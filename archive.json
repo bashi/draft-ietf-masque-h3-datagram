@@ -1,0 +1,2179 @@
+{
+  "magic": "E!vIA5L86J2I",
+  "timestamp": "2021-04-13T01:10:37.967623+00:00",
+  "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+  "labels": [
+    {
+      "name": "bug",
+      "description": "Something isn't working",
+      "color": "d73a4a"
+    },
+    {
+      "name": "documentation",
+      "description": "Improvements or additions to documentation",
+      "color": "0075ca"
+    },
+    {
+      "name": "duplicate",
+      "description": "This issue or pull request already exists",
+      "color": "cfd3d7"
+    },
+    {
+      "name": "enhancement",
+      "description": "New feature or request",
+      "color": "a2eeef"
+    },
+    {
+      "name": "help wanted",
+      "description": "Extra attention is needed",
+      "color": "008672"
+    },
+    {
+      "name": "good first issue",
+      "description": "Good for newcomers",
+      "color": "7057ff"
+    },
+    {
+      "name": "invalid",
+      "description": "This doesn't seem right",
+      "color": "e4e669"
+    },
+    {
+      "name": "question",
+      "description": "Further information is requested",
+      "color": "d876e3"
+    },
+    {
+      "name": "wontfix",
+      "description": "This will not be worked on",
+      "color": "ffffff"
+    }
+  ],
+  "issues": [
+    {
+      "number": 2,
+      "id": "MDU6SXNzdWU1MTI2NzI2NDI=",
+      "title": "Discussion of use of flow identifiers should be improved",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/2",
+      "state": "CLOSED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "From @martinthomson ([link to email](https://mailarchive.ietf.org/arch/msg/quic/lSqgErC2E_svoz_28VxohJ39gDg)):\r\n\r\n> I would frame this slightly differently, to the above point: This creates a system of \"flow identifiers\" to allow for concurrent use of DATAGRAM frames by multiple extensions without creating contention.  Except that it doesn't entirely...\r\n>\r\n> You should mention that signaling about flow identifiers is necessary, but that is the responsibility of the protocol that defines the usage.  If you don't signal, how does a receiver know that flow ID 1 maps to usage foo and flow ID 2 maps to usage bar?\r\n>\r\n> Also, you should explain that there is no general limit to the flow identifier space, though protocols might want to provide mechanisms to limit usage to prevent resource exhaustion.  This will depend on the protocol, of course.  Some protocols might not expend resources when creating flow IDs.",
+      "createdAt": "2019-10-25T19:05:02Z",
+      "updatedAt": "2019-10-30T22:37:30Z",
+      "closedAt": "2019-10-30T22:37:30Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed via https://github.com/DavidSchinazi/draft-h3-datagram/commit/3f0ff5d264cf7acf51d764fe65e20361dcfc4ddd",
+          "createdAt": "2019-10-30T22:37:30Z",
+          "updatedAt": "2019-10-30T22:37:30Z"
+        }
+      ]
+    },
+    {
+      "number": 3,
+      "id": "MDU6SXNzdWU1MjQ3MzMxNzE=",
+      "title": "Add examples",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/3",
+      "state": "CLOSED",
+      "author": "rmarx",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I feel the text could use some concrete examples of use cases where application-layer demultiplexing would be useful (or, perhaps more generally, how unreliable data over HTTP/3 would be useful).",
+      "createdAt": "2019-11-19T02:26:46Z",
+      "updatedAt": "2020-12-13T04:42:05Z",
+      "closedAt": "2020-12-13T04:42:05Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This should be fixed in today's update to the drafts.",
+          "createdAt": "2020-12-13T04:42:05Z",
+          "updatedAt": "2020-12-13T04:42:05Z"
+        }
+      ]
+    },
+    {
+      "number": 5,
+      "id": "MDU6SXNzdWU1ODI3NjkwNTU=",
+      "title": "Register a setting",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/5",
+      "state": "CLOSED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In order to use this, this will need to be signaled somehow.  It seems like the draft infers that the presence of the transport parameter for DATAGRAM is sufficient, but I don't believe that to be the case.\r\n\r\nTake the case where a client offers three protocols for use via ALPN.  One of those might always include DATAGRAM support and so the client is obligated to offer the transport parameter.  But that does not imply that all three offered protocols support this extension equally.  You need a way to unambiguously signal that the combination of DATAGRAM and h3 are supported.  That means a setting.",
+      "createdAt": "2020-03-17T05:41:30Z",
+      "updatedAt": "2020-04-17T00:45:47Z",
+      "closedAt": "2020-04-17T00:45:47Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree. I'll add a SETTING.",
+          "createdAt": "2020-03-17T23:26:25Z",
+          "updatedAt": "2020-03-17T23:26:25Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed via fd6e79923ca5fc0c22730d29abd5bbde2948bed1",
+          "createdAt": "2020-04-17T00:45:47Z",
+          "updatedAt": "2020-04-17T00:45:47Z"
+        }
+      ]
+    },
+    {
+      "number": 8,
+      "id": "MDU6SXNzdWU3MTc0ODkxNTE=",
+      "title": "\"0-length\" DATAGRAMS",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/8",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Since DATAGRAMS can have a 0-length payload, and H3 DATAGRAM mandates a flow ID, then something should be said about how an endpoint treats this.\r\n\r\nMy first reaction is that this is a connection error of type H3_FRAME_ERROR.",
+      "createdAt": "2020-10-08T16:23:26Z",
+      "updatedAt": "2020-12-13T04:42:04Z",
+      "closedAt": "2020-12-13T04:42:03Z",
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "This should also be extended to the frame being too short to decode varint.",
+          "createdAt": "2020-10-08T16:25:51Z",
+          "updatedAt": "2020-10-08T16:25:51Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree, failing to parse the varint flow ID due to the DATAGRAM payload being too short is indicative of a serious malfunction in the peer's h3-datagram implementation, so closing the connection sounds reasonable.",
+          "createdAt": "2020-10-08T16:34:12Z",
+          "updatedAt": "2020-10-08T16:34:12Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This should be fixed in today's update to the drafts.",
+          "createdAt": "2020-12-13T04:42:03Z",
+          "updatedAt": "2020-12-13T04:42:03Z"
+        }
+      ]
+    },
+    {
+      "number": 9,
+      "id": "MDU6SXNzdWU3NjU3MTYzNTI=",
+      "title": "Field:Flow ID cardinality",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/9",
+      "state": "CLOSED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "It's not really clear whether there are any expectations in relation to cardinality of flow identifiers and the field.  Can two fields refer to the same flow ID?  Can the same request reference multiple flow IDs?",
+      "createdAt": "2020-12-14T00:13:31Z",
+      "updatedAt": "2021-01-05T12:26:13Z",
+      "closedAt": "2021-01-05T12:26:13Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think the h3 datagram draft should allow both:\r\n- two requests can reuse the same flow ID if the definition of that HTTP features allows it (this feature is used by the [QUIC extension to CONNECT-UDP](https://tools.ietf.org/html/draft-pauly-masque-quic-proxy))\r\n- one request can reference two flow IDs - I think this is already stated though:\r\n> For example, an HTTP method that wishes to use two datagram flow identifiers for the lifetime of its request stream could encode the second flow identifier as a parameter",
+          "createdAt": "2020-12-15T00:27:01Z",
+          "updatedAt": "2020-12-15T00:27:01Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I'm sure that people operating intermediaries might have something to say here.  A gateway that routes flows might be unwilling to replicate datagram flows that are bound to requests that go to different origin servers.\r\n\r\nI agree that one request to many flows is worthwhile, but mention in examples doesn't really count as a specification.",
+          "createdAt": "2020-12-15T01:44:03Z",
+          "updatedAt": "2020-12-15T01:44:03Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fair enough, I'll add text to make this clearer. And I'll add a note to the intermediaries section about how the intermediary needs to ensure that if a second request arrives that shares a flow ID with a previous one, the intermediary MUST either send the new request to the same backend or reject it.",
+          "createdAt": "2020-12-15T02:42:55Z",
+          "updatedAt": "2020-12-15T02:42:55Z"
+        }
+      ]
+    },
+    {
+      "number": 10,
+      "id": "MDU6SXNzdWU3NjU3MTcyMTA=",
+      "title": "Returning flow identifiers",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/10",
+      "state": "CLOSED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There is a certain advantage to being able to use small flow identifiers, but there are only 32 of the smallest available for any given usage.  Would it be possible for a particular usage to reuse a value?\r\n\r\nI ask because CONNECT-UDP has a distinct start and end and could possibly take advantage of this.  That would have some small, but likely meaningful, impact on efficiency.",
+      "createdAt": "2020-12-14T00:15:18Z",
+      "updatedAt": "2021-01-05T12:53:24Z",
+      "closedAt": "2021-01-05T12:53:24Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree, this feature might make a real performance difference. The only caveat is reordering, we'll have to be careful that if receiving a RESET_STREAM frame for the CONNECT-UDP stream makes a flow ID available and a datagram with that flow ID gets reordered to arrive after, we'll need to check the packet number to make sure that this datagram is dropped instead of routed to its new owner.",
+          "createdAt": "2020-12-15T00:22:24Z",
+          "updatedAt": "2020-12-15T00:22:24Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "I don't like looking at packet numbers and would be opposed to that.  It's a pretty serious layering violation.\r\n\r\nA guard interval to minimize the potential for overlap might help, but I would prefer that we only allow reuse if the protocol that is carried has some sort of protection against receiving bad packets.  Tunneled QUIC should work fine for that (though Version Negotiation packets are still a little bit of a concern), as would tunneled STUN/TURN and WebRTC.\r\n\r\nMore analysis would be required if the protocol did not provide its own integrity protection, but as this is primarily a tunneling protocol, we might be safe in advising against that.",
+          "createdAt": "2020-12-15T01:48:48Z",
+          "updatedAt": "2020-12-15T01:48:48Z"
+        }
+      ]
+    },
+    {
+      "number": 11,
+      "id": "MDU6SXNzdWU3NjU3MjEwNTc=",
+      "title": "SF example parameter is confusing",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/11",
+      "state": "CLOSED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The document currently uses the following example:\r\n\r\n```\r\n     Datagram-Flow-Id = 42; alternate=44\r\n```\r\nMotivating this with an example of how to express multiple flow identifiers.\r\n\r\nI think that this example is potentially harmful.  It implies a lot about a potential extension mechanism as part of an example, but does not commit to properly defining an extension.  For examples like this I would much prefer to see something that is very clearly bogus.  Otherwise, people might implement that to the point that they even achieve interoperability of a sort.\r\n\r\nFor instance, the following requires a lot more guessing about how to interpret it, to the point that I would guess that pseudo-interoperability would be hard to arrive at by accident:\r\n\r\n```\r\n     Datagram-Flow-Id = 42; camels-per-orthodoxy=17.4\r\n```\r\n\r\nSee also #9.",
+      "createdAt": "2020-12-14T00:22:56Z",
+      "updatedAt": "2021-01-05T12:26:13Z",
+      "closedAt": "2021-01-05T12:26:13Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The goal of this example was to show a way to build an extension. A full example of this being used is [the ECN extension to CONNECT-UDP](https://tools.ietf.org/html/draft-schinazi-masque-connect-udp-ecn). I'm not really sure how to improve this, because making it clearly bogus defeats the purpose. Could you provide a PR?",
+          "createdAt": "2020-12-15T00:29:13Z",
+          "updatedAt": "2020-12-15T00:29:13Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Maybe we should talk more about the spelling of the ECN extension, which I haven't reviewed.\r\n\r\nI don't think that you should hide flow identifiers in this fashion.  It prevents an intermediary from understanding which requests are actively using flow identifiers.  A gateway might need to know that in order to ensure that DATAGRAM frames are consistently forwarded to the right origin server.\r\n\r\nAn alternative spelling that doesn't have that property would be:\r\n\r\n```\r\nDatagram-Flow-Id: 42; no-ecn, 43; ect0, 44; ecn-ce, 45; ect1\r\n```",
+          "createdAt": "2020-12-15T01:41:46Z",
+          "updatedAt": "2020-12-15T01:41:46Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To make sure I'm understand you correctly, are you suggesting a structured field list here? That would work, and actually in that case I'd suggest dropping the parameter on the first element to make this simpler.\r\n\r\n```\r\nDatagram-Flow-Id: 42, 44; ect0, 46; ecn-ce, 48; ect1\r\n```",
+          "createdAt": "2020-12-15T02:39:43Z",
+          "updatedAt": "2020-12-15T02:40:58Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Yep, that's it.  And I considered the same.  No parameter works fine.",
+          "createdAt": "2020-12-15T03:01:42Z",
+          "updatedAt": "2020-12-15T03:01:42Z"
+        }
+      ]
+    },
+    {
+      "number": 12,
+      "id": "MDU6SXNzdWU3NjU3NDM0NTQ=",
+      "title": "Many reasons why a message with Datagram-flow-Id could be delayed",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/12",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Section 6 makes the keen observation that:\r\n\r\n```\r\n   Since the QUIC STREAM frame that contains the \"Datagram-Flow-Id\"\r\n   header could be lost or reordered, it is possible that an endpoint\r\n   will receive an HTTP/3 datagram with a flow identifier that it does\r\n   not know as it has not yet received the corresponding \"Datagram-Flow-\r\n   Id\" header.  Endpoints MUST NOT treat that as an error; they MUST\r\n   either silently discard the datagram or buffer it until they receive\r\n   the \"Datagram-Flow-Id\" header.\r\n```\r\n\r\nThis is accurate but, when thinking about HTTP/3 APIs, does not cover all possible reasons that might cause a request message to be processed after the corresponding DATAGRAM frame is available. For instance, the message might be blocked by QPACK, or the implementation might present DATAGRAMS before stream headers. \r\n\r\nWe could boil the ocean with describing all possible reasons, so I think it might be better to shuffle the text to focus on describe the symptom (DATAGRAMS before HTTP messages) and the treatment. We can then give non-exhaustive example(s) as already done.",
+      "createdAt": "2020-12-14T01:00:48Z",
+      "updatedAt": "2021-01-05T12:26:13Z",
+      "closedAt": "2021-01-05T12:26:13Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I would prefer to not boil the ocean :)\r\n\r\nI'll make an editorial change to make it clearer that this is just an example among others.",
+          "createdAt": "2020-12-14T01:08:25Z",
+          "updatedAt": "2020-12-14T01:08:25Z"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "id": "MDU6SXNzdWU3NjU3NTM0OTY=",
+      "title": "Running out of Flow IDs",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/13",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "https://tools.ietf.org/html/draft-schinazi-masque-h3-datagram-01#section-6 states:\r\n\r\n```\r\n   Note that integer structured fields can only encode values up to\r\n   10^15-1, therefore the maximum possible value of the \"Datagram-Flow-\r\n   Id\" header is lower then the theoretical maximum value of a flow\r\n   identifier which is 2^62-1 due to the QUIC variable length integer\r\n   encoding.  If the flow identifier allocation service of an endpoint\r\n   runs out of values lower than 10^15-1, the endpoint MUST treat is as\r\n   a connection error of type H3_ID_ERROR.\r\n```\r\n\r\nThe text is a little ambiguous. I presume the intention is that the endpoint that is allocating flows should do what HTTP/3 defines as [Immediate Application Closure](https://tools.ietf.org/html/draft-ietf-quic-http-32#section-5.3)? The doesn't cover the case where an endpoint receives a Datagram Flow ID greater than 10^15-1 (either in a request or a DATAGRAM).\r\n\r\nI think it might help to separate these cases. Receiving a value of 10^15-1 is always a connection error of type H3_ID_ERROR. \r\nBut I'm not so sure about the sender case, if you really are flow ID exhausted, perhaps it is nicer to just spin up a new connection and leave the current one as is. We might recommend that endpoints initiate an HTTP/3 graceful close followed by an application close - but reusing H3_ID_ERROR for that case seems a bit overkill.",
+      "createdAt": "2020-12-14T01:17:38Z",
+      "updatedAt": "2021-01-05T12:26:13Z",
+      "closedAt": "2021-01-05T12:26:13Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think receiving a DATAGRAM whose flow ID is >= 10^15 is an error, the receiver should just silently drop it as the flow ID is unknown. Either way we should add text to clarify the expected action of the receiver.\r\n\r\nIn the sender case, I agree with you when the sender is the client, because in that case the client should instead just spin up a separate connection. On the server sender however, there is no such escape hatch, so perhaps we should tell the server to fail the operation that requested the flow ID.",
+          "createdAt": "2020-12-14T02:00:28Z",
+          "updatedAt": "2020-12-14T02:00:28Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Sorry I was not specific in my comment. I meant to speak about receiving the header field e.g.\r\n\r\n```\r\nDatagram-Flow-Id: 10000000000000000\r\n```\r\n\r\nThat would lead to an SF Integer parsing error, which [IIUC](https://tools.ietf.org/html/draft-ietf-httpbis-header-structure-19) would cause the field to be ignored - unless we define different behaviour.\r\n\r\nIgnoring the header has an interesting interplay with the optional guidance to `buffer it until they receive\r\n   the \"Datagram-Flow-Id\" header`.\r\n\r\nIgnoring things that are strictly above the known limits seems a little too generous. Is there a reason not to reject such requests and HTTP/3 DATAGRAMS?",
+          "createdAt": "2020-12-14T03:01:57Z",
+          "updatedAt": "2020-12-14T03:01:57Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ah, in that case I agree - receipt of a Datagram-Flow-Id header with value >= 10^15 should cause a connection error of type H3_ID_ERROR.\r\n\r\nI was just thinking that conceptually receiving DATAGRAM with strange flow IDs should not be an error because that might lead implementors to declare than any unknown flow ID is an error which would break valid scenarios in the presence of reordering.",
+          "createdAt": "2020-12-14T03:07:44Z",
+          "updatedAt": "2020-12-14T03:07:44Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Yeah. However, I think it would be fine to reject such a request with an 4xx response rather than tear down the entire connection...",
+          "createdAt": "2020-12-14T03:14:11Z",
+          "updatedAt": "2020-12-14T03:14:11Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fair enough, that works too. I'll just state that in that scenario the request is malformed",
+          "createdAt": "2020-12-14T03:45:15Z",
+          "updatedAt": "2020-12-14T03:45:15Z"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "id": "MDU6SXNzdWU3NjU4NDU4MTQ=",
+      "title": "0-RTT text is a bit obtuse",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/14",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "```\r\nWhen servers decide to accept 0-RTT data, they MUST send a\r\nH3_DATAGRAM SETTINGS parameter greater or equal to the value they sent to the\r\nclient in the connection where they sent them the NewSessionTicket\r\nmessage.\r\n```\r\n\r\nIn layspeak I think this is saying \"if a server sent the value 1 before, it MUST send 1 now. If a server sent 0 before, it MUST send 0 or 1 now\". \r\n\r\nCould we maybe editorialize this to make it less likely for someone to do `value++` and end up sending `2`?",
+      "createdAt": "2020-12-14T03:46:02Z",
+      "updatedAt": "2021-01-05T12:48:32Z",
+      "closedAt": "2021-01-05T12:48:32Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There is text in the doc stating that only 0 and 1 are valid. But I do agree that the current text is somewhat clunky. Can you send a PR?",
+          "createdAt": "2020-12-14T03:48:33Z",
+          "updatedAt": "2020-12-14T03:48:33Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Sure, I'll make a PR.",
+          "createdAt": "2020-12-14T15:03:53Z",
+          "updatedAt": "2020-12-14T15:03:53Z"
+        }
+      ]
+    },
+    {
+      "number": 15,
+      "id": "MDU6SXNzdWU3NjU4NTk0OTU=",
+      "title": "Consider a different error code when the flow ID doesn't fit in the frame",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/15",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There's some good guidance about parsing the Flow ID out of the HTTP/3 Datagram with respect to datagram payload length. But I'm not sure if the recommend error code of PROTOCOL_VIOLATION is the most appropriate. This implies that the error is a Transport Error but I'd argue that at this point (parsing of the frame payload) that its an HTTP/3 Application error. \r\n\r\nSince we're not actually parsing a true HTTP/3 frame, just a view over a transport frame, H3_FRAME_ERROR seems too specific. So I think H3_GENERAL_PROTOCOL_ERROR is the most straightforward.\r\n\r\nI wonder what others think.",
+      "createdAt": "2020-12-14T04:07:15Z",
+      "updatedAt": "2021-01-05T12:49:26Z",
+      "closedAt": "2021-01-05T12:49:26Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I honestly am fine with any error for this, though I'd prefer to reuse an existing one to reduce complexity.",
+          "createdAt": "2020-12-15T00:19:18Z",
+          "updatedAt": "2020-12-15T00:19:18Z"
+        }
+      ]
+    },
+    {
+      "number": 22,
+      "id": "MDU6SXNzdWU3NzkwODcxNzE=",
+      "title": "reusing flow identifiers is racy",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/22",
+      "state": "OPEN",
+      "author": "marten-seemann",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "#20 introduced the following text:\r\n\r\n> The flow identifier allocation service MAY reuse previously retired flow identifiers once they have ascertained that there are no packets with DATAGRAM frames using that flow identifier still in flight.\r\n\r\nThere are 2 problems with this, in each direction:\r\n1. In the send-direction, this can only be ascertained in the case of no packet loss, when all packets have been acknowledged. If any packet is not acknowledged, this could be due to this packet actually having been lost or just reordered delayed.\r\n2. While it's possible to ascertain that all *sent* packets have been acknowledged, this is not possible for packets sent by the peer.\r\n\r\nReusing a flow identifier opens up an attack vector: An attacker could delay the delivery of a packet containing the old flow identifier until it has been retired and reused. This would lead to a reinterpretation of the DATAGRAM contents in a new application context.",
+      "createdAt": "2021-01-05T14:17:17Z",
+      "updatedAt": "2021-02-02T18:57:41Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "If your HTTP/3 code is closely coupled with your QUIC code, this can be solved by looking at QUIC packet numbers. If we take the CONNECT-UDP example, receiving a RESET_STREAM frame for the CONNECT-UDP stream ensures that the peer will not send subsequent DATAGRAM frames with this flow ID. If you record the packet number of the packet that carried the RESET_STREAM frame, you can then drop any DATAGRAM frames with that flow ID whose packet number is lower. That solves both problems you've described.",
+          "createdAt": "2021-01-05T14:32:30Z",
+          "updatedAt": "2021-01-05T14:32:30Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "NONE",
+          "body": "> If your HTTP/3 code is closely coupled with your QUIC code, this can be solved by looking at QUIC packet numbers.\r\n\r\nIt is not, my implementation separates the two layers.\r\nIn the design of QUIC transport, we went a long way to avoid looking at the packet number at all. If this design principle applied to the transport, it should even more so apply to applications built on top of QUIC. \r\n\r\n> If you record the packet number of the packet that carried the RESET_STREAM frame, you can then drop any DATAGRAM frames with that flow ID whose packet number is lower.\r\n\r\nThat only applies for the server side, doesn't it? The client still wouldn't know if a packet it receives was sent before or after the ID was reassigned.",
+          "createdAt": "2021-01-05T16:10:12Z",
+          "updatedAt": "2021-01-05T16:10:12Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> It is not, my implementation separates the two layers.\r\n\r\nThis feature is optional, so you could choose to not implement it. Or are you proposing a different mechanism that works?\r\n\r\n> In the design of QUIC transport, we went a long way to avoid looking at the packet number at all. If this design principle applied to the transport, it should even more so apply to applications built on top of QUIC.\r\n\r\nI agree that we shouldn't violate this design principle in the mandatory parts of the spec, but doing so in optional features seems acceptable to me.\r\n\r\n> That only applies for the server side, doesn't it? The client still wouldn't know if a packet it receives was sent before or after the ID was reassigned.\r\n\r\nThis isn't really about client or server, but more about who sent the RESET_STREAM frame. The receiver of RESET_STREAM can key on the packet number that carried that frame, whereas its peer can key on the packet number of the first acknowledgement for that RESET_STREAM.",
+          "createdAt": "2021-01-05T17:00:28Z",
+          "updatedAt": "2021-01-05T17:00:28Z"
+        },
+        {
+          "author": "marten-seemann",
+          "authorAssociation": "NONE",
+          "body": "> This feature is optional, so you could choose to not implement it.\r\n\r\nHow so? How do I prevent the peer from reusing a flow identifier?\r\n\r\n> Or are you proposing a different mechanism that works?\r\n\r\nActually, I'm not quite sure I understand the issue that @martinthomson raised in #10. I see flow identifiers as analogues to stream IDs. For stream IDs, we never even considered reusing them, even though that wouldn't have required a layer violation in that case.\r\nWhy are the 3 additional bytes (I'm assuming you're using fewer than 1073741823/2 identifiers on a typical connection, otherwise it's 7) too expensive in one case, but not the other?",
+          "createdAt": "2021-01-05T17:16:59Z",
+          "updatedAt": "2021-01-05T17:16:59Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> How so? How do I prevent the peer from reusing a flow identifier?\r\n\r\nWhy would you want to prevent the peer from reusing a flow identifier? The peer ensures the security properties of reuse.\r\n\r\n> Actually, I'm not quite sure I understand the issue that @martinthomson raised in #10. I see flow identifiers as analogues to stream IDs. For stream IDs, we never even considered reusing them, even though that wouldn't have required a layer violation in that case.\r\n> Why are the 3 additional bytes (I'm assuming you're using fewer than 1073741823/2 identifiers on a typical connection, otherwise it's 7) too expensive in one case, but not the other?\r\n\r\nBecause the payload of DATAGRAM frames needs to fit in a single QUIC packet, whereas STREAM frames allows splitting the payload across packets. When you're tunneling, this means that the overhead impacts your MTU when using DATAGRAMs.\r\n\r\n",
+          "createdAt": "2021-01-05T17:25:06Z",
+          "updatedAt": "2021-01-05T17:25:06Z"
+        },
+        {
+          "author": "oesh",
+          "authorAssociation": "NONE",
+          "body": "I'd like to raise the attention towards the idea that reliably supporting reuse of flow identifiers can become quite complicated when in large-scale installations. \r\n\r\nConsider a large scale point of presence, where a large number of servers are sharing the same public IPs:\r\n\r\n\r\n```\r\n                                                   ^            \r\n                                                   |            \r\n                                                   |    Higher  \r\n                                                   |  protocols \r\n+--------------------------------------------+     |            \r\n|            Application cluster             |     |            \r\n+--------------------------------------------+     |            \r\n                                                   |            \r\n+-----------+                    +-----------+     |            \r\n|+---------+|                    |+---------+|     |            \r\n||   H3    ||                    ||   H3    ||     |            \r\n|+---------+|                    |+---------+|     |            \r\n|+---------+|  x 100             |+---------+|     |            \r\n||  QUIC   ||                    ||  QUIC   ||     |            \r\n|+---------+|                    |+---------+|     |            \r\n|+---------+|      GRE-style     |+---------+|     |            \r\n||   LB    |<------forwarding---->|   LB    ||     |            \r\n|+---------+|                    |+---------+|     |            \r\n+-----------+                    +-----------+     |            \r\n                                                   |            \r\n+--------------------------------------------+     |    Lower   \r\n|          Advertised IP addresses           |     |  protocols \r\n+--------------------------------------------+     |            \r\n                                                   v \r\n                                                   \r\n```\r\n\r\nIn such scenario, multiple datagrams that share the same flow identifier may be served by several distinct physical servers. In order for these servers to be able to route the datagrams in a consistent way, the flow id allocation service must be able to provide some sort of consistency guarantees: when the flow identifier expires, any server that may serve the flow needs to agree that the flow has indeed expired. In other words, there is a consensus problem lurking behind the scenes.\r\n\r\nWhile there are several ways to achieve such consensus, all share some propagation delay. Clients don't have a good way to estimating such delay (except for the observation that it's unlikely to be significantly shorter than the retransmit timeout). \r\n\r\nIt may be worth at least mentioning that reusing the flow identifiers rapidly is not recommended. \r\n\r\n(edit: changed the wording that has mistakenly projected an argument as a known fact).",
+          "createdAt": "2021-02-01T22:32:11Z",
+          "updatedAt": "2021-02-01T22:36:00Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hi @oesh , this is an interesting scenario but I'm not sure I understand it: are you saying that multiple servers can send the same datagram flow ID on the same connection? How does that work? Given that QUIC uses incremental packet numbers as the encryption nonce, you're going to need a synchronization point in the server-to-client datapath anyway, or am I misunderstanding something?",
+          "createdAt": "2021-02-01T23:35:50Z",
+          "updatedAt": "2021-02-01T23:35:50Z"
+        },
+        {
+          "author": "oesh",
+          "authorAssociation": "NONE",
+          "body": "Hi @DavidSchinazi, I was probably unclear. It is also possible that I am missing something. Let me try to clarify my comment.\r\n\r\nEDIT: I have reformatted / rephrased and clarified the comment. Again, I may be missing something, and will be glad to learn more in this case.\r\n\r\n```\r\nThe flow allocation service SHOULD also provide a mechanism for applications to indicate \r\nthey have completed their usage of a flow identifier and will no longer be using that flow identifier,\r\nthis process is called \"retiring\" a flow identifier. \r\n```\r\n\r\nI think the main point of my comment - if the flow id is known to the applications, then it would be hard to communicate the retirement of the flow ID. In particular, in some situations it would be impossible for an endpoint to infer that a particular flow id has been successfully \"retired\" by the peer endpoint, because the application can retain the state associated with that flow id.",
+          "createdAt": "2021-02-02T06:46:41Z",
+          "updatedAt": "2021-02-02T17:00:51Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Maybe the draft isn't clear: the idea is that the application is responsible for knowing that the flow ID is no longer in use, and ensuring that the application on the peer also knows that it is no longer in use, before retiring it - the application tells the flow allocation service to retire, the flow allocation service doesn't do it on its own.",
+          "createdAt": "2021-02-02T18:57:41Z",
+          "updatedAt": "2021-02-02T18:57:41Z"
+        }
+      ]
+    },
+    {
+      "number": 24,
+      "id": "MDU6SXNzdWU3ODQ2NDU5ODk=",
+      "title": "Datagram Flow Id parameters should be not be names",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/24",
+      "state": "OPEN",
+      "author": "tfpauly",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Rather than having names like `44; ecn-ect0`, the parameters should follow the usual parameter format, which would be like:\r\n\r\n44; ecn=ect0",
+      "createdAt": "2021-01-12T22:38:44Z",
+      "updatedAt": "2021-01-14T23:30:00Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "My understanding of the ask that lead to the \"name parameter\" being defined in draft-schinazi-masque-h3-datagram-04 was that we want to be able to assign unique handles to flow IDs in a generic way that is part of the this document. That would allow a general purpose implementation to be able to disambiguate lows without having to understand any specific extension.\r\n\r\nDuring the MASQUE interim, there was a suggestion for a different design that would define a `name` parameter eg. `44; name=ecn-ect0`. ",
+          "createdAt": "2021-01-12T23:10:55Z",
+          "updatedAt": "2021-01-12T23:10:55Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "body": "Specific extensions may also want to add more parameters.\r\n\r\nWhat's the direct benefit of having a name, if I don't know what it means? Is it just to tell that flows are different?",
+          "createdAt": "2021-01-14T00:29:35Z",
+          "updatedAt": "2021-01-14T00:29:35Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "> Specific extensions may also want to add more parameters.\r\n\r\nRight. The intention wasn't to *only* permit names. Other parameters can be sent since sf-list allows that. The spec and/or interim meeting meeting slides might not have made that clear. In other words the goal was to allowing naming while avoiding an endpoint ignoring an unknown parameter and mishandling it as a name or some other extension. As the interim discussion evolved, it became clear there are other ways to specify the header that could achieve the goal.\r\n\r\nI'm also realising my understanding of the extensibility requirements might not be fully representative - so don't take my replies as absolutionist.",
+          "createdAt": "2021-01-14T01:01:40Z",
+          "updatedAt": "2021-01-14T01:01:57Z"
+        },
+        {
+          "author": "martinthomson",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "As we discussed, if you want the names to imply some sort of semantic, then that is what parameters are for.  The example @tfpauly gave is perfect: if you want this flow to be for ECT0-marked packets, then `ecn=ect0` is perfectly good.  The name thing was ambiguous and relied on ordering.\r\n\r\nThe ECN case might be bad for the purposes of extension handling.  You can process these flows without needing to know the meaning of the ECN markings.  However, there might be other cases where the parameter indicates a change in the datagram contents.  I think that there is an important distinction here between what endpoints do with this (that is, User Agent and Origin Server in HTTP parlance) and what an intermediary might do.\r\n\r\nAn intermediary forwards all flows and only remaps flow identifiers.  It doesn't need to understand the content of datagrams. Therefore, it can do that without knowing what the semantics are.\r\n\r\nEndpoints will need to understand the semantics in order to make use of the data.  This is tricky, because it means that you might need to negotiate understanding.  If we are doing MASQUE and a client adds a flow that is marked `48; ip`, with the intention that the flow contains whole IP packets (let's say of any version), the thing that consumes this flow needs to understand that.  That means that some extensions require *end-to-end* negotiation before the marking can be used.  A server that handles this in a request can reject the request and thereby avoid getting datagrams it can't handle (or being required to generate datagrams it can't produce).  However, the same is not true for responses, so maybe there is a need for clients to indicate what they are able to support.\r\n\r\nWorth a separate issue?",
+          "createdAt": "2021-01-14T23:30:00Z",
+          "updatedAt": "2021-01-14T23:30:00Z"
+        }
+      ]
+    },
+    {
+      "number": 25,
+      "id": "MDU6SXNzdWU3ODQ2NDg4ODk=",
+      "title": "Please do not reuse flow-ids",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/25",
+      "state": "CLOSED",
+      "author": "ekr",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "We have 2^62. We don't need to reclaim them,",
+      "createdAt": "2021-01-12T22:44:36Z",
+      "updatedAt": "2021-03-05T17:55:16Z",
+      "closedAt": "2021-03-05T17:55:16Z",
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "related to #22",
+          "createdAt": "2021-01-12T23:02:49Z",
+          "updatedAt": "2021-01-12T23:02:49Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closing as duplicate of #22.",
+          "createdAt": "2021-03-05T17:55:16Z",
+          "updatedAt": "2021-03-05T17:55:16Z"
+        }
+      ]
+    },
+    {
+      "number": 26,
+      "id": "MDU6SXNzdWU3OTcwMjEyODc=",
+      "title": "packing DATAGRAMs with the same flow-id in a single QUIC packet",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/26",
+      "state": "OPEN",
+      "author": "lnicco",
+      "authorAssociation": "NONE",
+      "assignees": [
+        "LPardue"
+      ],
+      "labels": [],
+      "body": "in Section 2 \"Flow Identifiers\" it reads \r\n\r\n> If multiple DATAGRAM frames can be packed into a single QUIC packet, the sender SHOULD group them by flow identifier to promote fate-sharing within a specific flow and improve the ability to process batches of datagram messages efficiently on the receiver.\r\n\r\nthis to me seems to be in conflict with the opening statement \r\n> QUIC DATAGRAM frames do not provide a means to demultiplex application contexts\r\n\r\nif the flow-id is in the DATAGRAM payload, the transport is not supposed to be peeking at it. While it could be a nice (but a bit hacky) optimization in a real-world implementation, I feel like the RFC having it as a SHOULD is not ideal. ",
+      "createdAt": "2021-01-29T16:35:13Z",
+      "updatedAt": "2021-04-12T18:58:43Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "In my experience, in order to build a high performance implementation of QUIC, you have to leverage the fact that layers can share information to improve performance. Are you saying that you'd prefer not using SHOULD for this kind of optimization?",
+          "createdAt": "2021-01-30T00:12:54Z",
+          "updatedAt": "2021-01-30T00:12:54Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think Luca might have a point. If we consider this as a feature that a transport provides as a service, I don't really know what the service provides. There isn't another transport mechanism that relies on the ordering, or an interoperable aspect (would the other side be able to detect this?). It seems this is an aspect more about the API that QUIC provides, which is going to be a rich field of opportunity. There could be benefits but I don't know if we need to use the SHOULD. We could probably relax the language and try to articulate the benefits or tradeoffs of packetization and frame bundling. For instance, batching might interfere with timeliness, and controlling that might start creeping into prioritisation territory.\r\n\r\nThe more I think about it, the described behaviour about batch processing might assume the receiver behaves a certain way, which might not be true. Therefore this might not be a good default to recommend.  ",
+          "createdAt": "2021-01-30T00:34:59Z",
+          "updatedAt": "2021-01-30T00:34:59Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fair enough. Perhaps we remove this for now, and add guidance once we have more implementation/deployment experience?",
+          "createdAt": "2021-01-30T00:40:05Z",
+          "updatedAt": "2021-01-30T00:40:05Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I can live with a less drastic edit, leaving the text in draws the reader attention to the idea that packing could be important. I'd be happy to put together an editorial replacement for review, and if we hate it, then drop the concrete recommendation?",
+          "createdAt": "2021-01-30T00:46:59Z",
+          "updatedAt": "2021-01-30T00:46:59Z"
+        },
+        {
+          "author": "lnicco",
+          "authorAssociation": "NONE",
+          "body": "Thanks Lucas, you framed it way better than I could. \r\nAlso I believe that whether shared-fate within a flow is desirable or not may depend on the application.",
+          "createdAt": "2021-02-02T02:57:04Z",
+          "updatedAt": "2021-02-02T02:57:04Z"
+        },
+        {
+          "author": "dtikhonov",
+          "authorAssociation": "NONE",
+          "body": "> whether shared-fate within a flow is desirable or not may depend on the application.\r\n\r\nI came here looking for the same information:  Why is fate-sharing desired?  Is there some background to this?",
+          "createdAt": "2021-03-09T21:59:16Z",
+          "updatedAt": "2021-03-09T21:59:16Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I think more implementation and deployment experience would help here.\r\n\r\nI can see cases like tunneling IP flows containing TCP where fate sharing is preferable, since it's better to lose two adjacent packets in one flow than one packet each in two flows.  But it seems a bit use-case specific?  Also, you would expect most TCP segments to be large enough you couldn't put two into a single QUIC packet.",
+          "createdAt": "2021-03-10T21:13:28Z",
+          "updatedAt": "2021-03-10T21:13:28Z"
+        }
+      ]
+    },
+    {
+      "number": 27,
+      "id": "MDU6SXNzdWU4MTI5ODAyNTc=",
+      "title": "Make it explicit that Flow IDs are non-negative",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/27",
+      "state": "CLOSED",
+      "author": "LPardue",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The draft doesn't do this. It relies on the QUIC varint encoding for non-negativity in DATAGRAM frames but `sf-integer` could contain a negative value. Let's be clear in the spec.",
+      "createdAt": "2021-02-21T23:27:59Z",
+      "updatedAt": "2021-03-08T15:27:30Z",
+      "closedAt": "2021-03-08T15:27:30Z",
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Definitely agree, could you write a PR please?",
+          "createdAt": "2021-02-22T18:46:31Z",
+          "updatedAt": "2021-02-22T18:46:31Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I will.",
+          "createdAt": "2021-02-22T18:49:00Z",
+          "updatedAt": "2021-02-22T18:49:00Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "fixed in https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/29",
+          "createdAt": "2021-03-08T15:27:29Z",
+          "updatedAt": "2021-03-08T15:27:29Z"
+        }
+      ]
+    },
+    {
+      "number": 28,
+      "id": "MDU6SXNzdWU4MTY5MzM4NDQ=",
+      "title": "Datagram flows should have their individual max datagram size",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/28",
+      "state": "OPEN",
+      "author": "vasilvv",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Consider a situation where a single HTTP/3 connection is terminated at a CDN and it carries two different WebTransport sessions to different backends.  Those backends may have different max datagram size, thus the protocol needs to be able to specify max datagram size limit per-flow.",
+      "createdAt": "2021-02-26T01:05:14Z",
+      "updatedAt": "2021-02-26T01:10:58Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "body": "Do you mean DATAGRAM frame? Theres still an open question about whether we will continue with the max size Transport Parameter as a integer, or whether plain enable / disable would work ",
+          "createdAt": "2021-02-26T01:10:58Z",
+          "updatedAt": "2021-02-26T01:10:58Z"
+        }
+      ]
+    },
+    {
+      "number": 30,
+      "id": "MDU6SXNzdWU4MjQ2NTUyMTk=",
+      "title": "Flow ID allocation failures",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/30",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "draft 00 section 6 says:\r\n\r\n```\r\n   If the flow identifier allocation service\r\n   of an endpoint runs out of values lower than 10^15-1, the endpoint\r\n   MUST fail the flow identifier allocation.\r\n```\r\n\r\nFirst, Section 3, which talks about the service, seems like a better place to more-generally talk about errors. Specific error conditions probably depend on the encoding - in this case, the maximum depends on Datagram-Flow-Id header but we might imagine other uses of H3 DGRAM might have other limits.\r\n\r\nSecond, what does failure look like? Is it a \"won't vend flow ID\" or is this a connection-critical error etc. ",
+      "createdAt": "2021-03-08T15:10:42Z",
+      "updatedAt": "2021-03-08T18:39:37Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "From the flow allocation service's perspective, it just reports the failure to the requesting application context. Applications need to handle this and decide how. For example, a CONNECT-UDP client should handle failure by opening a second connection, but keeping the current one open until all its streams are done.",
+          "createdAt": "2021-03-08T15:14:04Z",
+          "updatedAt": "2021-03-08T15:14:04Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "that make sense. But there is also an implication that the flow ID allocation service needs to be primed with some knowledge of the bounds for which it can allocate, which might be application-specific. So it makes me wonder what the benefit of putting it in the allocation service itself is. An alternative is that the allocation service provides any legal wire-format value, and the application could enforce the 10^15-1 limit. ",
+          "createdAt": "2021-03-08T15:33:45Z",
+          "updatedAt": "2021-03-08T15:33:45Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "That's a fair point. In practice I don't expect this to ever happen (a given QUIC connection can only send 2^62 packets after all, and that number goes down to 2^23 if using AES), so it might be best to go for the simpler option and just declare 10^15 (which is roughly 2^50) as the max in the allocation service...",
+          "createdAt": "2021-03-08T15:38:48Z",
+          "updatedAt": "2021-03-08T15:40:22Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Introducing a hard 10^15  limit would also go some way to addressing https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/31",
+          "createdAt": "2021-03-08T18:39:36Z",
+          "updatedAt": "2021-03-08T18:39:36Z"
+        }
+      ]
+    },
+    {
+      "number": 31,
+      "id": "MDU6SXNzdWU4MjQ2NjAzNjM=",
+      "title": "Is it an error to receive a flow ID greater than 10^15-1?",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/31",
+      "state": "OPEN",
+      "author": "LPardue",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "There's a disparity between the largest flow ID that can be carried in the DATAGRAM frame and the largest that we can express in Datagram-Flow-Id.\r\n\r\nDraft 00 prevents a flow ID allocation of >= 10^15-1 but doesn't seem to address the case where a DATAGRAM frame contains that value. This is clearly an error, and I'd suggest that it is a connection error; probably `H3_ID_ERROR` or some new codepoint if we really wanted.",
+      "createdAt": "2021-03-08T15:16:37Z",
+      "updatedAt": "2021-03-08T16:03:19Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I don't think that needs to be an error, we can simply treat this like any other unknown flow ID?",
+          "createdAt": "2021-03-08T15:23:32Z",
+          "updatedAt": "2021-03-08T15:23:32Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "IMO this is clearly a situation that shouldn't happen and indicates the sending endpoint probably has some bug. I'm not sure on what being silent on the matter helps.",
+          "createdAt": "2021-03-08T16:03:18Z",
+          "updatedAt": "2021-03-08T16:03:18Z"
+        }
+      ]
+    },
+    {
+      "number": 32,
+      "id": "MDU6SXNzdWU4MjYzNzY2MzU=",
+      "title": "What guarantees are there against re-using flow IDs",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/32",
+      "state": "OPEN",
+      "author": "ianswett",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "QUIC has strong guarantees on not re-using Stream IDs.\r\n\r\nThere was strong consensus against allowing re-use of Flow IDs(#22).  The WG today was also leaning towards creating flow IDs that are not related to the Stream ID, which means preventing Flow ID re-use may be a challenge, since we can't rely on Stream ID non-reuse.\r\n\r\nOptions for enforcement include best effort ie: \"MUST close the connection if reuse is detected\" or try to ensure datagram flow IDs are used in order, which could allow enforcement be mandated.\r\n",
+      "createdAt": "2021-03-09T17:56:55Z",
+      "updatedAt": "2021-03-10T21:14:36Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree that we don't currently have text about enforcing the prohibition on reuse. But I'm not sure this is a feature we need? QUIC stream creation is flow controlled (via MAX_STREAMS) so there is infrastructure for this. QUIC Datagram Flow creation is not flow controlled, so I don't see this as a direct mapping. Do you have a use case that would require or benefit from this enforcement?",
+          "createdAt": "2021-03-09T22:12:50Z",
+          "updatedAt": "2021-03-09T22:12:50Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I do not.\r\n\r\nGiven that, I think a \"MUST close the connection if reuse is detected\" approach seems fine, but it's worth documenting.",
+          "createdAt": "2021-03-10T03:39:11Z",
+          "updatedAt": "2021-03-10T03:39:11Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "To clarify, reusing a flow ID for _different_ uses will be disallowed by the PR that resolves #22. However, two requests can refer to the same flow ID for the _same_ usage, that will stay legal. Because of this, I wouldn't know how to implement the MUST you describe.",
+          "createdAt": "2021-03-10T12:13:03Z",
+          "updatedAt": "2021-03-10T12:13:03Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I filed #33 for two requests referring to a single flow ID.",
+          "createdAt": "2021-03-10T21:14:36Z",
+          "updatedAt": "2021-03-10T21:14:36Z"
+        }
+      ]
+    },
+    {
+      "number": 33,
+      "id": "MDU6SXNzdWU4MjgzMzY3OTA=",
+      "title": "Allowing a single flow ID to be associated with multiple requests is brittle",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/33",
+      "state": "OPEN",
+      "author": "ianswett",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "The only note in the draft I see about this is:\r\n\"If an intermediary processes distinct HTTP requests that refer to the same flow ID in their respective \"Datagram-Flow-Id\" header fields, it MUST ensure that those requests are routed to the same backend.\"\r\n\r\nThis is not a requirement our load balancer would be able to enforce,\u00a0since requests are routed to backends individually.\u00a0 Is there a use case that really needs this, because it feels very odd to me as well as not working for our deployment.",
+      "createdAt": "2021-03-10T21:08:14Z",
+      "updatedAt": "2021-03-10T23:45:53Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@ianswett we're going to have to change our load balancer to handle datagrams, so the fact that it only deals in requests today doesn't mean it'll behave a given way once it supports MASQUE and/or WebTransport. In particular we're going to need a map from datagram flow ID to backend no matter what we do, so checking that map on incoming requests isn't unreasonable.\r\n\r\nThe current example use-case for this feature is [draft-pauly-masque-quic-proxy-00](https://tools.ietf.org/html/draft-pauly-masque-quic-proxy-00).",
+          "createdAt": "2021-03-10T21:16:27Z",
+          "updatedAt": "2021-03-10T21:16:27Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "In order to meet the requirement, I think you cannot have a 1:N mapping between flow ID and request stream.  If there were more than one stream that used the same flow ID, and those streams were routed to different backends, there would be no way to choose which to deliver an incoming datagram to (or are you supposed to replicate it?)",
+          "createdAt": "2021-03-10T22:50:46Z",
+          "updatedAt": "2021-03-10T22:50:46Z"
+        }
+      ]
+    },
+    {
+      "number": 34,
+      "id": "MDU6SXNzdWU4MjgzNzE3MjI=",
+      "title": "Why are flow IDs named?",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/34",
+      "state": "OPEN",
+      "author": "ianswett",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I spent a while trying to understand this and it's not clear to me from the spec.  Lucas posted this on Issue #24, but it's not quite enough for me(and it's not in the document).\r\n\r\n\r\n> My understanding of the ask that lead to the \"name parameter\" being defined in draft-schinazi-masque-h3-datagram-04 was that we want to be able to assign unique handles to flow IDs in a generic way that is part of the this document. That would allow a general purpose implementation to be able to disambiguate lows without having to understand any specific extension.\r\n\r\n_Originally posted by @LPardue in https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/24#issuecomment-759095560_",
+      "createdAt": "2021-03-10T21:42:46Z",
+      "updatedAt": "2021-03-10T22:28:11Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "achernya",
+          "authorAssociation": "NONE",
+          "body": "I think we should remove the flow ID names. The document appears to try to create a semantic meaning for them, but it has no effect on the wire image, so we can (and IMO should) do the semantic meanings in application level code.",
+          "createdAt": "2021-03-10T22:28:11Z",
+          "updatedAt": "2021-03-10T22:28:11Z"
+        }
+      ]
+    },
+    {
+      "number": 35,
+      "id": "MDU6SXNzdWU4Mjg0MTMyOTE=",
+      "title": "Remove the ECN example in Datagram-Flow-Id Header Field Definition",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/35",
+      "state": "OPEN",
+      "author": "achernya",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Currently, the Datagram-Flow-Id Header Field Definition section contains examples of the Datagram-Flow-Id header, which includes a 4-flow mechanism for conveying ECN information:\r\n\r\n> Datagram-Flow-Id = 42, 44; ecn-ect0, 46; ecn-ect1, 48; ecn-ce\r\n\r\nThis example seems to be tripping people up, myself included, by attempting to solve a problem of in-band signaling of non-UDP-payload bits by providing these streams, and drawing attention to that problem rather than the capability being described.\r\n\r\nI propose we remove this example until we have a better one to replace it. If we cannot find a good example, that also lends some evidence that perhaps we don't need the feature of creating multiple Datagram-Flow-Id associations in the same request.",
+      "createdAt": "2021-03-10T22:25:28Z",
+      "updatedAt": "2021-03-10T22:25:28Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 36,
+      "id": "MDU6SXNzdWU4MzUzMDk2NDM=",
+      "title": "Add a note about sticking out to security considerations",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/36",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "As discussed at IETF 110, some MASQUE servers may prefer to avoid sticking out (i.e. they may wish to be indistinguishable from a non-MASQUE-capable HTTP/3 server). The H3_DATAGRAM SETTINGS parameter may stick out. Therefore, we should add a note about this to the Security Considerations section. A simple solution could be to encourage widespread HTTP/3 servers to always send this.",
+      "createdAt": "2021-03-18T22:07:54Z",
+      "updatedAt": "2021-03-18T22:07:54Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "MDExOlB1bGxSZXF1ZXN0MzMwNzYxNzcz",
+      "title": "Editorial nits",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/1",
+      "state": "MERGED",
+      "author": "erickinnear",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "Minor editorial nits :)",
+      "createdAt": "2019-10-22T01:02:48Z",
+      "updatedAt": "2019-10-22T01:40:17Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "master",
+      "baseRefOid": "d277f50bfd8f7e5b174e2dd8e9509780ad6726c6",
+      "headRepository": "ekinnear/draft-h3-datagram",
+      "headRefName": "ek/editorial_nits",
+      "headRefOid": "32a41d0d6c9a0346d2dc071bcce8c2c117a3bfb1",
+      "closedAt": "2019-10-22T01:40:17Z",
+      "mergedAt": "2019-10-22T01:40:17Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "b21a78cc6876789f151be3ee919c5e54cf3bd913"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3MzA0OTMzMzUy",
+          "commit": {
+            "abbreviatedOid": "32a41d0"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks!",
+          "createdAt": "2019-10-22T01:40:08Z",
+          "updatedAt": "2019-10-22T01:40:08Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 4,
+      "id": "MDExOlB1bGxSZXF1ZXN0Mzg5NjM0NTc1",
+      "title": "Simplify analogy",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/4",
+      "state": "MERGED",
+      "author": "martinthomson",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "The comparison to UDP sockets is not as good as a comparison to streams.\r\nUDP sockets are sometimes spun up in the fashion described, but they are\r\nalso often a fixed thing, such as the socket that a DNS server listens\r\non.  That evokes the wrong model in which the caller chooses and there\r\nis some possibility of persistence.",
+      "createdAt": "2020-03-17T05:37:16Z",
+      "updatedAt": "2020-03-17T23:25:54Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "master",
+      "baseRefOid": "4d5e607970f52406318da396c21ca9b804b334af",
+      "headRepository": "martinthomson/draft-h3-datagram",
+      "headRefName": "conceptually-streams",
+      "headRefOid": "8759f87f7661cb978b72442df931560c541c5ac0",
+      "closedAt": "2020-03-17T23:25:53Z",
+      "mergedAt": "2020-03-17T23:25:53Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "3f78050d80fc5a8dc214442a94310b7a6ed45df5"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 16,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTM5MTEyNjQy",
+      "title": "editorial pass, mainly header -> header field",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/16",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2020-12-14T04:08:07Z",
+      "updatedAt": "2020-12-14T20:15:21Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "1f0758e933b693bc5d317484544e462d23381b66",
+      "headRepository": "LPardue/draft-h3-datagram",
+      "headRefName": "editorialize-pass-1",
+      "headRefOid": "b846fc303af4e3b53810dde9bd3122809b6114cc",
+      "closedAt": "2020-12-14T20:15:20Z",
+      "mergedAt": "2020-12-14T20:15:20Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "8984724e4a39f9c363632b1da4301c0b9bafea4c"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 17,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTM5NTQyNTQz",
+      "title": "add Lucas to authors",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/17",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2020-12-14T15:03:19Z",
+      "updatedAt": "2020-12-14T20:13:53Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "1f0758e933b693bc5d317484544e462d23381b66",
+      "headRepository": "LPardue/draft-h3-datagram",
+      "headRefName": "authorplusplus",
+      "headRefOid": "67dd739dd39a41dcd973ac9a9e8a05cdc5a61027",
+      "closedAt": "2020-12-14T20:13:53Z",
+      "mergedAt": "2020-12-14T20:13:53Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "70acc6cee4b1664f411be1fb761d3558f8d67a14"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 18,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTQ3MDQ2MDU0",
+      "title": "Make Datagram-Flow-Id a list",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/18",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR switches the header to a list on MT's suggestion to make the semantics clearer.\r\n\r\nCloses #9\r\nCloses #11\r\nCloses #12\r\nCloses #13\r\n",
+      "createdAt": "2020-12-30T18:35:15Z",
+      "updatedAt": "2021-01-05T12:26:13Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "12d95c99858d9eec43976133ec0e1376360745c7",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "dec2020",
+      "headRefOid": "e969f3b56bd97e96bc58d7887e26f0d89b4102eb",
+      "closedAt": "2021-01-05T12:26:13Z",
+      "mergedAt": "2021-01-05T12:26:13Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "3d9a0aa2f9a9d4f23d7c3e2586715c7cfd953fe0"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYwNTI0NjE1",
+          "commit": {
+            "abbreviatedOid": "6c37b29"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2020-12-31T17:40:04Z",
+          "updatedAt": "2020-12-31T18:04:45Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "This is bit odd because the three top-level SF types are List, Dictionary and Item. \r\n\r\nI think you want to explain that `Datagram-Flow-Id` is a List Structured Field, whose members must be Items of type Integer",
+              "createdAt": "2020-12-31T17:40:05Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "```suggestion\r\nbe the first parameter of that element. The ordering of the list does not\r\n```",
+              "createdAt": "2020-12-31T17:42:11Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            },
+            {
+              "originalPosition": 47,
+              "body": "Maybe we could tweak this further to really strike home the prose? For instance, if I read carefully I think this order is also valid\r\n\r\n```\r\nDatagram-Flow-Id = 44; ecn-ect0, 42, 48; ecn-ce, 46; ecn-ect1; \r\n```\r\n\r\n",
+              "createdAt": "2020-12-31T17:50:14Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            },
+            {
+              "originalPosition": 40,
+              "body": "It's not clear to me how this works in practice.  Especially for extensibility, the current text might be too ambiguous. Are you proposing there MUST be only one parameter, that  MUST be of type boolean, and MUST be of type true? Do names have to be unique within a header field? For instance, how would you expect to process a received header like this?\r\n\r\n```\r\nDatagram-Flow-Id = 42, 44; ecn-ect0; likesdogs, 48; ecn-ce, 46; ecn-ect1,\r\n                   50; ecn-ect1; likescats=?0, 52; ecn-ect2=?0\r\n```\r\n",
+              "createdAt": "2020-12-31T17:59:20Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "This is good. Is there something in Semantics we can cite to explain how malformed messages are handled?",
+              "createdAt": "2020-12-31T18:03:42Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYwNzA5MDQ5",
+          "commit": {
+            "abbreviatedOid": "624f82f"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-03T16:23:21Z",
+          "updatedAt": "2021-01-03T16:23:21Z",
+          "comments": [
+            {
+              "originalPosition": 47,
+              "body": "I ended up splitting the example in two: first the logical ordering then your example which nicely shows off that the unnamed can be in any position",
+              "createdAt": "2021-01-03T16:23:21Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYwNzA5MDU5",
+          "commit": {
+            "abbreviatedOid": "624f82f"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-03T16:23:29Z",
+          "updatedAt": "2021-01-03T16:23:30Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Good call, done",
+              "createdAt": "2021-01-03T16:23:30Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYwNzA5MTAx",
+          "commit": {
+            "abbreviatedOid": "624f82f"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-03T16:24:11Z",
+          "updatedAt": "2021-01-03T16:24:11Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "Unfortunately I didn't find anything in Semantics, so I referenced 7540. It's not perfect but it'll do.",
+              "createdAt": "2021-01-03T16:24:11Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYwNzA5MTMx",
+          "commit": {
+            "abbreviatedOid": "624f82f"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-03T16:24:43Z",
+          "updatedAt": "2021-01-03T16:24:43Z",
+          "comments": [
+            {
+              "originalPosition": 40,
+              "body": "Good call, I tried to clarify the text",
+              "createdAt": "2021-01-03T16:24:43Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxMTc0Nzc4",
+          "commit": {
+            "abbreviatedOid": "624f82f"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-04T16:43:39Z",
+          "updatedAt": "2021-01-04T16:43:39Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "I think its simpler to write just\r\n\r\n\"Datagram-Flow-Id\" is a List Structured Field {{!STRUCT-FIELD=I-D.ietf-httpbis-header-structure}}, whose members MUST all be Items of type Integer. Its ABNF is:\"\r\n\r\n(GitHub prevents me from making this as an actual direct suggestion)",
+              "createdAt": "2021-01-04T16:43:39Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxMTgyNjQ2",
+          "commit": {
+            "abbreviatedOid": "624f82f"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-04T16:54:30Z",
+          "updatedAt": "2021-01-04T17:04:18Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "Structured fields uses the term \"member\" for things in the list, so you could /s/element/member or do something like coin the term \"element\" as so. I kind of like coining here, since it makes it clear that these requirements apply in addition to standard structured field requirements. But I'm not fussy.\r\n\r\n```suggestion\r\nList members are flow identifier elements, which can be named or unnamed.\r\nOne element in the list is allowed to be unnamed, but all but one elements\r\n```\r\n\r\n",
+              "createdAt": "2021-01-04T16:54:30Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            },
+            {
+              "originalPosition": 83,
+              "body": "Do flow identifiers have to use the same name (or stay unamed) across requests? I think it would help to be strict here.",
+              "createdAt": "2021-01-04T17:00:29Z",
+              "updatedAt": "2021-01-05T12:06:48Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxNzM2ODM3",
+          "commit": {
+            "abbreviatedOid": "e969f3b"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-05T12:07:08Z",
+          "updatedAt": "2021-01-05T12:07:09Z",
+          "comments": [
+            {
+              "originalPosition": 7,
+              "body": "Oh I should have read my work more carefully, you're absolutely right. Done.",
+              "createdAt": "2021-01-05T12:07:08Z",
+              "updatedAt": "2021-01-05T12:07:09Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxNzQ3NTI5",
+          "commit": {
+            "abbreviatedOid": "e969f3b"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-05T12:25:46Z",
+          "updatedAt": "2021-01-05T12:25:46Z",
+          "comments": [
+            {
+              "originalPosition": 83,
+              "body": "Discussed offline, the draft needs editorial work to clarify how to use names and their conceptual meaning, but we'll address that in a separate PR.",
+              "createdAt": "2021-01-05T12:25:46Z",
+              "updatedAt": "2021-01-05T12:25:46Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 19,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTQ4OTg3ODkw",
+      "title": "Clarify 0-RTT value cannot exceed 1",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/19",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #14\ufeff\n",
+      "createdAt": "2021-01-05T12:40:11Z",
+      "updatedAt": "2021-01-05T12:48:32Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "3d9a0aa2f9a9d4f23d7c3e2586715c7cfd953fe0",
+      "headRepository": "LPardue/draft-h3-datagram",
+      "headRefName": "0-rtt-avoid-plusplus",
+      "headRefOid": "92ce17d192ba5c5f6ef0c960dc42f62b82cd47c1",
+      "closedAt": "2021-01-05T12:48:32Z",
+      "mergedAt": "2021-01-05T12:48:32Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "c583c3e4bf9a183da0d7bbc98eae671a273023af"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxNzYwMjY2",
+          "commit": {
+            "abbreviatedOid": "92ce17d"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-01-05T12:48:17Z",
+          "updatedAt": "2021-01-05T12:48:17Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 20,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTQ4OTkxMDY2",
+      "title": "Allow retiring flow identifiers",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/20",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #10 ",
+      "createdAt": "2021-01-05T12:43:15Z",
+      "updatedAt": "2021-01-05T12:53:24Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "3d9a0aa2f9a9d4f23d7c3e2586715c7cfd953fe0",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "reuse",
+      "headRefOid": "ba44cee6be7b4e67141704d35e8350abe4694ff3",
+      "closedAt": "2021-01-05T12:53:24Z",
+      "mergedAt": "2021-01-05T12:53:24Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "f9192fa1470b365b206525293f7d9c018d5d8839"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxNzYxMzI0",
+          "commit": {
+            "abbreviatedOid": "6af48e8"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-01-05T12:50:04Z",
+          "updatedAt": "2021-01-05T12:50:04Z",
+          "comments": [
+            {
+              "originalPosition": 13,
+              "body": "```suggestion\r\na shorter variable-length integer encoding.\r\n```",
+              "createdAt": "2021-01-05T12:50:04Z",
+              "updatedAt": "2021-01-05T12:52:22Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 21,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTQ4OTkzNTM4",
+      "title": "frames too short for flow ID cause H3 errors",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/21",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "CONTRIBUTOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixes #15\ufeff\n",
+      "createdAt": "2021-01-05T12:45:41Z",
+      "updatedAt": "2021-01-05T12:49:26Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "3d9a0aa2f9a9d4f23d7c3e2586715c7cfd953fe0",
+      "headRepository": "LPardue/draft-h3-datagram",
+      "headRefName": "h3-dgram-errors-are-h3-errors",
+      "headRefOid": "6604ce8f1c39a171a550e34c03ced5a505789a04",
+      "closedAt": "2021-01-05T12:49:26Z",
+      "mergedAt": "2021-01-05T12:49:26Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "14e55584038ba3cd751aa559fbfde175a579f738"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxNzYwODc5",
+          "commit": {
+            "abbreviatedOid": "6604ce8"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-01-05T12:49:20Z",
+          "updatedAt": "2021-01-05T12:49:20Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 23,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTQ5MDk5OTgy",
+      "title": "Add HTTP Datagram Flow Identifier Element Names registry",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/23",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2021-01-05T14:24:36Z",
+      "updatedAt": "2021-01-05T17:06:28Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "acefa05408483576a11ee7f737b2bc9a22e1f48e",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "iana_named_elements",
+      "headRefOid": "6307f4908455147045702245097d5cd1033f19cf",
+      "closedAt": "2021-01-05T17:06:28Z",
+      "mergedAt": "2021-01-05T17:06:28Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "87e9be4e89b21a92a2ebee9eaee09c79ef589d53"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NTYxOTIxNDM2",
+          "commit": {
+            "abbreviatedOid": "a884b4c"
+          },
+          "author": "LPardue",
+          "authorAssociation": "CONTRIBUTOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-01-05T16:08:43Z",
+          "updatedAt": "2021-01-05T16:08:43Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 29,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTg1ODY0ODQz",
+      "title": "Split flow identifier term to flows and IDs",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/29",
+      "state": "MERGED",
+      "author": "LPardue",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This somewhat of an experiment. While trying to address #27 I got distracted by the document's use of the \"flow identifier\" term.\r\n\r\nThe document likes to compare \"flow identifiers\" with QUIC streams, which is fine. But QUIC makes the distinction between streams and stream IDs; the ID is a property of the stream but it isn't the only one, and sometimes it helps to talk about the stream in other contexts.\r\n\r\nThis change tries to channel a similar editorial style. It replaces:\r\n\r\n* \"flow identifiers\" with \"flows\" when talking about a logical entitiy\r\n* \"flow identifiers\" with \"flow IDs\" when talking about the wire format, encoding, examples etc.\r\n\r\nThis could be a change too far but I figured it would be a good discussion starter.",
+      "createdAt": "2021-03-05T20:46:45Z",
+      "updatedAt": "2021-03-08T15:27:07Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "76452b30be50f35f8b23fdc528a4fac3f511c5eb",
+      "headRepository": "LPardue/draft-h3-datagram",
+      "headRefName": "lucas/flows-and-flow-IDs",
+      "headRefOid": "ba2565df896fbb65ade57163b958d50fb51ffcea",
+      "closedAt": "2021-03-08T15:27:06Z",
+      "mergedAt": "2021-03-08T15:27:06Z",
+      "mergedBy": "LPardue",
+      "mergeCommit": {
+        "oid": "eabfb327140651137c6c1053087d63dfdbdf18c5"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA1NTg4ODQ5",
+          "commit": {
+            "abbreviatedOid": "2c47568"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Overall I think this is a good improvement, thanks!",
+          "createdAt": "2021-03-05T20:50:49Z",
+          "updatedAt": "2021-03-05T20:55:49Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "```suggestion\r\nnumeric value, referred to as the flow identifier (or flow ID).  A flow ID is a 62-bit integer (0\r\n```",
+              "createdAt": "2021-03-05T20:50:49Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            },
+            {
+              "originalPosition": 46,
+              "body": "Do we want to call them \"flows\" or \"datagram flows\"? The second might be slightly clearer, albeit more wordy.",
+              "createdAt": "2021-03-05T20:51:42Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            },
+            {
+              "originalPosition": 72,
+              "body": "Technically, you don't allocate a flow, you allocate a flow ID - which is part of what you need to do when creating a new flow. So while I like the concept of a flow in general, I think the allocation service should deal in identifiers. What do you think?",
+              "createdAt": "2021-03-05T20:52:24Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA1NTkzMjAz",
+          "commit": {
+            "abbreviatedOid": "2c47568"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-05T20:58:11Z",
+          "updatedAt": "2021-03-05T20:58:11Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "This text is liberally copied from QUIC transport stream definition. Im happy to diverge but just wanted to point that out.",
+              "createdAt": "2021-03-05T20:58:11Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA1NTk0Nzc2",
+          "commit": {
+            "abbreviatedOid": "2c47568"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-05T21:00:40Z",
+          "updatedAt": "2021-03-05T21:00:41Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "I thought the same initially, I could go either way because the wordings doesn't bother me.",
+              "createdAt": "2021-03-05T21:00:41Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA1NTk4MTUx",
+          "commit": {
+            "abbreviatedOid": "2c47568"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-05T21:06:27Z",
+          "updatedAt": "2021-03-05T21:06:27Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "I think this is probably the most controversial part, so I'm glad we can agree it needs discussion.\r\n\r\nFrom an implementation perspective I do allocate for flows but that is an application-context dependent property (CONNECT-UDP would setup a flow<>UDP socket mapping for instance). But you're right that this text is specifically about IDs and I think that ignoring application details in this document is probably fine.\r\n\r\nLet me sleep on things and circle back.",
+              "createdAt": "2021-03-05T21:06:27Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA1NTk5MzE4",
+          "commit": {
+            "abbreviatedOid": "2c47568"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-05T21:08:27Z",
+          "updatedAt": "2021-03-05T21:08:27Z",
+          "comments": [
+            {
+              "originalPosition": 55,
+              "body": "I can live with flow ID for consistency",
+              "createdAt": "2021-03-05T21:08:27Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA1NTk5NjQ4",
+          "commit": {
+            "abbreviatedOid": "2c47568"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-05T21:09:02Z",
+          "updatedAt": "2021-03-05T21:09:02Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "Maybe we go with datagram flow then since it's slightly clearer and matches the header name?",
+              "createdAt": "2021-03-05T21:09:02Z",
+              "updatedAt": "2021-03-08T14:54:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA2Mzc5NzA0",
+          "commit": {
+            "abbreviatedOid": "ba2565d"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-08T14:58:42Z",
+          "updatedAt": "2021-03-08T14:58:42Z",
+          "comments": [
+            {
+              "originalPosition": 72,
+              "body": "I've changed this to `Flow ID allocation service` throughout",
+              "createdAt": "2021-03-08T14:58:42Z",
+              "updatedAt": "2021-03-08T14:58:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA2Mzc5OTM4",
+          "commit": {
+            "abbreviatedOid": "ba2565d"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-08T14:58:55Z",
+          "updatedAt": "2021-03-08T14:58:56Z",
+          "comments": [
+            {
+              "originalPosition": 46,
+              "body": "agreed, done",
+              "createdAt": "2021-03-08T14:58:55Z",
+              "updatedAt": "2021-03-08T14:58:56Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjA2Mzg0Mzk1",
+          "commit": {
+            "abbreviatedOid": "ba2565d"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks!",
+          "createdAt": "2021-03-08T15:03:11Z",
+          "updatedAt": "2021-03-08T15:03:11Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 37,
+      "id": "MDExOlB1bGxSZXF1ZXN0NTk5MjgxMDk4",
+      "title": "Experiment with HTTP/3 frames",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/37",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR is a thought experiment aimed at seeing whether using HTTP/3 frames for H3DGRAM and CONNECT-UDP makes sense. We're not planning on merging this as-is.",
+      "createdAt": "2021-03-24T00:31:24Z",
+      "updatedAt": "2021-03-30T21:49:53Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "eabfb327140651137c6c1053087d63dfdbdf18c5",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "experiment_h3_frames",
+      "headRefOid": "43f6970fe06c7e33129f62aff60d534d523b8f3a",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "General comment: Something you don't mention explicitly is whether it is permitted to send multiple REGISTER_DATAGRAM_FLOW_ID frames with different flow IDs on the same stream.",
+          "createdAt": "2021-03-24T02:03:11Z",
+          "updatedAt": "2021-03-24T02:03:11Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "@afrind For QPACK, a table is explicitly maintained, so I think things are Ok.  For h2, it's worse because the HPACK dictionary is LRU-based so if an extension frame is not supported, the dictionary gets out of sync.",
+          "createdAt": "2021-03-24T22:06:01Z",
+          "updatedAt": "2021-03-24T22:06:01Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "@ianswett : to clarify, you mean the QPACK table is not modified via encoded field sections.  Still, any extension that makes use of the QPACK dynamic table but doesn't properly decode all the sections will lead to state mismatch between the encoder and decoder -- the decoder still needs to send Section Acknowledgement or Stream Cancellation.  I guess it's not as bad as HPACK. \r\n\r\nI maintain that it's possible to write a safe extension to H2 or H3 that uses HPACK or QPACK dynamic tables, so long as it's guarded under SETTINGS.",
+          "createdAt": "2021-03-24T22:27:34Z",
+          "updatedAt": "2021-03-24T22:27:34Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjE5MjM1OTEy",
+          "commit": {
+            "abbreviatedOid": "dab39f2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-24T01:45:34Z",
+          "updatedAt": "2021-03-24T01:45:34Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "I think this needs some more explanation; what use cases motivate this freedom of extensibility?\r\n\r\nUnless there is a good reason to use QPACK I wouldn't. QPACK is for HTTP message metadata and these are clearly not those. I can predict this to cause all sorts of oddites/attacks when people try to reconstruct this field section and accidentally combine it with one reconstructed from HEADERS - or just the simple case of blocking/poisoning the QPACK dynamic table.\r\n\r\nCould we satisfy the extensibility requirements with a simple value-only field of `sf-list`?",
+              "createdAt": "2021-03-24T01:45:34Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjE5MjM5NjQ3",
+          "commit": {
+            "abbreviatedOid": "dab39f2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-24T01:54:38Z",
+          "updatedAt": "2021-03-24T01:54:38Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "I understand the spirit of the text but it seems slightly obtuse. It took a few reads and a cross-ref to CONNECT-UDP to help me. Maybe there is a some rewording to be done if we go in this direction.",
+              "createdAt": "2021-03-24T01:54:38Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIwMDIwMDYz",
+          "commit": {
+            "abbreviatedOid": "dab39f2"
+          },
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "Thanks David, some initial thoughts.",
+          "createdAt": "2021-03-24T17:26:22Z",
+          "updatedAt": "2021-03-24T18:14:11Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "Aside: I'd drop this piece of functionality and use whatever approach is agreed upon for h1 and h2.",
+              "createdAt": "2021-03-24T17:26:22Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "This is feeling even more different from CONNECT as well as substantially different from the current design.",
+              "createdAt": "2021-03-24T17:28:21Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 81,
+              "body": "Agreed, it'd be good to understand what our extensibility requirements are here.  I can imagine a fairly wide range.",
+              "createdAt": "2021-03-24T18:13:57Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIwMTk2MzM4",
+          "commit": {
+            "abbreviatedOid": "dab39f2"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-24T20:21:10Z",
+          "updatedAt": "2021-03-24T20:46:32Z",
+          "comments": [
+            {
+              "originalPosition": 35,
+              "body": "Does method always govern how DATAGRAMs are interpreted on a request/response stream?  Couldn't there be other mechanisms for specifying that?",
+              "createdAt": "2021-03-24T20:21:10Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 81,
+              "body": "I agree we should be looking at what the extensibility requirements are, and providing the appropriate degree of freedom here.\r\n\r\nI disagree that QPACK should only be used for HTTP message metadata and disallowed in extensions.  Why are we worried that this field section would be combined incorrectly with the header field section, but we're not worried about that for trailers?  Similar question for blocking/poisoning the QPACK table?",
+              "createdAt": "2021-03-24T20:38:00Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "I think the text should also address collisions or re-use of flow IDs.  What happens if the same flow ID is registered to more than one stream?  What is the lifetime of a flow ID -- does it auto-retire at the end of a stream, or can it outlive the FIN?  If the latter, how does the receiver of this frame know that the flow ID is done and state can be removed?",
+              "createdAt": "2021-03-24T20:39:48Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 95,
+              "body": "Are datagrams coming to H1?",
+              "createdAt": "2021-03-24T20:42:16Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 100,
+              "body": "I don't think you mean 'sent over...' a frame?",
+              "createdAt": "2021-03-24T20:42:51Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            },
+            {
+              "originalPosition": 104,
+              "body": "What kinds of streams is this frame valid on?  If a flow ID can outlive a stream, how do you send it?",
+              "createdAt": "2021-03-24T20:45:50Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIwMzAzNjQz",
+          "commit": {
+            "abbreviatedOid": "dab39f2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-24T23:12:03Z",
+          "updatedAt": "2021-03-24T23:12:03Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "I don't know what these frames are in relation to HTTP semantics. They contain an encoded field section but to where does that field section apply? There are rules and documented limitiations for handling trailers https://httpwg.org/http-core/draft-ietf-httpbis-semantics-latest.html#trailers.limitations.\r\n\r\nThis readslike a weird form of \"middlers\".\r\n\r\nMixing the use of a compression context between these HEADERS and extensions might be ok, or it might be horribly insecure. Is there precidence for extensions that have done this before?\r\n\r\nMaybe extensions can use QPACK but I want to know if H3_DATAGRAM needs to eat that complexity.",
+              "createdAt": "2021-03-24T23:12:03Z",
+              "updatedAt": "2021-03-24T23:47:51Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIwMzE4OTcx",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-24T23:48:59Z",
+          "updatedAt": "2021-03-24T23:48:59Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "Based on this discussion, QPACK isn't as simple as I originally thought, so I replaced it with a simple custom encoding.",
+              "createdAt": "2021-03-24T23:48:59Z",
+              "updatedAt": "2021-03-24T23:49:00Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIwMzIxNTAy",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-24T23:55:47Z",
+          "updatedAt": "2021-03-24T23:55:47Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "Hm, I think QPACK ended up perhaps too tightly coupled to HTTP semantics - at least it references Field Lines and Field Sections.  The specification itself is otherwise devoid of semantic meaning - it's just an encoding and compression scheme for name/value pairs.  I think it would be kind of a bummer if it couldn't be used, particularly by HTTP extensions, to convey compressed, structured metadata - like \"middlers\", etc.\r\n\r\nBut I can see @DavidSchinazi giving us a nudge to quit discussing QPACK here...",
+              "createdAt": "2021-03-24T23:55:47Z",
+              "updatedAt": "2021-03-24T23:55:47Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIwMzI0Mjcx",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-25T00:02:55Z",
+          "updatedAt": "2021-03-25T00:02:56Z",
+          "comments": [
+            {
+              "originalPosition": 81,
+              "body": "Oh I'm in complete agreement that HPACK/QPACK are very nice generic key-value compression schemes. It's slightly sad they are entwined with messages but that's what we've been dealt.",
+              "createdAt": "2021-03-25T00:02:55Z",
+              "updatedAt": "2021-03-25T00:02:56Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIzNjgwODQ0",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-29T21:52:58Z",
+          "updatedAt": "2021-03-29T22:37:21Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "Is it actually necessary to define syntax for the extension string, or would it make sense to leave it up to the extension using the datagrams (i.e. MASQUE or WebTransport)?  Also, why make it text and not binary?",
+              "createdAt": "2021-03-29T21:52:58Z",
+              "updatedAt": "2021-03-29T22:37:21Z"
+            },
+            {
+              "originalPosition": 95,
+              "body": "This feels weird, because this requires a party to make unilateral declarations about peer's flow IDs.  Why not just make the requester associate a flow from its side to a stream?",
+              "createdAt": "2021-03-29T22:36:06Z",
+              "updatedAt": "2021-03-29T22:37:21Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIzNzQ5Mjk0",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-30T00:23:34Z",
+          "updatedAt": "2021-03-30T00:23:35Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "I'd rather define this once instead of having each method dictate what this contains. Binary would work too, text just felt simpler.",
+              "createdAt": "2021-03-30T00:23:34Z",
+              "updatedAt": "2021-03-30T00:23:35Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIzNzUwMDg5",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-30T00:25:46Z",
+          "updatedAt": "2021-03-30T00:25:46Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "The issue there is that you would then need some sort of acknowledgement to know when your peer has parsed that frame. The unilateral model removes the need for acknowledgements at the HTTP level (for example HTTP/2 has an ACK bit on the SETTINGS frame for this reason).",
+              "createdAt": "2021-03-30T00:25:46Z",
+              "updatedAt": "2021-03-30T00:25:46Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjIzNzU3OTM3",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-30T00:48:46Z",
+          "updatedAt": "2021-03-30T00:48:46Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "I think something binary like Settings parameters has been too restrictive for extensibility. Depending exactly what extensibility people migh need, I think I'd probably still lean towards this being an encoded sf-list. This solves for many caveats of data-types and would give a nice pathway to migrate to binary Structured Fields if people really can't stomach strings in wire format.",
+              "createdAt": "2021-03-30T00:48:46Z",
+              "updatedAt": "2021-03-30T00:48:46Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjI0NTM5OTI2",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-30T17:43:27Z",
+          "updatedAt": "2021-03-30T17:44:40Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "> the sender of the frame unilateraly defines the semantics it will apply to the datagrams it\r\nreceives\r\n\r\nThis feels backwards to me - my inclination is to have the sender define the semantics of datagrams it will send on a flow ID.  This is similar to how unidirectional extension streams work -- the sender-chosen stream type identifies the semantics.  \r\n",
+              "createdAt": "2021-03-30T17:43:27Z",
+              "updatedAt": "2021-03-30T17:44:40Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjI0Njg2ODMw",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-30T20:43:42Z",
+          "updatedAt": "2021-03-30T20:43:42Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "I don't think the analogy with stream types is correct. The semantics of stream types are determined by an IANA registry, whereas flow IDs are ephemeral per-connection numbers. If you reverse the direction then things break in the presence of reordering.",
+              "createdAt": "2021-03-30T20:43:42Z",
+              "updatedAt": "2021-03-30T20:43:42Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjI0NzMyMjgw",
+          "commit": {
+            "abbreviatedOid": "43f6970"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-03-30T21:49:01Z",
+          "updatedAt": "2021-03-30T21:49:01Z",
+          "comments": [
+            {
+              "originalPosition": 95,
+              "body": "\"I'm listening for X on Flow-ID Y\" requires a roundtrip before the sender can even send.  Saying, \"I'm sending you X on Flow-ID Y\" doesn't break in the face of reordering, you just might lose some datagrams if your stack discards datagrams with unknown Flow IDs.  The receiver can also buffer datagrams on unknown Flow IDs for a while if it's concerned about this case.\r\n\r\nConsider an extension for unreliable HTTP upload, where I send POST request headers on a stream and then the body comes in DATAGRAMs. If I've already seen the SETTINGS from the server and know it supports my extension, why do I need to wait another RTT to acquire a flow-ID?",
+              "createdAt": "2021-03-30T21:49:01Z",
+              "updatedAt": "2021-03-30T21:49:53Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 38,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjEyOTk1MTMx",
+      "title": "Experiment with two layers of indirection",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/38",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Similar to #37, this PR is a thought experiment aimed at seeing whether an alternate design makes sense. We're not planning on merging this as-is.\r\n\r\nThis design was inspired by a proposal by @bemasc. Ben gets the credit for the idea of using two layers of indirection here, and I take the blame for writing it down wrong.\r\n\r\nSince this is really hard to review in PR form, I've uploaded an HTML version [here](https://davidschinazi.com/stuff/draft-ietf-masque-h3-datagram.html) so I definitely suggest reading that instead.\r\n\r\nConceptually, I think this proposal is easier to reason about, and it has the advantage of requiring minimal work from intermediaries. Its downside is that the wire format is slightly less efficient because it requires another varint to be sent per datagram, but I think we can live with that.",
+      "createdAt": "2021-04-11T02:18:51Z",
+      "updatedAt": "2021-04-13T00:51:51Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "255935632c9247980273dfe418de8c2a4332727f",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "experiment_1_to_1",
+      "headRefOid": "88e6caf21369d6986ec724d23d22550b47bf54de",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm still digesting this proposal, so take the following comments with a pinch of salt.\r\n\r\nI think the PR description glosses over some design changes and buries the lede. The major changes in this proposal seems to be that Flow IDs are no longer connection global, and Flow ID usage negotitation is no longer based on headers. If I were to reword the proposed concepts based on my understanding, we're talking about flow groups bound to each request. Flows can be added to the group during its lifetime but never retired. A flow allocation service needs only ensure uniqueness of flow IDs in a flow group. I'm failing to see why it is better to have an identifying tuple (stream-id:flow-id) instead of a global identifier (flow-id) but happy to be pointed out to why.\r\n\r\nThe examples are helpful so thanks for putting those in (I might have opinions on actually keeping them but this spec is currently weaker for not including any, I think we tracked this on a ticket already.)\r\n\r\nIf I were to summarise my understanding, this proposal replaces\r\n\r\n```\r\nHEADERS (on stream 44) {\r\n  method: CONNECT-UDP\r\n  {other headers}\r\n  datagram-flow-id: 0\r\n}\r\n```\r\n\r\nwith \r\n\r\n```\r\nHEADERS (on stream 44) {\r\n  method: CONNECT-UDP\r\n  {other headers}\r\n}\r\n\r\nRELIABLE_DATAGRAM (on stream 44) { \r\n  Flow-ID: 0\r\n  Registered-Flow-Id: 1\r\n  Extension-String: \"\"\r\n}\r\n```\r\n\r\nThe claim is that this makes it easier to reason about things, but frankly at this stage I can see it making some things harder. No longer can a MASQUE server reason about creating a tunnel based on HEADERS alone, it needs to combine that with some additional information that is delivered on the request stream but is not part of an HTTP request semantic. Such is the nature of H2/H3 frames, but I find it odd that the flow ID is described as an end-to-end signal in the same breath as being described as bound to a request context.\r\n\r\nThe surprising change I find in this design is it makes the flow registration unreliable, with a very weak suggestion to use something reliable. Can you embelish on why you picked this direction?  I'm not convinced if we want to do this flow groups thing but if we did, I find the overloading of RELIABLE_DATAGRAM unhelpful. It seems that you could combine some of this proposal with the REGISTER_DATAGRAM_FLOW_ID from #37. That would provide a clearer separation between the datagram control plane and data plane. One advantage of using a frame delivered on the request stream is that it avoids Flow-ID 0 being special case, which is ugly because it prevents requets from being made on Stream-ID 0. Another advantage is that it allows strict ordering of frames, in case we wanted to add rules about in-order flow ID usage.\r\n\r\nFinally, I'm slightly confused by how the CONNECT-IP example would work in reality if the server did not support the `\"ip=192.0.2.42,port=443\"` extension. If it drops the DATAGRAM payload silently, that seems like a sad move. I think someone (maybe Alan?) suggested somewhere that a frame-based registration design could benefit from some control-plane signal. I'm beginning to lean toward some further types of controls for flows, like an H3-layer STOP_SENDING/RESET_FLOW.\r\n\r\nTo to conclude my understanding/opinion of this proposal\r\n\r\n1. flow IDs are request-scoped, not global. I'm not sure if this is a good, bad or neutral change.\r\n1. flow IDs reservation is  done using a frame and can be done during the lifetime of a request\r\n  * This makes things gnarlier for my current implementation. It would require API changes to expose such events to an application.\r\n1. flow ID reservation could include extension strings I don't understand. If so, I have to just drop all datagrams for that flow and can't signal it back to my peer.",
+          "createdAt": "2021-04-12T02:19:26Z",
+          "updatedAt": "2021-04-12T02:19:26Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "Hi Lucas,\r\n\r\n>No longer can a MASQUE server reason about creating a tunnel based on HEADERS alone, it needs to combine that with some additional information that is delivered on the request stream but is not part of an HTTP request semantic.\r\n\r\nI'm not sure what you mean by \"creating a tunnel\", but note that the actual call to `bind()`, to allocate a UDP socket, can indeed be performed based on the headers alone.  (Actually, you don't even need the headers.)\r\n\r\nIt's true that, like #37, this proposal allows flows to be created at any time during CONNECT-UDP's lifetime.  This feature is not strictly necessary, but can be useful in various scenarios.  For example, it is hard to imagine how QUIC connection ID compression can work without this.\r\n\r\n> Such is the nature of H2/H3 frames, but I find it odd that the flow ID is described as an end-to-end signal in the same breath as being described as bound to a request context.\r\n\r\nHTTP requests are end-to-end: they are communicated through the intermediaries but are not _for_ the intermediaries.  They're not even version-specific.  Flows in MASQUE have these properties too.\r\n\r\n> The surprising change I find in this design is it makes the flow registration unreliable, with a very weak suggestion to use something reliable. Can you embelish on why you picked this direction?\r\n\r\nI interpreted this as \"you definitely want to use reliable registration, but technically nobody is going to enforce this requirement on you\".  I think we can adjust this easily enough.\r\n\r\n> I'm not convinced if we want to do this flow groups thing but if we did, I find the overloading of RELIABLE_DATAGRAM unhelpful. It seems that you could combine some of this proposal with the REGISTER_DATAGRAM_FLOW_ID from #37. That would provide a clearer separation between the datagram control plane and data plane.\r\n\r\nThe key claim of this design is that flows are only meaningful end-to-end, so exposing them to intermediaries is unnecessary.  From the HTTP transport's perspective, a flow-registration is just more data to be routed along with the request/response; it's only meaningful to the client and server.\r\n\r\n> One advantage of using a frame delivered on the request stream is that it avoids Flow-ID 0 being special case, which is ugly because it prevents requets from being made on Stream-ID 0.\r\n\r\nFWIW, I think \"zero is special\" is a fairly elegant common pattern.\r\n\r\n> Another advantage is that it allows strict ordering of frames, in case we wanted to add rules about in-order flow ID usage.\r\n\r\nIt's not spelled out here, but RELIABLE_DATAGRAMs would be strictly ordered, so this is still possible.\r\n\r\n> Finally, I'm slightly confused by how the CONNECT-IP example would work in reality if the server did not support the `\"ip=192.0.2.42,port=443\"` extension.\r\n\r\nI think @DavidSchinazi is implying that the listed extensions all happen to be Mandatory To Implement for the corresponding methods.  I agree, it would be good to discuss how non-mandatory extensions are negotiated.\r\n\r\n> I'm beginning to lean toward some further types of controls for flows, like an H3-layer STOP_SENDING/RESET_FLOW.\r\n\r\nThis is a key advantage of the two-layer design here.  These types of commands are only meaningful end-to-end, but without the second layer, adding new commands requires upgrading every intermediary and negotiating support in SETTINGS at each hop.",
+          "createdAt": "2021-04-12T14:47:22Z",
+          "updatedAt": "2021-04-12T14:47:22Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hey Ben, \r\n\r\nThanks for the reply, it paints a much fuller picture. I'm still wondering how this form of design might work across HTTP/1, 2 and 3 but that is a broader question for the WG so I'll leave aside. I'm not sure how best to reply here but I'll give quoting a shot. \r\n\r\n> I'm not sure what you mean by \"creating a tunnel\", but note that the actual call to bind(), to allocate a UDP socket, can indeed be performed based on the headers alone. (Actually, you don't even need the headers.)\r\n\r\nAs my first comment, I probably had the weakest view of the proposal. Based on the current design, a MASQUE server could reject a request if, for example, it detected a bad flow ID. I realize now that some of those failure conditions just go away. So I retract my comment.\r\n\r\n> It's true that, like #37, this proposal allows flows to be created at any time during CONNECT-UDP's lifetime. This feature is not strictly necessary, but can be useful in various scenarios. For example, it is hard to imagine how QUIC connection ID compression can work without this.\r\n\r\nYep this seems like a useful extension point and something that is difficult to achieve today.\r\n\r\n> >     The surprising change I find in this design is it makes the flow registration unreliable, with a very weak suggestion to use something reliable. Can you embelish on why you picked this direction?\r\n\r\n> I interpreted this as \"you definitely want to use reliable registration, but technically nobody is going to enforce this requirement on you\". I think we can adjust this easily enough.\r\n\r\nWhy not enforce it though? What scenario benefits from an unreliable flow creation. DATAGRAMs can be lost in the network or in the application buffers. The opportunity for problems get worse when adding intermediaries.\r\n\r\n> The key claim of this design is that flows are only meaningful end-to-end, so exposing them to intermediaries is unnecessary. From the HTTP transport's perspective, a flow-registration is just more data to be routed along with the request/response; it's only meaningful to the client and server.\r\n\r\nThat explanation helps, thanks. I think this speaks to my earlier point though. It seems this is a design that adds stuff to HTTP message but is not HTTP metadata or HTTP content. So what is it? H2 and H3 frames are hop-by-hop but their contents can be forwarded without being processed by anyone but the intended recipient. An intermediary that knows how to forward a request can forward frame contents. It seems this is the desired goal of using RELIABLE_DATAGRAM for control and data planes. But my point is that you could equally define REGISTER_DATAGRAM_FLOW_ID and other control frames that behave similarly, without having to overload them as a DATAGRAM on a special flow.\r\n\r\n> FWIW, I think \"zero is special\" is a fairly elegant common pattern.\r\n\r\nWe avoided it for QUIC and HTTP/3. If every deployment of HTTP/3 DATAGRAM would have to burn the first request stream, that seems ugly to me.\r\n\r\n>>    Finally, I'm slightly confused by how the CONNECT-IP example would work in reality if the server did not support the \"ip=192.0.2.42,port=443\" extension.\r\n\r\n> I think @DavidSchinazi is implying that the listed extensions all happen to be Mandatory To Implement for the corresponding methods. I agree, it would be good to discuss how non-mandatory extensions are negotiated.\r\n\r\n>>    I'm beginning to lean toward some further types of controls for flows, like an H3-layer STOP_SENDING/RESET_FLOW.\r\n\r\n> This is a key advantage of the two-layer design here. These types of commands are only meaningful end-to-end, but without the second layer, adding new commands requires upgrading every intermediary and negotiating support in SETTINGS at each hop.\r\n\r\nI see two separate things. First, it is useful to be able to handle DATAGRAM frames with different formats, without needing all points in the change to understand how to process that format - I agree with this. Second, we can use DATAGRAM frames to carry control messages for managing datagram flows. This one I have more of a problem with, how extensible does flow management need to be? For this proposal, changes are needed to add RELIABLE_DATAGRAM support through the chain in the first instance. Adding support for other frames at the same time doesn't much more difficult.\r\n\r\n",
+          "createdAt": "2021-04-12T18:49:06Z",
+          "updatedAt": "2021-04-12T18:49:57Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "\r\n> > > ```\r\n> > > The surprising change I find in this design is it makes the flow registration unreliable, with a very weak suggestion to use something reliable. Can you embelish on why you picked this direction?\r\n> > > ```\r\n> \r\n> > I interpreted this as \"you definitely want to use reliable registration, but technically nobody is going to enforce this requirement on you\". I think we can adjust this easily enough.\r\n> \r\n> Why not enforce it though?\r\n\r\nI'm fine with enforcing it, so long as we're clear that enforcement only happens at the endpoints.  Intermediaries shouldn't be looking past the Quarter Stream ID.\r\n\r\n> > The key claim of this design is that flows are only meaningful end-to-end, so exposing them to intermediaries is unnecessary. From the HTTP transport's perspective, a flow-registration is just more data to be routed along with the request/response; it's only meaningful to the client and server.\r\n> \r\n> That explanation helps, thanks. I think this speaks to my earlier point though. It seems this is a design that adds stuff to HTTP message but is not HTTP metadata or HTTP content. So what is it?\r\n\r\nIn an idealized version of HTTP, I see a stack of layers: hop, cache, exchange (request/response, end-to-end), method, resource (payload/representation).  The Quarter Stream ID is part of the hop layer.  Everything past that point is owned by the exchange.  The Flow ID, commands, and extension types are at the method layer.  The content of the extensions is at the resource layer.\r\n\r\nConcretely, this means that intermediaries can forward datagrams for unrecognized methods, even if we cannot predict what requirements future methods may have for datagrams.\r\n\r\n> H2 and H3 frames are hop-by-hop but their contents can be forwarded without being processed by anyone but the intended recipient.\r\n\r\nYes, and this PR essentially defines a frame type that means \"forward this without processing unless you're the intended recipient\".\r\n\r\n> An intermediary that knows how to forward a request can forward frame contents. It seems this is the desired goal of using RELIABLE_DATAGRAM for control and data planes. But my point is that you could equally define REGISTER_DATAGRAM_FLOW_ID and other control frames that behave similarly, without having to overload them as a DATAGRAM on a special flow.\r\n> \r\n> > FWIW, I think \"zero is special\" is a fairly elegant common pattern.\r\n> \r\n> We avoided it for QUIC and HTTP/3. If every deployment of HTTP/3 DATAGRAM would have to burn the first request stream, that seems ugly to me.\r\n\r\nThe obvious alternative is to put a DatagramType varint after the Quarter Stream ID, like an H3 frame on a stream.  This costs us one byte of MTU.  I don't think it buys us anything concrete, but I'm willing to spend a byte if it makes the design feel more consistent.\r\n\r\n> > > I'm beginning to lean toward some further types of controls for flows, like an H3-layer STOP_SENDING/RESET_FLOW.\r\n> \r\n> > This is a key advantage of the two-layer design here. These types of commands are only meaningful end-to-end, but without the second layer, adding new commands requires upgrading every intermediary and negotiating support in SETTINGS at each hop.\r\n> \r\n> I see two separate things. First, it is useful to be able to handle DATAGRAM frames with different formats, without needing all points in the change to understand how to process that format - I agree with this. Second, we can use DATAGRAM frames to carry control messages for managing datagram flows. This one I have more of a problem with, how extensible does flow management need to be? For this proposal, changes are needed to add RELIABLE_DATAGRAM support through the chain in the first instance. Adding support for other frames at the same time doesn't much more difficult.\r\n\r\nExposing the concept of flows to intermediaries makes them everything much more complicated.  For example, intermediaries would need their own flow count limits to avoid memory exhaustion.  Will clients and servers be able to figure out what happened when that limit is reached?  In the case of flow cleanup commands, the commands would presumably need to be ack'd end-to-end before flows could be reused, and both the commands and the acks would need to be interpreted and translated by intermediaries.  As an intermediary, what do I do with a datagram on a mapping for which a \"stop\" command has been forwarded but the \"ack\" has not yet been observed?  This complexity is not buying us anything.\r\n\r\nExtensibility, with additional commands negotiated via SETTINGS, is even more of a mess.  If I'm a CDN reverse proxy for myriad backends with different capabilities, what commands do I claim to support?\r\n\r\nI think we're much better off if we can draw a clear, simple line between hop-by-hop and end-to-end data.",
+          "createdAt": "2021-04-12T20:17:23Z",
+          "updatedAt": "2021-04-12T20:17:23Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Just to respond to one specific point:\r\n\r\n>>    I see two separate things. First, it is useful to be able to handle DATAGRAM frames with different formats, without needing all points in the change to understand how to process that format - I agree with this. Second, we can use DATAGRAM frames to carry control messages for managing datagram flows. This one I have more of a problem with, how extensible does flow management need to be? For this proposal, changes are needed to add RELIABLE_DATAGRAM support through the chain in the first instance. Adding support for other frames at the same time doesn't much more difficult.\r\n\r\n> Exposing the concept of flows to intermediaries makes them everything much more complicated. For example, intermediaries would need their own flow count limits to avoid memory exhaustion. Will clients and servers be able to figure out what happened when that limit is reached? In the case of flow cleanup commands, the commands would presumably need to be ack'd end-to-end before flows could be reused, and both the commands and the acks would need to be interpreted and translated by intermediaries. As an intermediary, what do I do with a datagram on a mapping for which a \"stop\" command has been forwarded but the \"ack\" has not yet been observed? This complexity is not buying us anything.\r\n\r\nI think we might be talking across ourselves but mean the same thing. All I'm suggesting is that a REGISTER_DATAGRAM_FLOW_ID (or whatever we call it) could contain the same information as the proposed RELIABLE_DATAGRAM on flow 0. Intermediaries wouldn't process the contents of the frame, they'd just forward it on the stream.\r\n\r\nto repurpose an example\r\n\r\n\r\n```\r\n~~~\r\nClient                                             Server\r\n\r\nSTREAM(44): DATA{HEADERS}      -------->\r\n  :method = CONNECT-UDP\r\n  :scheme = https\r\n  :path = /\r\n  :authority = target.example.org:443\r\n\r\nSTREAM(44): REGISTER_DATAGRAM_FLOW_ID  -------->\r\n  Registered Flow ID = 1\r\n  Extension String = \"\"\r\n\r\nDATAGRAM                       -------->\r\n  Quarter Stream ID = 11\r\n  Flow ID = 1\r\n  Payload = Encapsulated UDP Payload\r\n\r\n           <--------  STREAM(44): DATA{HEADERS}\r\n                        :status = 200\r\n\r\n           <--------  STREAM(44): REGISTER_DATAGRAM_FLOW_ID\r\n                        Registered Flow ID = 1\r\n                        Extension String = \"\"\r\n\r\n/* Wait for target server to respond to UDP packet. */\r\n\r\n           <--------  DATAGRAM\r\n                        Quarter Stream ID = 11\r\n                        Flow ID = 1\r\n                        Payload = Encapsulated UDP Payload\r\n~~~\r\n```",
+          "createdAt": "2021-04-12T22:04:06Z",
+          "updatedAt": "2021-04-12T22:04:06Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "Got it, thanks.  I agree, that works fine.  However, I do feel that it's somewhat less elegant and much less extensible.  Ideally, I would like all data that intermediaries don't need to process to be opaque to them, so there's no ambiguity about what is hop-by-hop and what is end-to-end.  Or to put it another way: at the transport level, \"REGISTER_DATAGRAM_FLOW_ID\" and \"RELIABLE_DATAGRAM\" have the same semantics, so why define it twice?\r\n\r\nAnother way to see this is to consider HTTP/1.1 usage.  In that case, we literally need to encode the flow registration commands into the request and response bodies.  That makes it clear that these commands are part of the end-to-end resource.",
+          "createdAt": "2021-04-12T22:36:02Z",
+          "updatedAt": "2021-04-12T22:36:02Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "IIUC this proposal moves the flow ID registration from an always reliable transfer, to a maybe reliable one. I think that's important to call out and get group consensus. If am understanding incorrectly, then please do correct me :) Putting reliability-needed messages on a reliable stream is a no-brainer to me.\r\n\r\nGenerally we're carry traffic intended for the target server in datagrams, and we expect that tunneled protocol to run it's own loss detection algorithm if it cares. But flow 0 here is special case and is seems like it might need it's own loss detection too.\r\n\r\nAt risk of going off on a tangent, as an implementer I need to decide how to handle RELIABLE_DATAGRAM. Is it reliable just for the hop that it is being carried over, or should it be reliable all the way? This PR implies its ok to leave the reliability choice up to implementations, and I don't trust them not to have hard-to-debug problems. I.e. say we had\r\n\r\nmasque client -> intermediary A -> intermediary B -> masque server\r\n\r\nIf client sent RELIABLE_DATAGRAM to A, is A allowed to shift the contents into a DATAGRAM for transmission to B?\r\nOr what if I write an implementation that operates a shared in-memory queue of DATAGRAMS for all flows, that drops the oldest to maintain a fixed size. Am I allowed to put RELIABLE_DATAGRAMs on that queue? \r\n\r\n",
+          "createdAt": "2021-04-12T23:32:57Z",
+          "updatedAt": "2021-04-12T23:33:45Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "A different point, before I forget. I like this proposal's change of flow IDs to be unidirectional. The Flow ID becomes more about the format of the datagram message, rather than it's purpose, which is powerful. The CONNECT-IP example is easy to overlook, the client is able to send DATAGRAMS either uncompressed or compressed, while the server can only do uncompressed. \r\n\r\nThe impact to an implementation that handles the DATAGRAM is that is needs to keep 2 sets of {stream:flow} tuples for each stream - one in the send direction, one in the receive direction. But I think that is manageable.",
+          "createdAt": "2021-04-13T00:23:23Z",
+          "updatedAt": "2021-04-13T00:23:23Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "This PR doesn't spell out RELIABLE_DATAGRAM, but you're right that the details there are important.  In H2, RELIABLE_DATAGRAM needs to carry a flag to ensure that messages that need to be reliable (like control messages) stay reliable end-to-end, and are not converted into H3 unreliable datagrams at H2->H3 intermediaries.",
+          "createdAt": "2021-04-13T00:51:51Z",
+          "updatedAt": "2021-04-13T00:51:51Z"
+        }
+      ],
+      "reviews": []
+    },
+    {
+      "number": 39,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjE0MDIxNzk4",
+      "title": "Yet another experiment with two layers of indirection",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/39",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This is a variation on #38 but with the \"flow ID = 0 means register\" replaced with the REGISTER_DATAGRAM_FLOW_ID frame from #37.\r\n\r\nSince this is really hard to review in PR form, I've uploaded an HTML version [here](https://davidschinazi.com/stuff/draft-ietf-masque-h3-datagram-exp2.html#name-register_datagram_flow_id-ht) so I definitely suggest reading that instead.",
+      "createdAt": "2021-04-12T23:58:04Z",
+      "updatedAt": "2021-04-13T00:12:19Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "255935632c9247980273dfe418de8c2a4332727f",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "experiment_1_to_1_with_register_frame",
+      "headRefOid": "ea7fbdb8e6371d0d8fa5fdfe7962709234b02cb8",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
+}

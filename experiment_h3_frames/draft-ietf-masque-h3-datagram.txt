@@ -1,0 +1,407 @@
+
+
+
+
+Network Working Group                                        D. Schinazi
+Internet-Draft                                                Google LLC
+Intended status: Standards Track                               L. Pardue
+Expires: 25 September 2021                                    Cloudflare
+                                                           24 March 2021
+
+
+                    Using QUIC Datagrams with HTTP/3
+                  draft-ietf-masque-h3-datagram-latest
+
+Abstract
+
+   The QUIC DATAGRAM extension provides application protocols running
+   over QUIC with a mechanism to send unreliable data while leveraging
+   the security and congestion-control properties of QUIC.  However,
+   QUIC DATAGRAM frames do not provide a means to demultiplex
+   application contexts.  This document describes how to use QUIC
+   DATAGRAM frames when the application protocol running over QUIC is
+   HTTP/3.  It defines logical flows identified by a non-negative
+   integer that are present at the start of the DATAGRAM frame payload.
+   Flows are associated with QUIC streams using the
+   REGISTER_DATAGRAM_FLOW_ID HTTP/3 frame, allowing endpoints to match
+   unreliable DATAGRAMS frames to the HTTP messages that they are
+   related to.
+
+   Discussion of this work is encouraged to happen on the MASQUE IETF
+   mailing list (masque@ietf.org (mailto:masque@ietf.org)) or on the
+   GitHub repository which contains the draft: https://github.com/ietf-
+   wg-masque/draft-ietf-masque-h3-datagram.
+
+Status of This Memo
+
+   This Internet-Draft is submitted in full conformance with the
+   provisions of BCP 78 and BCP 79.
+
+   Internet-Drafts are working documents of the Internet Engineering
+   Task Force (IETF).  Note that other groups may also distribute
+   working documents as Internet-Drafts.  The list of current Internet-
+   Drafts is at https://datatracker.ietf.org/drafts/current/.
+
+   Internet-Drafts are draft documents valid for a maximum of six months
+   and may be updated, replaced, or obsoleted by other documents at any
+   time.  It is inappropriate to use Internet-Drafts as reference
+   material or to cite them other than as "work in progress."
+
+   This Internet-Draft will expire on 25 September 2021.
+
+Copyright Notice
+
+   Copyright (c) 2021 IETF Trust and the persons identified as the
+   document authors.  All rights reserved.
+
+   This document is subject to BCP 78 and the IETF Trust's Legal
+   Provisions Relating to IETF Documents (https://trustee.ietf.org/
+   license-info) in effect on the date of publication of this document.
+   Please review these documents carefully, as they describe your rights
+   and restrictions with respect to this document.  Code Components
+   extracted from this document must include Simplified BSD License text
+   as described in Section 4.e of the Trust Legal Provisions and are
+   provided without warranty as described in the Simplified BSD License.
+
+Table of Contents
+
+   1.  Introduction
+     1.1.  Conventions and Definitions
+   2.  Datagram Flows
+   3.  Flow ID Allocation
+   4.  HTTP/3 DATAGRAM Frame Format
+   5.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
+   6.  REGISTER_DATAGRAM_FLOW_ID HTTP/3 Frame Definition
+   7.  RELIABLE_DATAGRAM HTTP/3 Frame Definition
+   8.  HTTP/2 Support
+   9.  HTTP Intermediaries
+   10. Security Considerations
+   11. IANA Considerations
+     11.1.  HTTP SETTINGS Parameter
+     11.2.  Flow Extension Keys
+   12. Normative References
+   Acknowledgments
+   Authors' Addresses
+
+1.  Introduction
+
+   The QUIC DATAGRAM extension [DGRAM] provides application protocols
+   running over QUIC [QUIC] with a mechanism to send unreliable data
+   while leveraging the security and congestion-control properties of
+   QUIC.  However, QUIC DATAGRAM frames do not provide a means to
+   demultiplex application contexts.  This document describes how to use
+   QUIC DATAGRAM frames when the application protocol running over QUIC
+   is HTTP/3 [H3].  It defines logical flows identified by a non-
+   negative integer that are present at the start of the DATAGRAM frame
+   payload.  Flows are associated with QUIC streams using the
+   REGISTER_DATAGRAM_FLOW_ID HTTP/3 frame, allowing endpoints to match
+   unreliable DATAGRAMS frames to the HTTP messages that they are
+   related to.
+
+   This design mimics the use of Stream Types in HTTP/3, which provide a
+   demultiplexing identifier at the start of each unidirectional stream.
+
+   Discussion of this work is encouraged to happen on the MASQUE IETF
+   mailing list (masque@ietf.org (mailto:masque@ietf.org)) or on the
+   GitHub repository which contains the draft: https://github.com/ietf-
+   wg-masque/draft-ietf-masque-h3-datagram.
+
+1.1.  Conventions and Definitions
+
+   The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT",
+   "SHOULD", "SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and
+   "OPTIONAL" in this document are to be interpreted as described in BCP
+   14 [RFC2119] [RFC8174] when, and only when, they appear in all
+   capitals, as shown here.
+
+2.  Datagram Flows
+
+   Flows are bidirectional exchanges of datagrams within a single QUIC
+   connection.  These are conceptually similar to streams in the sense
+   that they allow multiplexing of application data.  Flows are
+   identified within a connection by a numeric value, referred to as the
+   flow ID.  A flow ID is a 62-bit integer (0 to 2^62-1).
+
+   Flows lack any of the ordering or reliability guarantees of streams.
+   Beyond this, a sender SHOULD ensure that DATAGRAM frames within a
+   single flow are transmitted in order relative to one another.  If
+   multiple DATAGRAM frames can be packed into a single QUIC packet, the
+   sender SHOULD group them by flow to promote fate-sharing within a
+   specific flow and improve the ability to process batches of datagram
+   messages efficiently on the receiver.
+
+3.  Flow ID Allocation
+
+   Implementations of HTTP/3 that support the DATAGRAM extension MUST
+   provide a flow ID allocation service.  That service will allow
+   applications co-located with HTTP/3 to request a unique flow ID that
+   they can subsequently use for their own purposes.  The HTTP/3
+   implementation will then parse the flow ID of incoming DATAGRAM
+   frames and use it to deliver the frame to the appropriate application
+   context.
+
+   Even-numbered flow IDs are client-initiated, while odd-numbered flow
+   IDs are server-initiated.  This means that an HTTP/3 client
+   implementation of the flow ID allocation service MUST only provide
+   even-numbered IDs, while a server implementation MUST only provide
+   odd-numbered IDs.  Note that, once allocated, any flow ID can be used
+   by both client and server - only allocation carries separate
+   namespaces to avoid requiring synchronization.
+
+   The flow ID allocation service SHOULD also provide a mechanism for
+   applications to indicate they have completed their usage of a flow ID
+   and will no longer be using that flow ID, this process is called
+   "retiring" a flow ID.  Applications MUST NOT retire a flow ID until
+   after they have received confirmation that the peer has also stopped
+   using that flow ID.  The flow ID allocation service MAY reuse
+   previously retired flow ID once they have ascertained that there are
+   no packets with DATAGRAM frames using that flow ID still in flight.
+   Reusing flow IDs can improve performance by transmitting the flow ID
+   using a shorter variable-length integer encoding.
+
+4.  HTTP/3 DATAGRAM Frame Format
+
+   When used with HTTP/3, the Datagram Data field of QUIC DATAGRAM
+   frames uses the following format (using the notation from the
+   "Notational Conventions" section of [QUIC]):
+
+   HTTP/3 DATAGRAM Frame {
+     Flow ID (i),
+     HTTP/3 Datagram Payload (..),
+   }
+
+                   Figure 1: HTTP/3 DATAGRAM Frame Format
+
+   Flow ID:  A variable-length integer indicating the Flow ID of the
+      datagram (see Section 2).
+
+   HTTP/3 Datagram Payload:  The payload of the datagram, whose
+      semantics are defined by individual applications.  Note that this
+      field can be empty.
+
+   Endpoints MUST treat receipt of a DATAGRAM frame whose payload is too
+   short to parse the flow ID as an HTTP/3 connection error of type
+   H3_GENERAL_PROTOCOL_ERROR.
+
+5.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
+
+   Implementations of HTTP/3 that support this mechanism can indicate
+   that to their peer by sending the H3_DATAGRAM SETTINGS parameter with
+   a value of 1.  The value of the H3_DATAGRAM SETTINGS parameter MUST
+   be either 0 or 1.  A value of 0 indicates that this mechanism is not
+   supported.  An endpoint that receives the H3_DATAGRAM SETTINGS
+   parameter with a value that is neither 0 or 1 MUST terminate the
+   connection with error H3_SETTINGS_ERROR.
+
+   An endpoint that sends the H3_DATAGRAM SETTINGS parameter with a
+   value of 1 MUST send the max_datagram_frame_size QUIC Transport
+   Parameter [DGRAM].  An endpoint that receives the H3_DATAGRAM
+   SETTINGS parameter with a value of 1 on a QUIC connection that did
+   not also receive the max_datagram_frame_size QUIC Transport Parameter
+   MUST terminate the connection with error H3_SETTINGS_ERROR.
+
+   When clients use 0-RTT, they MAY store the value of the server's
+   H3_DATAGRAM SETTINGS parameter.  Doing so allows the client to use
+   HTTP/3 datagrams in 0-RTT packets.  When servers decide to accept
+   0-RTT data, they MUST send a H3_DATAGRAM SETTINGS parameter greater
+   than or equal to the value they sent to the client in the connection
+   where they sent them the NewSessionTicket message.  If a client
+   stores the value of the H3_DATAGRAM SETTINGS parameter with their
+   0-RTT state, they MUST validate that the new value of the H3_DATAGRAM
+   SETTINGS parameter sent by the server in the handshake is greater
+   than or equal to the stored value; if not, the client MUST terminate
+   the connection with error H3_SETTINGS_ERROR.  In all cases, the
+   maximum permitted value of the H3_DATAGRAM SETTINGS parameter is 1.
+
+6.  REGISTER_DATAGRAM_FLOW_ID HTTP/3 Frame Definition
+
+   The REGISTER_DATAGRAM_FLOW_ID frame (type=TBD) is used to register a
+   flow ID with the QUIC stream that it is sent on.  By sending this
+   frame, the sender indicates that it will process any received
+   datagram with the corresponding flow ID using semantics specific to
+   this frame.  For example, if this is sent on a client-initiated
+   bidirectional stream that has carried an HTTP request, this flow ID
+   will now be interpreted as governed by the method of that request.
+
+   REGISTER_DATAGRAM_FLOW_ID Frame {
+     Type (i) = TBD,
+     Length (i),
+     Flow ID (i),
+     Extension String (..),
+   }
+
+          Figure 2: REGISTER_DATAGRAM_FLOW_ID HTTP/3 Frame Format
+
+   The Type and Length fields follows the definition of HTTP/3 frames
+   from [H3].  The payload consists of:
+
+   Flow ID:  The flow ID to associate with the QUIC stream that carried
+      this frame.
+
+   Extension String:  A string of comma-separated key-value pairs to
+      enable extensibility.
+
+   The ABNF for the Extension String field is as follows (using syntax
+   from Section 3.2.6 of [RFC7230]):
+
+     extension-string = [ ext-member *( "," ext-member ) ]
+     ext-member       = ext-member-key "=" ext-member-value
+     ext-member-key   = token
+     ext-member-value = token
+
+   Note that these registrations are unilateral and unidirectional: the
+   sender of the frame unilateraly defines the semantics it will apply
+   to the datagrams it receives.  If a mechanism using this feature
+   wants to send datagrams of a given flow ID in both directions, this
+   frame will need to be exchanged in both directions.
+
+7.  RELIABLE_DATAGRAM HTTP/3 Frame Definition
+
+   The RELIABLE_DATAGRAM frame (type=TBD) is used to send datagrams over
+   QUIC streams when QUIC datagrams are unavailable or undesirable.
+   Datagrams transmitted over streams using this frame have the same
+   semantics as datgrams sent over the QUIC DATAGRAM frame.
+
+   RELIABLE_DATAGRAM Frame {
+     Type (i) = TBD,
+     Length (i),
+     Flow ID (i),
+     HTTP/3 Datagram Payload (..),
+   }
+
+              Figure 3: RELIABLE_DATAGRAM HTTP/3 Frame Format
+
+   The Type and Length fields follows the definition of HTTP/3 frames
+   from [H3].  The payload consists of:
+
+   Flow ID:  A variable-length integer indicating the Flow ID of the
+      datagram (see Section 2).
+
+   HTTP/3 Datagram Payload:  The payload of the datagram, whose
+      semantics are defined by individual applications.  Note that this
+      field can be empty.
+
+8.  HTTP/2 Support
+
+   We can provide DATAGRAM support in HTTP/2 by defining the
+   REGISTER_DATAGRAM_FLOW_ID and RELIABLE_DATAGRAM frames in HTTP/2.
+
+   TODO: Refactor this document into "HTTP Datagrams" with definitions
+   for HTTP/2 and HTTP/3.
+
+9.  HTTP Intermediaries
+
+   HTTP/3 DATAGRAM flows are specific to a given HTTP/3 connection.
+   However, in some cases, an HTTP request may travel across multiple
+   HTTP connections if there are HTTP intermediaries involved; see
+   Section 2.3 of [RFC7230].
+
+   If an intermediary has sent the H3_DATAGRAM SETTINGS parameter with a
+   value of 1 it MUST NOT blindly forward HTTP/3 frames.  The
+   intermediary MUST parse received REGISTER_DATAGRAM_FLOW_ID and
+   RELIABLE_DATAGRAM frames and act on them.  If the intermediary wishes
+   to forward datagrams from one connection to another, it MUST generate
+   flow IDs on the outbound connection using its flow ID allocation
+   service.
+
+10.  Security Considerations
+
+   This document does not have additional security considerations beyond
+   those defined in [QUIC] and [DGRAM].
+
+11.  IANA Considerations
+
+11.1.  HTTP SETTINGS Parameter
+
+   This document will request IANA to register the following entry in
+   the "HTTP/3 Settings" registry:
+
+     +--------------+-------+---------------+---------+
+     | Setting Name | Value | Specification | Default |
+     +==============+=======+===============+=========+
+     | H3_DATAGRAM  | 0x276 | This Document |    0    |
+     +--------------+-------+---------------+---------+
+
+11.2.  Flow Extension Keys
+
+   This document will request IANA to create an "HTTP Datagram Flow
+   Extension Keys" registry.  Registrations in this registry MUST
+   include the following fields:
+
+   Key:  The key (see Section 6).  Keys MUST be valid tokens as defined
+      in Section 3.2.6 of [RFC7230].
+
+   Description:  A brief description of the key semantics, which MAY be
+      a summary if a specification reference is provided.
+
+   Reference:  An optional reference to a specification for the
+      parameter.  This field MAY be empty.
+
+   Registrations follow the "First Come First Served" policy (see
+   Section 4.4 of [IANA-POLICY]) where two registrations MUST NOT have
+   the same Key. This registry is initially empty.
+
+12.  Normative References
+
+   [DGRAM]    Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
+              Datagram Extension to QUIC", Work in Progress, Internet-
+              Draft, draft-ietf-quic-datagram-02, 16 February 2021,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-quic-
+              datagram-02.txt>.
+
+   [H3]       Bishop, M., "Hypertext Transfer Protocol Version 3
+              (HTTP/3)", Work in Progress, Internet-Draft, draft-ietf-
+              quic-http-34, 2 February 2021,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-quic-
+              http-34.txt>.
+
+   [IANA-POLICY]
+              Cotton, M., Leiba, B., and T. Narten, "Guidelines for
+              Writing an IANA Considerations Section in RFCs", BCP 26,
+              RFC 8126, DOI 10.17487/RFC8126, June 2017,
+              <https://datatracker.ietf.org/doc/html/rfc8126>.
+
+   [QUIC]     Iyengar, J. and M. Thomson, "QUIC: A UDP-Based Multiplexed
+              and Secure Transport", Work in Progress, Internet-Draft,
+              draft-ietf-quic-transport-34, 14 January 2021,
+              <https://datatracker.ietf.org/doc/html/draft-ietf-quic-
+              transport-34.txt>.
+
+   [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
+              Requirement Levels", BCP 14, RFC 2119,
+              DOI 10.17487/RFC2119, March 1997,
+              <https://datatracker.ietf.org/doc/html/rfc2119>.
+
+   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
+              Protocol (HTTP/1.1): Message Syntax and Routing",
+              RFC 7230, DOI 10.17487/RFC7230, June 2014,
+              <https://datatracker.ietf.org/doc/html/rfc7230>.
+
+   [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
+              2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
+              May 2017, <https://datatracker.ietf.org/doc/html/rfc8174>.
+
+Acknowledgments
+
+   The DATAGRAM flow identifier was previously part of the DATAGRAM
+   frame definition itself, the author would like to acknowledge the
+   authors of that document and the members of the IETF MASQUE working
+   group for their suggestions.  Additionally, the author would like to
+   thank Martin Thomson for suggesting the use of an HTTP/3 SETTINGS
+   parameter.
+
+Authors' Addresses
+
+   David Schinazi
+   Google LLC
+   1600 Amphitheatre Parkway
+   Mountain View, California 94043,
+   United States of America
+
+   Email: dschinazi.ietf@gmail.com
+
+
+   Lucas Pardue
+   Cloudflare
+
+   Email: lucaspardue.24.7@gmail.com
