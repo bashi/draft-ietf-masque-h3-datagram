@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-04-13T01:10:37.967623+00:00",
+  "timestamp": "2021-04-15T01:07:51.711297+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -2161,7 +2161,7 @@
       "labels": [],
       "body": "This is a variation on #38 but with the \"flow ID = 0 means register\" replaced with the REGISTER_DATAGRAM_FLOW_ID frame from #37.\r\n\r\nSince this is really hard to review in PR form, I've uploaded an HTML version [here](https://davidschinazi.com/stuff/draft-ietf-masque-h3-datagram-exp2.html#name-register_datagram_flow_id-ht) so I definitely suggest reading that instead.",
       "createdAt": "2021-04-12T23:58:04Z",
-      "updatedAt": "2021-04-13T00:12:19Z",
+      "updatedAt": "2021-04-14T03:30:57Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "255935632c9247980273dfe418de8c2a4332727f",
@@ -2173,7 +2173,28 @@
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjM1MTg1MDU1",
+          "commit": {
+            "abbreviatedOid": "ea7fbdb"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-04-14T03:30:56Z",
+          "updatedAt": "2021-04-14T03:30:57Z",
+          "comments": [
+            {
+              "originalPosition": 183,
+              "body": "I see why this frame is necessary for #38, since that was used to register flows, but I'd prefer to see this removed from this version of the proposal for simplicity and clarity. If people need it, it can be an extension later.",
+              "createdAt": "2021-04-14T03:30:56Z",
+              "updatedAt": "2021-04-14T03:30:57Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
