@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-04-15T01:07:51.711297+00:00",
+  "timestamp": "2021-04-18T01:09:37.847123+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -905,6 +905,177 @@
       "updatedAt": "2021-03-18T22:07:54Z",
       "closedAt": null,
       "comments": []
+    },
+    {
+      "number": 40,
+      "id": "MDU6SXNzdWU4NTkzNDc4MTc=",
+      "title": "DATAGRAM and STREAM+FIN reordering",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/40",
+      "state": "OPEN",
+      "author": "afrind",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "H3 datagrams are associated with a stream, so it makes sense that it is only valid to send DATAGRAMs before sending the stream FIN.  These packets may be received out of order however.  What should receivers do with these packets?\r\n\r\nThe simplest action for the receiver is to drop any datagrams received after FIN, but I can imagine applications where the receiver would prefer to allow them to be processed for some time.  Should the draft offer guidance for this?\r\n\r\nThe answer might be different if we use Flow IDs as connection scoped identifiers or the 2-layer approach (Stream ID+Flow ID) discussed at the interim.",
+      "createdAt": "2021-04-16T00:16:07Z",
+      "updatedAt": "2021-04-16T19:08:30Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think this might be a case for \"MUST NOT send datagram after the stream is closed for sending, MAY ignore datagrams if detected they are received after the stream is closed.\"\r\n\r\nThe challenge I've seen for implementations is that the stream read and datagram read functions operate independently. Its hard to correlate any state or actions between the two. In my case, ACK'ing a packet containing a FIN doesn't mean anything about how the receiver application will read the stream data.",
+          "createdAt": "2021-04-16T11:35:43Z",
+          "updatedAt": "2021-04-16T11:37:48Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Thanks for filing this. I'll add text to address this after we switch to the two-layer approach (assuming that becomes official WG consensus)",
+          "createdAt": "2021-04-16T19:08:29Z",
+          "updatedAt": "2021-04-16T19:08:29Z"
+        }
+      ]
+    },
+    {
+      "number": 41,
+      "id": "MDU6SXNzdWU4NjAxODI5MjU=",
+      "title": "2-layer design",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/41",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "During the 2021-04 MASQUE Interim, we discussed a design proposal from @bemasc to replace the one-layer flow ID design with a two-layer design. This design replaces the flow ID with two numbers: a stream ID and a context ID. The contents of the QUIC DATAGRAM frame would now look like:\r\n```\r\nHTTP/3 DATAGRAM Frame {\r\n  Stream ID (i),\r\n  Context ID (i),\r\n  HTTP/3 Datagram Payload (..),\r\n}\r\n```\r\n\r\nWhile the flow ID in the draft was per-hop, the proposal has better separation:\r\n* the stream ID is per-hop, it maps to an HTTP request\r\n* the context ID is end-to-end, it maps to context information inside that request\r\n\r\nIntermediaries now only look at stream IDs and can be blissfully ignorant of context IDs.\r\n\r\nIn the room at the 2021-04 MASQUE Interim, multiple participants spoke in support of this design and no one raised objections. This issue exists to ensure that we have consensus on this change - please speak up if you disagree.",
+      "createdAt": "2021-04-16T21:28:06Z",
+      "updatedAt": "2021-04-16T21:28:06Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 42,
+      "id": "MDU6SXNzdWU4NjAxOTA0ODc=",
+      "title": "Directionality of flow/context IDs",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/42",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In draft-ietf-masque-h3-datagram-00, flow IDs are bidirectional. During the 2021-04 MASQUE Interim, we discussed the possibility of making them unidirectional. Here are the differences:\r\n\r\n* Bidirectional\r\n  * single shared namespace for both endpoints (even for client, odd for server)\r\n  * it's easier to refer to peer's IDs, which makes negotiation easier\r\n\r\n* Unidirectional\r\n  * one namespace per direction\r\n  * every bidirectional use needs to associate both directions somehow\r\n\r\nI'm personally leaning towards keeping them bidirectional. Unlike QUIC streams, these do not have a state machine or flow control credits, so there is no cost to only using a single direction of a bidirectional flow for unidirectional use-cases.",
+      "createdAt": "2021-04-16T21:44:34Z",
+      "updatedAt": "2021-04-17T02:32:44Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "There's another option where flows are unidirectional but they share a namespace (cleint even/server odd).\r\n\r\nI'm undecided. And I also don't know how important it is to choose. The 2 layer design means that DATAGRAMs always have a bidirectional tie via the stream ID.\r\n\r\nOn balance, I think bidirectional would be good enough today but I would be receptive to extension use cases that make a strong point of unidirectional.",
+          "createdAt": "2021-04-16T22:19:34Z",
+          "updatedAt": "2021-04-16T22:19:34Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "body": "\ud83e\udd37 Bidirectional is my personal preference, but either way could work ultimately. It seems to me that any extension that wants unidirectional can just only use this context/flow/etc ID for one direction if it wants.",
+          "createdAt": "2021-04-17T02:32:44Z",
+          "updatedAt": "2021-04-17T02:32:44Z"
+        }
+      ]
+    },
+    {
+      "number": 43,
+      "id": "MDU6SXNzdWU4NjAyMDE4Nzk=",
+      "title": "Ability to accept or reject registration of context IDs",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/43",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "During the 2021-04 MASQUE Interim, we discussed having the ability to accept or reject registration of context IDs. An important motivation for this is the fact that context ID registrations take up memory (for example it could be a compression context which contains the data that is elided) and therefore we need to prevent endpoints from arbitrarily making their peer allocate memory. While we could flow control context ID registration, a much simpler solution would be to have a way for endpoints to close/shutdown a registration.",
+      "createdAt": "2021-04-16T21:59:00Z",
+      "updatedAt": "2021-04-17T02:31:26Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "IIUC there's an opposing view that the constraints can be negotiated apiori. Either statically (such as defining an extension which states that there can only be N contenxts of a given type) or dynamically using something like a HTTP header. Failure to meet these constraints could lead to an HTTP/3 stream or connection error rather than a flow rejection.",
+          "createdAt": "2021-04-16T22:30:48Z",
+          "updatedAt": "2021-04-16T22:30:48Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@LPardue I've filed #44 to discuss whether to register/negotiate at request start or mid-stream.",
+          "createdAt": "2021-04-16T23:19:30Z",
+          "updatedAt": "2021-04-16T23:19:30Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "body": "I think that if there is the ability to register mid-stream (#44), we need the ability to close/de-register/reject mid-stream as well. If we don't have mid-stream changes, then no need to negotiate.\r\n\r\nHowever, someone trying to register something needs to be able to know whether or not the thing they registered will be accepted.",
+          "createdAt": "2021-04-17T02:31:26Z",
+          "updatedAt": "2021-04-17T02:31:26Z"
+        }
+      ]
+    },
+    {
+      "number": 44,
+      "id": "MDU6SXNzdWU4NjAyNDI4MzQ=",
+      "title": "Pick mechanism to register context IDs (header vs message)",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/44",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "During the 2021-04 MASQUE Interim, we discussed multiple options for registering context IDs. Without going into the specific of the encoding, there are two broad classes of solutions:\r\n\r\n* \"Header\" design\r\n  * Once-at-setup registration\r\n  * This happens during the HTTP request/response\r\n  * Simplest solution is to use an HTTP header such as `Datagram-Flow-Id` (encoding TBD)\r\n  * Example use-case: CONNECT-UDP without extensions\r\n* \"Message\" design\r\n  * Mid-stream registration\r\n  * This can happen at any point during the lifetime of the request stream\r\n  * This would involve some sort of \"register\" message (encoding TBD, see separate issue)\r\n  * Example use-case: CONNECT-IP on-the-fly compression (this can't be done at tunnel setup time because the bits top be compressed aren't always known at that time)\r\n \r\nIt's possible to implement once-at-setup registration using the Message design, but it isn't possible to implement mid-stream registration. Therefore I think we should go with the Message design. It would also be possible to implement both but I don't think that provides much value.",
+      "createdAt": "2021-04-16T23:00:50Z",
+      "updatedAt": "2021-04-17T02:29:51Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'd like to here some more from the WebTransport use case on the issue. \r\n\r\nMy understanding is that the Requests are used to create WebTransport sessions and that creation of datagram flows(contexts) could be a lot more ad-hoc / server generated after the request phase, when compared to the CONNECT-UDP case.\r\n\r\nCc @vvasiliev",
+          "createdAt": "2021-04-17T00:06:05Z",
+          "updatedAt": "2021-04-17T00:06:59Z"
+        },
+        {
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "body": "Personally, I'd vote for either \"message\" or \"message + header\" (a la priorities), but not just \"header\". Mid-stream annotation of context/flow/etc is quite useful.",
+          "createdAt": "2021-04-17T02:29:51Z",
+          "updatedAt": "2021-04-17T02:29:51Z"
+        }
+      ]
+    },
+    {
+      "number": 45,
+      "id": "MDU6SXNzdWU4NjAyNDY1MzI=",
+      "title": "Is the context ID optional?",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/45",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This issue assumes that decide to go with the two-layer design described in #41. Given that design, some applications might not need the multiplexing provided by context IDs. We have multiple options here:\r\n\r\n* Make context ID mandatory\r\n  * Applications that don't need it waste a byte per datagram\r\n* Negotiate the presence of context IDs using an HTTP header\r\n  * Context IDs would still be mandatory to implement on servers because the client might send that header\r\n* Have the method determine whether context IDs are present or not\r\n  * This would prevent extensibility on those methods\r\n* Create a REGISTER_NO_CONTEXT message\r\n  * This assumes we use the Message design from #44\r\n  * We add a register message that means that this stream does not use context IDs\r\n  * This allows avoiding the byte overhead without sacrificing extensibility",
+      "createdAt": "2021-04-16T23:07:41Z",
+      "updatedAt": "2021-04-17T02:35:25Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "body": "Making the context ID mandatory is simple, although slightly wasteful.\r\n\r\nFor the variations where it is optional, I prefer the one that uses a header. It could work with a variant of #44 where we do Header + Message, and the Header determines whether or not you have contexts, and whether or not they can be dynamic.",
+          "createdAt": "2021-04-17T02:35:25Z",
+          "updatedAt": "2021-04-17T02:35:25Z"
+        }
+      ]
     }
   ],
   "pulls": [
