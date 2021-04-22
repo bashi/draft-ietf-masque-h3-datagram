@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-04-18T01:09:37.847123+00:00",
+  "timestamp": "2021-04-22T01:08:41.596858+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -965,7 +965,7 @@
       "labels": [],
       "body": "In draft-ietf-masque-h3-datagram-00, flow IDs are bidirectional. During the 2021-04 MASQUE Interim, we discussed the possibility of making them unidirectional. Here are the differences:\r\n\r\n* Bidirectional\r\n  * single shared namespace for both endpoints (even for client, odd for server)\r\n  * it's easier to refer to peer's IDs, which makes negotiation easier\r\n\r\n* Unidirectional\r\n  * one namespace per direction\r\n  * every bidirectional use needs to associate both directions somehow\r\n\r\nI'm personally leaning towards keeping them bidirectional. Unlike QUIC streams, these do not have a state machine or flow control credits, so there is no cost to only using a single direction of a bidirectional flow for unidirectional use-cases.",
       "createdAt": "2021-04-16T21:44:34Z",
-      "updatedAt": "2021-04-17T02:32:44Z",
+      "updatedAt": "2021-04-19T18:10:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -981,6 +981,27 @@
           "body": "\ud83e\udd37 Bidirectional is my personal preference, but either way could work ultimately. It seems to me that any extension that wants unidirectional can just only use this context/flow/etc ID for one direction if it wants.",
           "createdAt": "2021-04-17T02:32:44Z",
           "updatedAt": "2021-04-17T02:32:44Z"
+        },
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "I think bidirectional flows are likely overcomplicated and unnecessary.  For example, if either peer can \"close\" a flow, this requires a much more complex state machine.  In my experience, half-closed states are hard to get right.  Closing unidirectional flows seems much easier to reason about.\r\n\r\nMany, perhaps most, of our use cases for flows are really unidirectional.  For example, DSCP marking likely only makes sense from client to server, while timestamps for congestion control tuning likely only make sense from server to client.  QUIC connection IDs are different in each direction, so QUIC header compression may be easiest to understand with unidirectional flows.",
+          "createdAt": "2021-04-19T16:57:49Z",
+          "updatedAt": "2021-04-19T16:57:49Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "> In my experience, half-closed states are hard to get right.\r\n\r\nBidirectional doesn't imply half-close states. I'm thinking of a bidirectional flow that can only be closed atomically as a whole.\r\n\r\n> Many, perhaps most, of our use cases for flows are really unidirectional.\r\n\r\nI don't think that's true. The default extension-less CONNECT-UDP is bidirectional. So is ECN, and so would a timestamp extension.",
+          "createdAt": "2021-04-19T18:06:25Z",
+          "updatedAt": "2021-04-19T18:06:25Z"
+        },
+        {
+          "author": "achernya",
+          "authorAssociation": "NONE",
+          "body": "I would prefer bidirectional without support for half-close. I feel that having unidirectional flow/context IDs adds overhead we don't need; peers now need to track those associations and it's unclear what the benefits of having them separated out are.",
+          "createdAt": "2021-04-19T18:10:46Z",
+          "updatedAt": "2021-04-19T18:10:46Z"
         }
       ]
     },
@@ -996,7 +1017,7 @@
       "labels": [],
       "body": "During the 2021-04 MASQUE Interim, we discussed having the ability to accept or reject registration of context IDs. An important motivation for this is the fact that context ID registrations take up memory (for example it could be a compression context which contains the data that is elided) and therefore we need to prevent endpoints from arbitrarily making their peer allocate memory. While we could flow control context ID registration, a much simpler solution would be to have a way for endpoints to close/shutdown a registration.",
       "createdAt": "2021-04-16T21:59:00Z",
-      "updatedAt": "2021-04-17T02:31:26Z",
+      "updatedAt": "2021-04-19T18:11:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -1019,6 +1040,13 @@
           "body": "I think that if there is the ability to register mid-stream (#44), we need the ability to close/de-register/reject mid-stream as well. If we don't have mid-stream changes, then no need to negotiate.\r\n\r\nHowever, someone trying to register something needs to be able to know whether or not the thing they registered will be accepted.",
           "createdAt": "2021-04-17T02:31:26Z",
           "updatedAt": "2021-04-17T02:31:26Z"
+        },
+        {
+          "author": "achernya",
+          "authorAssociation": "NONE",
+          "body": "I agree that notification of the registration status is particularly important if we allow mid-stream registration.",
+          "createdAt": "2021-04-19T18:11:45Z",
+          "updatedAt": "2021-04-19T18:11:45Z"
         }
       ]
     },
@@ -1065,7 +1093,7 @@
       "labels": [],
       "body": "This issue assumes that decide to go with the two-layer design described in #41. Given that design, some applications might not need the multiplexing provided by context IDs. We have multiple options here:\r\n\r\n* Make context ID mandatory\r\n  * Applications that don't need it waste a byte per datagram\r\n* Negotiate the presence of context IDs using an HTTP header\r\n  * Context IDs would still be mandatory to implement on servers because the client might send that header\r\n* Have the method determine whether context IDs are present or not\r\n  * This would prevent extensibility on those methods\r\n* Create a REGISTER_NO_CONTEXT message\r\n  * This assumes we use the Message design from #44\r\n  * We add a register message that means that this stream does not use context IDs\r\n  * This allows avoiding the byte overhead without sacrificing extensibility",
       "createdAt": "2021-04-16T23:07:41Z",
-      "updatedAt": "2021-04-17T02:35:25Z",
+      "updatedAt": "2021-04-19T20:02:57Z",
       "closedAt": null,
       "comments": [
         {
@@ -1074,6 +1102,20 @@
           "body": "Making the context ID mandatory is simple, although slightly wasteful.\r\n\r\nFor the variations where it is optional, I prefer the one that uses a header. It could work with a variant of #44 where we do Header + Message, and the Header determines whether or not you have contexts, and whether or not they can be dynamic.",
           "createdAt": "2021-04-17T02:35:25Z",
           "updatedAt": "2021-04-17T02:35:25Z"
+        },
+        {
+          "author": "achernya",
+          "authorAssociation": "NONE",
+          "body": "What are the benefits of message over header to make it optional? To me it seems like header is sufficient, because the context IDs are end-to-end, and should not affect intermediaries, making the header a natural place to put it. I think having the context ID be the default behavior and the header is to opt-out is the right decision if we were to allow removing it.",
+          "createdAt": "2021-04-19T18:13:58Z",
+          "updatedAt": "2021-04-19T18:13:58Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": ">  I think having the context ID be the default behavior and the header is to opt-out is the right decision if we were to allow removing it.\r\n\r\nThis is a bit of a bike-shed, but why would it default to having context-IDs instead of not having them? ",
+          "createdAt": "2021-04-19T20:02:57Z",
+          "updatedAt": "2021-04-19T20:02:57Z"
         }
       ]
     }
