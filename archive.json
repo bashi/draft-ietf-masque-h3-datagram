@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-04-22T01:08:41.596858+00:00",
+  "timestamp": "2021-04-25T01:14:07.965633+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -949,9 +949,31 @@
       "labels": [],
       "body": "During the 2021-04 MASQUE Interim, we discussed a design proposal from @bemasc to replace the one-layer flow ID design with a two-layer design. This design replaces the flow ID with two numbers: a stream ID and a context ID. The contents of the QUIC DATAGRAM frame would now look like:\r\n```\r\nHTTP/3 DATAGRAM Frame {\r\n  Stream ID (i),\r\n  Context ID (i),\r\n  HTTP/3 Datagram Payload (..),\r\n}\r\n```\r\n\r\nWhile the flow ID in the draft was per-hop, the proposal has better separation:\r\n* the stream ID is per-hop, it maps to an HTTP request\r\n* the context ID is end-to-end, it maps to context information inside that request\r\n\r\nIntermediaries now only look at stream IDs and can be blissfully ignorant of context IDs.\r\n\r\nIn the room at the 2021-04 MASQUE Interim, multiple participants spoke in support of this design and no one raised objections. This issue exists to ensure that we have consensus on this change - please speak up if you disagree.",
       "createdAt": "2021-04-16T21:28:06Z",
-      "updatedAt": "2021-04-16T21:28:06Z",
+      "updatedAt": "2021-04-23T19:39:33Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "martinduke",
+          "authorAssociation": "NONE",
+          "body": "I am fine with the 2-layer design for CONNECT-UDP, but I am not sure if the second identifier should be in H3 DATAGRAM or should be specific to CONNECT-UDP. As I indicated to the list, webtrans and httpbis might weigh in on this with broader consideration of other use cases.",
+          "createdAt": "2021-04-22T21:59:41Z",
+          "updatedAt": "2021-04-22T21:59:41Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Hi @martinduke the topic of the optionality of context IDs is discussed in issue #45.",
+          "createdAt": "2021-04-23T01:13:08Z",
+          "updatedAt": "2021-04-23T01:13:08Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I think this is a good design, because it minimizes the core functionality of the draft, but avoids every application that needs multiple dynamically created sub-flows from re-inventing a different mechanism.\r\n\r\nNit: I would not call this a 'Frame', since it's not an HTTP(TLV) frame.",
+          "createdAt": "2021-04-23T19:39:33Z",
+          "updatedAt": "2021-04-23T19:39:33Z"
+        }
+      ]
     },
     {
       "number": 42,
@@ -965,7 +987,7 @@
       "labels": [],
       "body": "In draft-ietf-masque-h3-datagram-00, flow IDs are bidirectional. During the 2021-04 MASQUE Interim, we discussed the possibility of making them unidirectional. Here are the differences:\r\n\r\n* Bidirectional\r\n  * single shared namespace for both endpoints (even for client, odd for server)\r\n  * it's easier to refer to peer's IDs, which makes negotiation easier\r\n\r\n* Unidirectional\r\n  * one namespace per direction\r\n  * every bidirectional use needs to associate both directions somehow\r\n\r\nI'm personally leaning towards keeping them bidirectional. Unlike QUIC streams, these do not have a state machine or flow control credits, so there is no cost to only using a single direction of a bidirectional flow for unidirectional use-cases.",
       "createdAt": "2021-04-16T21:44:34Z",
-      "updatedAt": "2021-04-19T18:10:46Z",
+      "updatedAt": "2021-04-23T01:21:45Z",
       "closedAt": null,
       "comments": [
         {
@@ -1002,6 +1024,20 @@
           "body": "I would prefer bidirectional without support for half-close. I feel that having unidirectional flow/context IDs adds overhead we don't need; peers now need to track those associations and it's unclear what the benefits of having them separated out are.",
           "createdAt": "2021-04-19T18:10:46Z",
           "updatedAt": "2021-04-19T18:10:46Z"
+        },
+        {
+          "author": "martinduke",
+          "authorAssociation": "NONE",
+          "body": "This issue is conflating consent (unilateral/bilateral) with scope (unidirectional/bidirectional). IIUC there are two questions here:\r\n1) Can I send a flow-id forever once declared, or can the endpoint tell me to stop without killing the whole stream (consent)?\r\n2) Can the receiver of a flow-id assignment use that same flow-id when sending datagrams, or could this mean something completely different?\r\n\r\nI think the answer to (1) is \"yes, it can tell me to stop\" (i.e. it is negotiated while allowing speculative sending). For (2), I lean toward bidirectional, but not strongly. There are plenty of codepoints, so it seems wasteful for each endpoint to define the same semantic explicitly.",
+          "createdAt": "2021-04-22T21:32:10Z",
+          "updatedAt": "2021-04-22T21:32:10Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@martinduke the intent of this issue wan't to conflate those two things. This issue is about scope. For consent, see issue #43.",
+          "createdAt": "2021-04-23T01:21:44Z",
+          "updatedAt": "2021-04-23T01:21:44Z"
         }
       ]
     },
@@ -1062,7 +1098,7 @@
       "labels": [],
       "body": "During the 2021-04 MASQUE Interim, we discussed multiple options for registering context IDs. Without going into the specific of the encoding, there are two broad classes of solutions:\r\n\r\n* \"Header\" design\r\n  * Once-at-setup registration\r\n  * This happens during the HTTP request/response\r\n  * Simplest solution is to use an HTTP header such as `Datagram-Flow-Id` (encoding TBD)\r\n  * Example use-case: CONNECT-UDP without extensions\r\n* \"Message\" design\r\n  * Mid-stream registration\r\n  * This can happen at any point during the lifetime of the request stream\r\n  * This would involve some sort of \"register\" message (encoding TBD, see separate issue)\r\n  * Example use-case: CONNECT-IP on-the-fly compression (this can't be done at tunnel setup time because the bits top be compressed aren't always known at that time)\r\n \r\nIt's possible to implement once-at-setup registration using the Message design, but it isn't possible to implement mid-stream registration. Therefore I think we should go with the Message design. It would also be possible to implement both but I don't think that provides much value.",
       "createdAt": "2021-04-16T23:00:50Z",
-      "updatedAt": "2021-04-17T02:29:51Z",
+      "updatedAt": "2021-04-23T19:47:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -1078,6 +1114,13 @@
           "body": "Personally, I'd vote for either \"message\" or \"message + header\" (a la priorities), but not just \"header\". Mid-stream annotation of context/flow/etc is quite useful.",
           "createdAt": "2021-04-17T02:29:51Z",
           "updatedAt": "2021-04-17T02:29:51Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I prefer \"Message\" only, since the dynamic use case seems like a fairly compelling use of sub-flows(contexts?).\r\n\r\nI'm not sure there are many cases when one allocates all sub-flows up front AND needs to use a header to do that in a flexible way.  If an application needs multiple sub-flows, but they're fixed in number/format(ie: data and control), I don't think there's a need for a header or a \"Message\", since the application can consider that part of its internal format.",
+          "createdAt": "2021-04-23T19:47:30Z",
+          "updatedAt": "2021-04-23T19:47:30Z"
         }
       ]
     },
@@ -1093,7 +1136,7 @@
       "labels": [],
       "body": "This issue assumes that decide to go with the two-layer design described in #41. Given that design, some applications might not need the multiplexing provided by context IDs. We have multiple options here:\r\n\r\n* Make context ID mandatory\r\n  * Applications that don't need it waste a byte per datagram\r\n* Negotiate the presence of context IDs using an HTTP header\r\n  * Context IDs would still be mandatory to implement on servers because the client might send that header\r\n* Have the method determine whether context IDs are present or not\r\n  * This would prevent extensibility on those methods\r\n* Create a REGISTER_NO_CONTEXT message\r\n  * This assumes we use the Message design from #44\r\n  * We add a register message that means that this stream does not use context IDs\r\n  * This allows avoiding the byte overhead without sacrificing extensibility",
       "createdAt": "2021-04-16T23:07:41Z",
-      "updatedAt": "2021-04-19T20:02:57Z",
+      "updatedAt": "2021-04-23T14:58:55Z",
       "closedAt": null,
       "comments": [
         {
@@ -1116,6 +1159,34 @@
           "body": ">  I think having the context ID be the default behavior and the header is to opt-out is the right decision if we were to allow removing it.\r\n\r\nThis is a bit of a bike-shed, but why would it default to having context-IDs instead of not having them? ",
           "createdAt": "2021-04-19T20:02:57Z",
           "updatedAt": "2021-04-19T20:02:57Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I think the second option \"Negotiate the presence of context IDs using an HTTP header\" is the best personally.\r\n\r\nIn terms of: \"Context IDs would still be mandatory to implement on servers because the client might send that header\", I assume server in this context is the final application server, not a proxy?  Even so, I'd argue it's applications which decide if they need this functionality, so if a server only implemented one application and it didn't use Context-IDs, then I don't see why it would need to implement it.",
+          "createdAt": "2021-04-23T14:43:01Z",
+          "updatedAt": "2021-04-23T14:43:01Z"
+        },
+        {
+          "author": "achernya",
+          "authorAssociation": "NONE",
+          "body": "Ian, in your comment, are you talking about an intermediary when you say \"proxy\"? If so, then an intermediary need not implement anything based on the payload of than H3 DATAGRAM, it only has to pass the data along. That may be worth a clarification.",
+          "createdAt": "2021-04-23T14:51:01Z",
+          "updatedAt": "2021-04-23T14:51:01Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Having context ID optional has a nice future-proof property - other uses of datagrams in HTTP/3 can decide if they want the second layer or not. \r\n\r\nI wouldn't even state it as application needing multiplexing or not. Other applications might find it very useful to include a second ((third, fourth, fifth) layer of frame header. I think its fine for us to state as much in this in the spec, while also defining an explicit second layer for multiplexing.",
+          "createdAt": "2021-04-23T14:58:42Z",
+          "updatedAt": "2021-04-23T14:58:42Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "Yes, by proxy I meant intermediary.  And I agree about what intermediaries need to do, I just wanted to ensure I understood what server meant when David used it above.\r\n\r\nYup, whenever all this gets written up, we can make it clear that intermediaries can ignore much of this.",
+          "createdAt": "2021-04-23T14:58:55Z",
+          "updatedAt": "2021-04-23T14:58:55Z"
         }
       ]
     }
