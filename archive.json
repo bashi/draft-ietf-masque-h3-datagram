@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-04-25T01:14:07.965633+00:00",
+  "timestamp": "2021-04-29T01:06:39.828809+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -987,7 +987,7 @@
       "labels": [],
       "body": "In draft-ietf-masque-h3-datagram-00, flow IDs are bidirectional. During the 2021-04 MASQUE Interim, we discussed the possibility of making them unidirectional. Here are the differences:\r\n\r\n* Bidirectional\r\n  * single shared namespace for both endpoints (even for client, odd for server)\r\n  * it's easier to refer to peer's IDs, which makes negotiation easier\r\n\r\n* Unidirectional\r\n  * one namespace per direction\r\n  * every bidirectional use needs to associate both directions somehow\r\n\r\nI'm personally leaning towards keeping them bidirectional. Unlike QUIC streams, these do not have a state machine or flow control credits, so there is no cost to only using a single direction of a bidirectional flow for unidirectional use-cases.",
       "createdAt": "2021-04-16T21:44:34Z",
-      "updatedAt": "2021-04-23T01:21:45Z",
+      "updatedAt": "2021-04-27T16:41:00Z",
       "closedAt": null,
       "comments": [
         {
@@ -1038,6 +1038,13 @@
           "body": "@martinduke the intent of this issue wan't to conflate those two things. This issue is about scope. For consent, see issue #43.",
           "createdAt": "2021-04-23T01:21:44Z",
           "updatedAt": "2021-04-23T01:21:44Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "Conceptually, I like unidirectional better.  I tell the peer that when I send with context-ID=X, it has a given semantic.  For bidirectional the sender is saying both that and that if the peer sends on that ID the original sender will interpret with the same semantic.  That might not even make sense.\r\n\r\nIs it possible to associate datagrams with a unidirectional stream (push?).  If so, does allowing for bidirectional context imply that even though the receiver cannot send frames on the stream, it can send datagrams?\r\n\r\nEvery negotiation does run the risk of loss/reordering resulting in a drop or buffering event at the receiver.  The appeal of bidirectional is that it removes half of this risk in the cases where the bidirectionality is used.",
+          "createdAt": "2021-04-27T16:41:00Z",
+          "updatedAt": "2021-04-27T16:41:00Z"
         }
       ]
     },
@@ -1187,6 +1194,86 @@
           "body": "Yes, by proxy I meant intermediary.  And I agree about what intermediaries need to do, I just wanted to ensure I understood what server meant when David used it above.\r\n\r\nYup, whenever all this gets written up, we can make it clear that intermediaries can ignore much of this.",
           "createdAt": "2021-04-23T14:58:55Z",
           "updatedAt": "2021-04-23T14:58:55Z"
+        }
+      ]
+    },
+    {
+      "number": 46,
+      "id": "MDU6SXNzdWU4NzAzMTgxMjE=",
+      "title": "The spec should discuss how h3-datagram works(or does not) with priority",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/46",
+      "state": "OPEN",
+      "author": "ianswett",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I think it's be valuable for h3-datagram to be able to use the new HTTP priority draft.\r\n\r\nI think it'd be ok to say that the datagram flow has the same prioritization as the request that initiated it.  I don't think anything more complex is necessary, but I could be wrong.",
+      "createdAt": "2021-04-28T20:09:30Z",
+      "updatedAt": "2021-04-28T23:26:37Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "That seems reasonable to me, assuming that we can get some implementations of this first. I suspect that we'll want this text to live in whichever gets published last between draft-ietf-masque-h3-datagram and [draft-ietf-httpbis-priority](https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-priority).",
+          "createdAt": "2021-04-28T20:13:35Z",
+          "updatedAt": "2021-04-28T20:13:35Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "The extensible priorities draft doesn't prioritise streams, it prioritizes responses. Is it sufficient that only a client can control the relative priority of datagrams coming back to it?\r\n",
+          "createdAt": "2021-04-28T20:28:33Z",
+          "updatedAt": "2021-04-28T20:28:33Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "oh and FWIW as an editor on priorities, we are pretty close to a WGLC. If there's merit in saying something about datagrams and priorities, putting it here feels like the right thing.",
+          "createdAt": "2021-04-28T20:31:21Z",
+          "updatedAt": "2021-04-28T20:31:21Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "> The extensible priorities draft doesn't prioritise streams, it prioritizes responses. Is it sufficient that only a client can control the relative priority of datagrams coming back to it?\r\n\r\nGiven the client already has the ability to control the relative priority of datagrams its sending, I think that's ok?\r\n\r\nPossibly there are use cases where the server wants to indicate a priority to the client as well?\r\n\r\nMy strawman use case is tunneling multiple HTTP/3 connections: One goes to the origin, one goes to a static content server, ads, etc, and the client wants to receive data from the origin at a higher priority than the other data.",
+          "createdAt": "2021-04-28T21:01:18Z",
+          "updatedAt": "2021-04-28T21:01:18Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think that is a good use case! I don't know if someone will turn around and say they really want to support that server control use case, I'm keen to hear strong proponents to really understand why.\r\n\r\nMaking DATAGRAM priority based on streams aids parity between CONNECT and CONNECT-UDP cases. \r\n\r\nTo your mind, would datagrams be prioritized against other datagrams and other streams? There's probably something to say here, especially the edge case where there is data to be sent non-incrementally on the stream AND the datagram flow.\r\n\r\nSomething to consider is also that if we go ahead with a 2-layer approach, whether we want to expose per-flow priorities. Maybe that can be done by carrying the extensible priority value as an extension field in the flow creation message. Although it does sound a bit too much complexity.\r\n",
+          "createdAt": "2021-04-28T21:26:32Z",
+          "updatedAt": "2021-04-28T21:26:32Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "\r\n> To your mind, would datagrams be prioritized against other datagrams and other streams? There's probably something to say here, especially the edge case where there is data to be sent non-incrementally on the stream AND the datagram flow.\r\n>\r\n\r\nYes, I would expect all datagrams and streams to be prioritized together.  If there's a response and it has associated datagrams, I'm not sure which would get precedence over one another, but if the assumption is that the response will be small, it probably makes sense to prioritize that?\r\n\r\n> Something to consider is also that if we go ahead with a 2-layer approach, whether we want to expose per-flow priorities. Maybe that can be done by carrying the extensible priority value as an extension field in the flow creation message. Although it does sound a bit too much complexity.\r\n\r\nI really hope we can avoid that, since it means the proxy/intermediary would have to deal with subflows, whereas currently it doesn't have to.  Also, for most of the subflow use cases I've heard, I don't think that would be valuable or necessary.",
+          "createdAt": "2021-04-28T22:46:49Z",
+          "updatedAt": "2021-04-28T22:46:49Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Agree about the context/subflows things. Lets avoid that.\r\n\r\nFor the bigger picture stuff I'd need to think on this some more. Perhaps a mildly flexible solution is to define an extensible priorities extension that would \r\n\r\n1) explain some of the considerations into scheduling relative priorities between streams and datagrams\r\n\r\n2) define a `dgram` parameter to allow explicit setting of datagram flow priority.  For example, to have an incremental stream at urgency 1 and incremental datagram at urgency 3\r\n\r\n```\r\npriority: u=1, i, dgram;u=3;i\r\n```\r\n\r\nWe could then state that omitting the `drgram` parameter means the stream's priority is used.\r\n\r\n3) by adding more params to `dgram` we could even support explicit signalling of the wish for shared priority space, or segregated.",
+          "createdAt": "2021-04-28T23:08:23Z",
+          "updatedAt": "2021-04-28T23:08:23Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'd say that defining a new `dgram` prioritization parameter should be left to its own document, I'd prefer not to have this in h3-datagram itself",
+          "createdAt": "2021-04-28T23:14:56Z",
+          "updatedAt": "2021-04-28T23:14:56Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I agree its scope creep. I would be ok with this document saying very little and punting the problem to a `draft-ietf-httpbis-dgram-priorities` (which I would entertain co-writing)",
+          "createdAt": "2021-04-28T23:26:37Z",
+          "updatedAt": "2021-04-28T23:26:37Z"
         }
       ]
     }
