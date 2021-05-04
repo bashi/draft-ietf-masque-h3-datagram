@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-04-29T01:06:39.828809+00:00",
+  "timestamp": "2021-05-04T01:03:58.779382+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -417,15 +417,15 @@
       "id": "MDU6SXNzdWU3NzkwODcxNzE=",
       "title": "reusing flow identifiers is racy",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/22",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "marten-seemann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "#20 introduced the following text:\r\n\r\n> The flow identifier allocation service MAY reuse previously retired flow identifiers once they have ascertained that there are no packets with DATAGRAM frames using that flow identifier still in flight.\r\n\r\nThere are 2 problems with this, in each direction:\r\n1. In the send-direction, this can only be ascertained in the case of no packet loss, when all packets have been acknowledged. If any packet is not acknowledged, this could be due to this packet actually having been lost or just reordered delayed.\r\n2. While it's possible to ascertain that all *sent* packets have been acknowledged, this is not possible for packets sent by the peer.\r\n\r\nReusing a flow identifier opens up an attack vector: An attacker could delay the delivery of a packet containing the old flow identifier until it has been retired and reused. This would lead to a reinterpretation of the DATAGRAM contents in a new application context.",
       "createdAt": "2021-01-05T14:17:17Z",
-      "updatedAt": "2021-02-02T18:57:41Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-03T22:57:45Z",
+      "closedAt": "2021-05-03T22:57:45Z",
       "comments": [
         {
           "author": "DavidSchinazi",
@@ -573,7 +573,7 @@
       "id": "MDU6SXNzdWU3OTcwMjEyODc=",
       "title": "packing DATAGRAMs with the same flow-id in a single QUIC packet",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/26",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "lnicco",
       "authorAssociation": "NONE",
       "assignees": [
@@ -582,8 +582,8 @@
       "labels": [],
       "body": "in Section 2 \"Flow Identifiers\" it reads \r\n\r\n> If multiple DATAGRAM frames can be packed into a single QUIC packet, the sender SHOULD group them by flow identifier to promote fate-sharing within a specific flow and improve the ability to process batches of datagram messages efficiently on the receiver.\r\n\r\nthis to me seems to be in conflict with the opening statement \r\n> QUIC DATAGRAM frames do not provide a means to demultiplex application contexts\r\n\r\nif the flow-id is in the DATAGRAM payload, the transport is not supposed to be peeking at it. While it could be a nice (but a bit hacky) optimization in a real-world implementation, I feel like the RFC having it as a SHOULD is not ideal. ",
       "createdAt": "2021-01-29T16:35:13Z",
-      "updatedAt": "2021-04-12T18:58:43Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-03T23:00:58Z",
+      "closedAt": "2021-05-03T23:00:58Z",
       "comments": [
         {
           "author": "DavidSchinazi",
@@ -879,15 +879,15 @@
       "id": "MDU6SXNzdWU4Mjg0MTMyOTE=",
       "title": "Remove the ECN example in Datagram-Flow-Id Header Field Definition",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/35",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "achernya",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Currently, the Datagram-Flow-Id Header Field Definition section contains examples of the Datagram-Flow-Id header, which includes a 4-flow mechanism for conveying ECN information:\r\n\r\n> Datagram-Flow-Id = 42, 44; ecn-ect0, 46; ecn-ect1, 48; ecn-ce\r\n\r\nThis example seems to be tripping people up, myself included, by attempting to solve a problem of in-band signaling of non-UDP-payload bits by providing these streams, and drawing attention to that problem rather than the capability being described.\r\n\r\nI propose we remove this example until we have a better one to replace it. If we cannot find a good example, that also lends some evidence that perhaps we don't need the feature of creating multiple Datagram-Flow-Id associations in the same request.",
       "createdAt": "2021-03-10T22:25:28Z",
-      "updatedAt": "2021-03-10T22:25:28Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-03T23:06:43Z",
+      "closedAt": "2021-05-03T23:06:43Z",
       "comments": []
     },
     {
@@ -895,15 +895,15 @@
       "id": "MDU6SXNzdWU4MzUzMDk2NDM=",
       "title": "Add a note about sticking out to security considerations",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/36",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "As discussed at IETF 110, some MASQUE servers may prefer to avoid sticking out (i.e. they may wish to be indistinguishable from a non-MASQUE-capable HTTP/3 server). The H3_DATAGRAM SETTINGS parameter may stick out. Therefore, we should add a note about this to the Security Considerations section. A simple solution could be to encourage widespread HTTP/3 servers to always send this.",
       "createdAt": "2021-03-18T22:07:54Z",
-      "updatedAt": "2021-03-18T22:07:54Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-03T23:14:12Z",
+      "closedAt": "2021-05-03T23:14:12Z",
       "comments": []
     },
     {
@@ -987,7 +987,7 @@
       "labels": [],
       "body": "In draft-ietf-masque-h3-datagram-00, flow IDs are bidirectional. During the 2021-04 MASQUE Interim, we discussed the possibility of making them unidirectional. Here are the differences:\r\n\r\n* Bidirectional\r\n  * single shared namespace for both endpoints (even for client, odd for server)\r\n  * it's easier to refer to peer's IDs, which makes negotiation easier\r\n\r\n* Unidirectional\r\n  * one namespace per direction\r\n  * every bidirectional use needs to associate both directions somehow\r\n\r\nI'm personally leaning towards keeping them bidirectional. Unlike QUIC streams, these do not have a state machine or flow control credits, so there is no cost to only using a single direction of a bidirectional flow for unidirectional use-cases.",
       "createdAt": "2021-04-16T21:44:34Z",
-      "updatedAt": "2021-04-27T16:41:00Z",
+      "updatedAt": "2021-05-02T16:53:34Z",
       "closedAt": null,
       "comments": [
         {
@@ -1045,6 +1045,13 @@
           "body": "Conceptually, I like unidirectional better.  I tell the peer that when I send with context-ID=X, it has a given semantic.  For bidirectional the sender is saying both that and that if the peer sends on that ID the original sender will interpret with the same semantic.  That might not even make sense.\r\n\r\nIs it possible to associate datagrams with a unidirectional stream (push?).  If so, does allowing for bidirectional context imply that even though the receiver cannot send frames on the stream, it can send datagrams?\r\n\r\nEvery negotiation does run the risk of loss/reordering resulting in a drop or buffering event at the receiver.  The appeal of bidirectional is that it removes half of this risk in the cases where the bidirectionality is used.",
           "createdAt": "2021-04-27T16:41:00Z",
           "updatedAt": "2021-04-27T16:41:00Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "To second @achernya I would also prefer bidirectional without support for half-close.  Given you can always not send something in one direction, and there's none of the overhead of streams(ie: flow control, etc) I can't see any benefits of unidirectional over bidirectional in this case.\r\n\r\nAssociating h3-datagrams with a server push seems like unnecessary complexity to me, but you're right that it should be clarified.  #47\r\n\r\n",
+          "createdAt": "2021-05-02T16:53:34Z",
+          "updatedAt": "2021-05-02T16:53:34Z"
         }
       ]
     },
@@ -1274,6 +1281,51 @@
           "body": "I agree its scope creep. I would be ok with this document saying very little and punting the problem to a `draft-ietf-httpbis-dgram-priorities` (which I would entertain co-writing)",
           "createdAt": "2021-04-28T23:26:37Z",
           "updatedAt": "2021-04-28T23:26:37Z"
+        }
+      ]
+    },
+    {
+      "number": 47,
+      "id": "MDU6SXNzdWU4NzM5ODk1OTI=",
+      "title": "Can HTTP server push use h3-datagram?",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/47",
+      "state": "OPEN",
+      "author": "ianswett",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "I would prefer that h3-datagram cannot use server push, because I believe it adds extra complexity and there are no clear use cases.\r\n\r\nAdditionally, server push is an optimization which allows a server to push a resource up to 1RTT prior to the client's (expected) requests for the resource.  h3-datagram is much more analogous to a CONNECT, which is neither idempotent or cacheable, so I'd assume a client would drop any received datagrams, rendering the optimization useless.\r\n\r\nWhatever we decide, we should definitely clarify this.  This issue was motivated by https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/42#issuecomment-827750984\r\n",
+      "createdAt": "2021-05-02T16:52:08Z",
+      "updatedAt": "2021-05-03T15:37:52Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "+1\r\n\r\nI think it would be OK to restrict this H3 DGRAM extension to only permit top-level flow creation by the client. This gels well with HTTP semantics - today there isn't a way for a server to spontaneously start sending things not associated with an HTTP request. Even server push needs the \"parent request\" (unless you try to do something like my unbound server push extension, which no one seemed interested in).\r\n\r\nIn a two layer model, there might be use cases that benefit from sever-initated second-level flows. But they can hang off the client request stream, not try to tack on to server push.\r\n\r\nFinally, descoping server push means that support over multiple proxies becomes much easier to reason about.\r\n\r\n",
+          "createdAt": "2021-05-02T17:44:44Z",
+          "updatedAt": "2021-05-02T17:44:44Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "Thanks @LPardue I forgot to mention that server push via multiple layers of proxies(ie: CDNs) has proven fairly impossible in practice, and h3-datagram is intended as an end-to-end protocol I believe.",
+          "createdAt": "2021-05-02T17:54:25Z",
+          "updatedAt": "2021-05-02T17:54:25Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "The use-case I could see for push leveraging datagram is if the server wanted a mechanism to deliver the body of the pushed resource in an unreliable way, but the same could most likely be accomplished by hanging the datagrams off the associated stream of the push.  \r\n\r\n> server push via multiple layers of proxies(ie: CDNs) has proven fairly impossible in practice\r\n\r\nReally?  We've delivered pushes through multiple layers of proxies.  It's not going to be that different for WebTransport streams to traverse proxies.",
+          "createdAt": "2021-05-03T15:24:58Z",
+          "updatedAt": "2021-05-03T15:24:58Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I think there are better ways to send unreliable bodies than unreliable datagrams.\r\n\r\nI agree that in some homogeneous environments, multi-layer pushes are practical, but in the general case I don't think they are.  Apple's low latency HLS abandoned push fairly early on for that reason.",
+          "createdAt": "2021-05-03T15:37:52Z",
+          "updatedAt": "2021-05-03T15:37:52Z"
         }
       ]
     }
@@ -2566,6 +2618,144 @@
           ]
         }
       ]
+    },
+    {
+      "number": 48,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjI5NDE0NzI2",
+      "title": "Remove reuse",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/48",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #22.",
+      "createdAt": "2021-05-03T22:57:09Z",
+      "updatedAt": "2021-05-04T00:51:51Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "255935632c9247980273dfe418de8c2a4332727f",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "no_reuse",
+      "headRefOid": "b8344dfdc9c876a64466bc1d73d4db7c4e3585f1",
+      "closedAt": "2021-05-03T22:57:45Z",
+      "mergedAt": "2021-05-03T22:57:44Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "b5b2cc5cb506ebae31de75dd619171b961bfc524"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 49,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjI5NDE1NzM1",
+      "title": "Remove guidance about packing DATAGRAM frames in packets",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/49",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #26.",
+      "createdAt": "2021-05-03T23:00:09Z",
+      "updatedAt": "2021-05-04T00:51:33Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "b5b2cc5cb506ebae31de75dd619171b961bfc524",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "no_packing",
+      "headRefOid": "01ed8b88b2d3ada41188a4b067de6d38b50b1b62",
+      "closedAt": "2021-05-03T23:00:58Z",
+      "mergedAt": "2021-05-03T23:00:58Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "db6f3ef1f551435e2ac847079b0600fa23f62aef"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 50,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjI5NDE3NTk1",
+      "title": "Remove ECN example",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/50",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #35 ",
+      "createdAt": "2021-05-03T23:05:47Z",
+      "updatedAt": "2021-05-04T00:51:38Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "db6f3ef1f551435e2ac847079b0600fa23f62aef",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "no_ecn",
+      "headRefOid": "596664648c38738cb9ec0c89d0036a802688d4b3",
+      "closedAt": "2021-05-03T23:06:43Z",
+      "mergedAt": "2021-05-03T23:06:43Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "b7720a8befd842989a8d9c14eddc04918d824f4c"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 51,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjI5NDE5NTk3",
+      "title": "Add text about sticking out",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/51",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #36 ",
+      "createdAt": "2021-05-03T23:11:50Z",
+      "updatedAt": "2021-05-04T00:51:44Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "b7720a8befd842989a8d9c14eddc04918d824f4c",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "sticking_out",
+      "headRefOid": "c80b82e278bc11825626bd158163e4c545644b11",
+      "closedAt": "2021-05-03T23:14:12Z",
+      "mergedAt": "2021-05-03T23:14:12Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "6cccb0e8b5149c1dae7d33c3579321032c591864"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 52,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjI5NDUxODY2",
+      "title": "Two layer design with CAPSULE",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/52",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR aims to take the design discussions we had at the last\r\ninterim, and propose a potential solution. This PR should in theory\r\ncontain enough information to allow folks to implement this new\r\ndesign. That will allow us to perform interop testing and confirm\r\nwhether the design is sound.\r\n\r\n[An HTML version of the draft with these changes is available here.](https://ietf-wg-masque.github.io/draft-ietf-masque-h3-datagram/two_layer_capsule/draft-ietf-masque-h3-datagram.html)",
+      "createdAt": "2021-05-04T00:52:14Z",
+      "updatedAt": "2021-05-04T00:53:36Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "6cccb0e8b5149c1dae7d33c3579321032c591864",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "two_layer_capsule",
+      "headRefOid": "687935d6d69219bb0051a7eeed92ab7dcad386eb",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
