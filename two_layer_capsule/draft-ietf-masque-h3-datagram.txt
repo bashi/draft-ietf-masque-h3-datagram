@@ -5,8 +5,8 @@
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                               L. Pardue
-Expires: 6 November 2021                                      Cloudflare
-                                                              5 May 2021
+Expires: 7 November 2021                                      Cloudflare
+                                                              6 May 2021
 
 
                     Using QUIC Datagrams with HTTP/3
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 6 November 2021.
+   This Internet-Draft will expire on 7 November 2021.
 
 Copyright Notice
 
@@ -227,7 +227,8 @@ Table of Contents
    only be sent in client-initiated bidirectional streams.
    Intermediaries MUST forward all received CAPSULE frames in their
    unmodified entirety on the same stream where it would forward DATA
-   frames.
+   frames.  Intermediaries MUST NOT send any CAPSULE frames other than
+   the ones it is forwarding.
 
    This specification of CAPSULE currently uses HTTP/3 frame type
    0xffcab5.  If this document is approved, a lower number will be
