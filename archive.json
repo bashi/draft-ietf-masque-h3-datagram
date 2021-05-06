@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-04T01:03:58.779382+00:00",
+  "timestamp": "2021-05-06T01:00:24.527816+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -1326,6 +1326,30 @@
           "body": "I think there are better ways to send unreliable bodies than unreliable datagrams.\r\n\r\nI agree that in some homogeneous environments, multi-layer pushes are practical, but in the general case I don't think they are.  Apple's low latency HLS abandoned push fairly early on for that reason.",
           "createdAt": "2021-05-03T15:37:52Z",
           "updatedAt": "2021-05-03T15:37:52Z"
+        }
+      ]
+    },
+    {
+      "number": 53,
+      "id": "MDU6SXNzdWU4NzY4MzExNzk=",
+      "title": "Do context ID closures need more details?",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/53",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In #52, we introduce the CLOSE_DATAGRAM_CONTEXT capsule which allows endpoints to close a context. That message currently only contains the context ID to close. @bemasc suggests that we may want to add more information there.\r\n* Should we differentiate between \"context close\" and \"context registration rejected\"?\r\n* Should we add an error code?\r\n\r\nIn particular, do folks have use cases for these features?",
+      "createdAt": "2021-05-05T21:01:30Z",
+      "updatedAt": "2021-05-05T21:14:07Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "body": "My first concern is with infinite loops.  If the context was \"garbage collected\" by the recipient, the sender can simply re-create it if they still want it.  However, if it was closed due to incompatibility (i.e. rejected) or hitting a resource limit (e.g. max # of contexts), reopening it in response will produce a tight infinite loop.\r\n\r\nThis could be maybe be avoided by some kind of heuristic, but an explicit indication of what's going on seems better.",
+          "createdAt": "2021-05-05T21:14:07Z",
+          "updatedAt": "2021-05-05T21:14:07Z"
         }
       ]
     }
@@ -2743,19 +2767,672 @@
       "labels": [],
       "body": "This PR aims to take the design discussions we had at the last\r\ninterim, and propose a potential solution. This PR should in theory\r\ncontain enough information to allow folks to implement this new\r\ndesign. That will allow us to perform interop testing and confirm\r\nwhether the design is sound.\r\n\r\n[An HTML version of the draft with these changes is available here.](https://ietf-wg-masque.github.io/draft-ietf-masque-h3-datagram/two_layer_capsule/draft-ietf-masque-h3-datagram.html)",
       "createdAt": "2021-05-04T00:52:14Z",
-      "updatedAt": "2021-05-04T00:53:36Z",
+      "updatedAt": "2021-05-06T00:22:53Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "6cccb0e8b5149c1dae7d33c3579321032c591864",
       "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "headRefName": "two_layer_capsule",
-      "headRefOid": "687935d6d69219bb0051a7eeed92ab7dcad386eb",
+      "headRefOid": "057155d0291b00a81d14147c87e5c5737371c9ce",
       "closedAt": null,
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUxNTQxNTAx",
+          "commit": {
+            "abbreviatedOid": "1efe34e"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-04T18:27:40Z",
+          "updatedAt": "2021-05-04T18:27:40Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "This requirement seems awkard to implement as specified. I think some of that comes from mixing length checks and parsing. To elabortate:\r\n\r\n\r\n* it states endpoints, but what about intermediaries (they need to parse just the Quarter Stream ID but should they forward a frame whose length is exactly the Quarter Stream ID?)\r\n* for an endpoint parsing both fields it probably needs to be an 'and' \r\n* since the fields are varints its harder to check the DATAGRAM payload length can satisfy the field requirements. The obvious case is if payload length is 1 (less than two minimally encoded varints) but other combos make it harder.\r\n\r\nThe way that H3 specs the requirement isn't a perfect fit but I think the spirit is more closely align with what you're trying to say - https://tools.ietf.org/html/draft-ietf-quic-http-34#section-7.1",
+              "createdAt": "2021-05-04T18:27:40Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUxNjgzODUz",
+          "commit": {
+            "abbreviatedOid": "ec60f26"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-04T21:29:01Z",
+          "updatedAt": "2021-05-04T21:29:01Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "Good point, one of those is hop-by-hop but the other is end-to-end. I've tweaked the requirements here to reflect that.",
+              "createdAt": "2021-05-04T21:29:01Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUxNzU1Njk4",
+          "commit": {
+            "abbreviatedOid": "617ea29"
+          },
+          "author": "tfpauly",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-04T23:46:22Z",
+          "updatedAt": "2021-05-05T00:02:51Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Way to have an intro that just copies the abstract =)",
+              "createdAt": "2021-05-04T23:46:22Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 51,
+              "body": "Editorial suggestion that  `{#datagram-contexts}` and `{#context-id-alloc}` could be subsections of Multiplexing, as \"##\" sections, which could remove the need to have `(see {{datagram-contexts}})` right before the section itself.",
+              "createdAt": "2021-05-04T23:48:09Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "```suggestion\r\nContexts refer to bidirectional exchanges of datagrams associated with a single HTTP\r\n```",
+              "createdAt": "2021-05-04T23:48:44Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 120,
+              "body": "Why does this say \"zero modulo four\"? Shouldn't it be \"the QUIC stream ID modulo four\"?",
+              "createdAt": "2021-05-04T23:51:00Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 151,
+              "body": "Bikeshed bikeshed bikeshed...",
+              "createdAt": "2021-05-05T00:00:30Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 255,
+              "body": "```suggestion\r\nunilaterally informs its peer of the closure. Endpoints can use\r\n```",
+              "createdAt": "2021-05-05T00:01:09Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 257,
+              "body": "```suggestion\r\nregistered by either themselves, or by their peer. Endpoints MAY use the\r\n```",
+              "createdAt": "2021-05-05T00:01:22Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUxNzY5OTA1",
+          "commit": {
+            "abbreviatedOid": "617ea29"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Thanks for the review!",
+          "createdAt": "2021-05-05T00:29:30Z",
+          "updatedAt": "2021-05-05T00:35:17Z",
+          "comments": [
+            {
+              "originalPosition": 26,
+              "body": "Indeed :)",
+              "createdAt": "2021-05-05T00:29:30Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 51,
+              "body": "Ah, that was my original intention. Thanks. Fixed.",
+              "createdAt": "2021-05-05T00:30:55Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "Done.",
+              "createdAt": "2021-05-05T00:32:34Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 120,
+              "body": "Reworded to use divisible instead of modulo",
+              "createdAt": "2021-05-05T00:33:25Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 151,
+              "body": "Nope nope nope",
+              "createdAt": "2021-05-05T00:33:35Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 255,
+              "body": "Done",
+              "createdAt": "2021-05-05T00:34:03Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 257,
+              "body": "Done",
+              "createdAt": "2021-05-05T00:34:21Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyMzIxMTYy",
+          "commit": {
+            "abbreviatedOid": "5d90c34"
+          },
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "I think this is a good change.  Thanks!\r\n\r\nThere are some things that I think we should still discuss, but we shouldn't hold up this change on those details.",
+          "createdAt": "2021-05-05T13:42:29Z",
+          "updatedAt": "2021-05-05T13:51:29Z",
+          "comments": [
+            {
+              "originalPosition": 257,
+              "body": "Allowing endpoints to close contexts created by the peer seems confusing to me.  If my peer just closed the context I've been using ... what do I do?  Do I reopen it?  Do I fail the connection?",
+              "createdAt": "2021-05-05T13:42:29Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 258,
+              "body": "I think it would probably be better to distinguish CLOSE from \"registration rejected\".  Did the server close the context because it accepted my packets and believes the context is no longer needed?  Or did it close because I hit a resource limit?  Or was my request incompatible?\r\n\r\nIf something can be used to communicate failures, then I think it probably needs an error code, so the recipient knows what to do next.",
+              "createdAt": "2021-05-05T13:48:05Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 153,
+              "body": "```suggestion\r\nCAPSULE (placeholder, final name TBD) allows reliably sending request-related information end-to-end, even in\r\n```",
+              "createdAt": "2021-05-05T13:49:48Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyNzM2OTA2",
+          "commit": {
+            "abbreviatedOid": "5d90c34"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T20:53:19Z",
+          "updatedAt": "2021-05-05T21:02:46Z",
+          "comments": [
+            {
+              "originalPosition": 153,
+              "body": "Given that the draft is not in WGLC, everything's still up for discussion. That definitely includes the name \"CAPSULE\", but I don't think we need to spell that out explicitly in the document.",
+              "createdAt": "2021-05-05T20:53:19Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 257,
+              "body": "I'd say that depends on the application. In CONNECT-UDP if you close the main context then things break, so you might as well close the stream. But as another example, if your peer introduced a CONNECT-IP compression context and used it for a while and you're seeing low usage of it and want to reclaim memory, you can close than context and have the tunnel still be functional. Let's move this conversation to #43.",
+              "createdAt": "2021-05-05T21:00:35Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 258,
+              "body": "That's an interesting idea. I've filed #53 to track it so we don't forget after this is merged.",
+              "createdAt": "2021-05-05T21:01:41Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyNzQ1Mzc5",
+          "commit": {
+            "abbreviatedOid": "5d90c34"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T21:04:33Z",
+          "updatedAt": "2021-05-05T22:29:53Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "This reference to contexts comes before it is defined.  Add it to a definition of terms section, or forward reference?  It's a very generic term.",
+              "createdAt": "2021-05-05T21:04:34Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Maybe just 'encoded stream identifier'?",
+              "createdAt": "2021-05-05T21:05:12Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "ID -> identifier",
+              "createdAt": "2021-05-05T21:05:31Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 62,
+              "body": "multiple -> one or more",
+              "createdAt": "2021-05-05T21:27:50Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "What does it mean for a context ID to be 'client-initiated'?  Perhaps contexts are 'defined' by either the client or the server?",
+              "createdAt": "2021-05-05T21:31:08Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "Given how vague the word context is, I think we should try to provide a bit more description of what this document thinks they are.  They are more specific than simply a bidirectional exchange, right?  It's a sub-group of the bidirectional exchange of datagrams that share some property or metadata?",
+              "createdAt": "2021-05-05T21:40:20Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 92,
+              "body": "can be used -> can be included in DATAGRAMs sent by",
+              "createdAt": "2021-05-05T21:41:10Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 133,
+              "body": "Do you need to specify behavior when the quarter stream ID refers to a non-existent or previously closed stream, etc?",
+              "createdAt": "2021-05-05T21:44:11Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 158,
+              "body": "frame -> frames",
+              "createdAt": "2021-05-05T21:44:59Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 193,
+              "body": "remove 'upcoming'",
+              "createdAt": "2021-05-05T21:46:09Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 158,
+              "body": "Is it a bug or a feature that intermediaries are not allowed to modify the contents of a capsule, but there's nothing stopping them from doing so?  eg: why not require end-to-end encryption or integrity protection of the payloads?\r\n\r\nAre there use-cases where we might want to allow an intermediary to modify the context information, or inject its own contexts?",
+              "createdAt": "2021-05-05T21:47:54Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 197,
+              "body": "I find it annoying that I have to register a context ID in order to use any datagrams, even if I don't want to use it.  I prefer being able to negotiate the use of context IDs in datagrams, or at least defining a value (0?) which does not need to be registered and carries the empty context.\r\n\r\nAfter reading the examples, which all register context-ID 0 with the empty extension string, I think this would help reduce boilerplate in a lot of cases.",
+              "createdAt": "2021-05-05T21:51:16Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 233,
+              "body": "for a short while in hopes of receiving -> temporarily while awaiting",
+              "createdAt": "2021-05-05T21:53:42Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 224,
+              "body": "Specify errors if a sender attempts to register a context ID that it has registered but not yet closed, or of the wrong parity.",
+              "createdAt": "2021-05-05T21:54:52Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 606,
+              "body": "TImestamp -> Timestamp",
+              "createdAt": "2021-05-05T22:04:04Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 500,
+              "body": "I assume this is for the 'extension-string' parameter in Register Datagram Context.  The word key first appears here.",
+              "createdAt": "2021-05-05T22:09:27Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 151,
+              "body": "After reading this document, the main benefit I see to CAPSULE is that it makes it easier to deploy future end-to-end extension \"frames\" without having to modify intermediaries (because H3 drops unknown frames).  It may also make it easier to extend in client <--> server cases where the H3 stack itself is not easily modifiable (owned by a third-party, say).\r\n\r\nEventually it would probably warrant its own document and not be buried in DATAGRAM?",
+              "createdAt": "2021-05-05T22:24:11Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODQxNTkx",
+          "commit": {
+            "abbreviatedOid": "5d90c34"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T23:09:28Z",
+          "updatedAt": "2021-05-05T23:09:28Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "A generic HTTP library capable of receiving and sending datagrams could be used to build either an intermediary or an endpoint.  WIth this specification, It would need two sets of APIs, one that had the context ID (for endpoints) and one without (for intermediaries).  If datagrams carry context IDs then intermediaries should be able to parse them.",
+              "createdAt": "2021-05-05T23:09:28Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUxNzM4NjQy",
+          "commit": {
+            "abbreviatedOid": "617ea29"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-04T23:04:38Z",
+          "updatedAt": "2021-05-05T23:34:25Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "The odd-numbered context IDs are throwing me. Is this an attempt to leave that door open even if this proposal defines mot means to establish the flow?",
+              "createdAt": "2021-05-04T23:04:38Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 158,
+              "body": "I think adding a secure integrity mechanism is overkill. I'd treat these more like how headers and intermediaries work. Most intermediaries really have no business looking at the stuff, but some will decide to do stuff and if they break things then hopefully the failure to abide the spec will be reflected in market position.",
+              "createdAt": "2021-05-05T23:31:19Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 138,
+              "body": "What would intermediaries do with it? It might be fair to parse it and tell your API users \"this field is entirely meaningless unless you are an endpoint\".",
+              "createdAt": "2021-05-05T23:34:19Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODM2MjY0",
+          "commit": {
+            "abbreviatedOid": "5d90c34"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Thanks for the review!",
+          "createdAt": "2021-05-05T22:57:09Z",
+          "updatedAt": "2021-05-05T23:37:04Z",
+          "comments": [
+            {
+              "originalPosition": 37,
+              "body": "Good point, I rephrased this.",
+              "createdAt": "2021-05-05T22:57:09Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 39,
+              "body": "Agreed, done.",
+              "createdAt": "2021-05-05T22:57:19Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 41,
+              "body": "Done",
+              "createdAt": "2021-05-05T22:57:38Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 56,
+              "body": "Added more text to explain contexts",
+              "createdAt": "2021-05-05T23:07:28Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 62,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:08:24Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 88,
+              "body": "The next sentence explains this further, I prefer initiated over defined.",
+              "createdAt": "2021-05-05T23:09:21Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 92,
+              "body": "I find used to be clearer",
+              "createdAt": "2021-05-05T23:09:52Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 133,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:15:07Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 151,
+              "body": "I agree with your benefit analysis. I'd prefer to avoid splitting the document further though. Let's wait and see if anyone wants to use CAPSULE but cannot implement DATAGRAM.",
+              "createdAt": "2021-05-05T23:16:29Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 158,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:16:49Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 158,
+              "body": "Capsules are by definition end-to-end. If intermediaries start looking inside, they might cause ossification. In theory, I'd happily use end-to-end encryption to protect them but we don't have keys for this purpose.",
+              "createdAt": "2021-05-05T23:18:33Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 193,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:18:56Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 197,
+              "body": "I consider that to be a feature rather than a bug. If we don't exercise this path, implementors will cut corners and we won't be able to deploy extensions down the road. Requiring the main path to use the extension mechanism ensures that the mechanism is exercised and functional.",
+              "createdAt": "2021-05-05T23:20:57Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 224,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:26:55Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 233,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:27:24Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 500,
+              "body": "These are the keys from that section, I added references.",
+              "createdAt": "2021-05-05T23:31:45Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 606,
+              "body": "Done",
+              "createdAt": "2021-05-05T23:32:53Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 138,
+              "body": "Your HTTP implementation is going to need to know whether to act on datagrams (endpoint) or forward them (intermediaries). Plumbing that bool to the parse function doesn't seem complex?",
+              "createdAt": "2021-05-05T23:34:16Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODU1NTcx",
+          "commit": {
+            "abbreviatedOid": "943fdbc"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T23:44:17Z",
+          "updatedAt": "2021-05-05T23:44:18Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "Odd-numbered context IDs allow servers to register their own contexts. For example, a CONNECT-IP server could choose to start compressing using a compression context of its choosing.",
+              "createdAt": "2021-05-05T23:44:17Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODU2MTI2",
+          "commit": {
+            "abbreviatedOid": "943fdbc"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T23:45:42Z",
+          "updatedAt": "2021-05-05T23:51:20Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "> What would intermediaries do with it?\r\n\r\nThe same thing it does with other opaque things it get from the peer (eg: body bytes, datagram payloads) - forward to the other peer.\r\n\r\nWhatever thing handles an HTTP stream would now have APIs like\r\n\r\n```\r\nonDatagram(payload)\r\nsendDatagram(payload)\r\n```\r\nfor intermediaries, or, if you are for endpoints:\r\n\r\n```\r\nonDatagram(contextID, payload)\r\nsendDatagram(contextID, payload)\r\n```\r\n\r\nI'd prefer to have the library only have the second variant.  If using the library to implement a proxy, then the proxy implementation would pass the context ID and payload from one peer's `onDatagram` to the other side's `sendDatagram`. \r\n\r\nLogging/stats are another possible use.\r\n\r\nI guess the broader point is -- as this spec is written, the datagram has to have that context ID, so why be so prescriptive about what the intermediary can and can't do with it.",
+              "createdAt": "2021-05-05T23:45:42Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            },
+            {
+              "originalPosition": 197,
+              "body": "Most wg's approach grease by defining it and encouraging implementers to use it liberally enough to prevent this, but not require it.  HTTP/3 doesn't require a GREASE frame in order to function.",
+              "createdAt": "2021-05-05T23:48:25Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODU4NTkw",
+          "commit": {
+            "abbreviatedOid": "943fdbc"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T23:52:21Z",
+          "updatedAt": "2021-05-05T23:52:21Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "Yeah this makes sense, I just didn't digest all of the concepts before posting.",
+              "createdAt": "2021-05-05T23:52:21Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODU5OTEz",
+          "commit": {
+            "abbreviatedOid": "943fdbc"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-05T23:55:53Z",
+          "updatedAt": "2021-05-05T23:55:54Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "We're considering making the Context ID optional (see #45). If intermediaries start parsing the context ID, it'll prevent us from doing that.",
+              "createdAt": "2021-05-05T23:55:53Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODYyMzUy",
+          "commit": {
+            "abbreviatedOid": "943fdbc"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-06T00:02:32Z",
+          "updatedAt": "2021-05-06T00:02:33Z",
+          "comments": [
+            {
+              "originalPosition": 197,
+              "body": "This isn't about grease, it's about using your extension mechanism. HTTP/3 forces all HTTP implementations to correctly support HTTP headers, because otherwise they couldn't send or parse `:method`. That guarantees that everyone correctly handles headers. We could have said that if no HEADERS frame is sent then it means GET, but we decided against that.",
+              "createdAt": "2021-05-06T00:02:32Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODYzNzgy",
+          "commit": {
+            "abbreviatedOid": "943fdbc"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-06T00:06:22Z",
+          "updatedAt": "2021-05-06T00:06:23Z",
+          "comments": [
+            {
+              "originalPosition": 158,
+              "body": "I was being a bit tongue in cheek by suggesting security measures here. It strikes me as overkill too.\r\n\r\nSo is it explicitly forbidden for a proxy to register its own context ID on a stream via CAPSULE?  This would require some careful context-ID allocations by the proxy to avoid potential collisions, which in turn break the rules about the context-IDs being end-to-end.\r\n\r\nI don't have a use case, but I'm not sure I see the the value in locking this down quite so tightly.  Are there designs that depend on the context identifier being the same at every hop?  Perhaps tunneling QUIC in 'forward' mode relies on this?\r\n",
+              "createdAt": "2021-05-06T00:06:22Z",
+              "updatedAt": "2021-05-06T00:21:32Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUyODY5NDMz",
+          "commit": {
+            "abbreviatedOid": "057155d"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-06T00:22:53Z",
+          "updatedAt": "2021-05-06T00:22:53Z",
+          "comments": [
+            {
+              "originalPosition": 158,
+              "body": "The core tenet of the two-layer design is that Stream IDs are per-hop and context IDs are end-to-end. That allows extensions to rely on the fact that both endpoints have the same view of context IDs. CAPSULE exists as an end-to-end mechanism, and similarly relies on that property. If we need a new per-hop mechanism, then we can use a different h3 frame. I've clarified that intermediaries don't send capsules apart from forwarding them, so they're not allowed to inject their own context IDs.",
+              "createdAt": "2021-05-06T00:22:53Z",
+              "updatedAt": "2021-05-06T00:22:53Z"
+            }
+          ]
+        }
+      ]
     }
   ]
 }
