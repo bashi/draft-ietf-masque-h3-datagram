@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-06T01:00:24.527816+00:00",
+  "timestamp": "2021-05-09T01:06:32.778669+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -1216,7 +1216,7 @@
       "labels": [],
       "body": "I think it's be valuable for h3-datagram to be able to use the new HTTP priority draft.\r\n\r\nI think it'd be ok to say that the datagram flow has the same prioritization as the request that initiated it.  I don't think anything more complex is necessary, but I could be wrong.",
       "createdAt": "2021-04-28T20:09:30Z",
-      "updatedAt": "2021-04-28T23:26:37Z",
+      "updatedAt": "2021-05-07T18:46:54Z",
       "closedAt": null,
       "comments": [
         {
@@ -1281,6 +1281,13 @@
           "body": "I agree its scope creep. I would be ok with this document saying very little and punting the problem to a `draft-ietf-httpbis-dgram-priorities` (which I would entertain co-writing)",
           "createdAt": "2021-04-28T23:26:37Z",
           "updatedAt": "2021-04-28T23:26:37Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "I think defining priorities of sub-flows would be useful in Ian's use case if you wanted to merge the priorities of streams within the tunneled QUIC connections at the entry proxy, rather that strictly prioritize one tunnel over another.\r\n\r\nOne could do this by registering a context-ID for each priority level.  This context-ID could be used by the intermediary (did I break the rules again?) to determine the priority of the datagram back towards the client.",
+          "createdAt": "2021-05-07T18:46:54Z",
+          "updatedAt": "2021-05-07T18:46:54Z"
         }
       ]
     },
@@ -1350,6 +1357,37 @@
           "body": "My first concern is with infinite loops.  If the context was \"garbage collected\" by the recipient, the sender can simply re-create it if they still want it.  However, if it was closed due to incompatibility (i.e. rejected) or hitting a resource limit (e.g. max # of contexts), reopening it in response will produce a tight infinite loop.\r\n\r\nThis could be maybe be avoided by some kind of heuristic, but an explicit indication of what's going on seems better.",
           "createdAt": "2021-05-05T21:14:07Z",
           "updatedAt": "2021-05-05T21:14:07Z"
+        }
+      ]
+    },
+    {
+      "number": 54,
+      "id": "MDU6SXNzdWU4Nzc2OTY3OTQ=",
+      "title": "Can intermediaries interact with capsules, contexts and context IDs?",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/54",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "In #52, capsules, contexts and context IDs are explicitly defined as end-to-end and there are requirements for intermediaries to not modify them, and to not even parse them. The motivation for this was to ensure that we retain the ability to deploy extensions end-to-end without having to modify intermediaries. @afrind mentioned that these requirements might be too strict, as he would like to have his intermediary be able to parse the context ID, for logging purposes.",
+      "createdAt": "2021-05-06T16:24:48Z",
+      "updatedAt": "2021-05-06T20:31:21Z",
+      "closedAt": null,
+      "comments": [
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "Part of the comment from the PR is also about consistency of interface for generic HTTP libraries that can be used to build either endpoints or intermediaries.  If the context ID is always present, it's overly prescriptive to say that an intermediary can't parse it, and such a requirement couldn't be enforced anyways.\r\n\r\nIf context IDs are negotiated on/off, whether this is possible depends on the negotiation mechanism.",
+          "createdAt": "2021-05-06T20:09:08Z",
+          "updatedAt": "2021-05-06T20:09:08Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think its fine for a component that has bytes passing through it to look at those bytes. The import thing to do is set expectations on what that means for the protocol behaviour we are defining. We don't expect intermediaries to do anything with a context ID; they should not enforce the protocol semantic rules (odd, even, reuse etc).\r\n\r\nH2 and H3 somewhat solve this problem by decoupling frame parsing from frame payload interpretation. E.g. if the form of a request or response is invalid, an intermediary shouldn't pass it on. \r\n\r\nDATAGRAM is different because it isn't defined as an actual HTTP/3 frame with frame headers and frame payload. Something that might work is to formalise that quarter stream ID is part of the envelope that intermediaries have to be able to handle the syntax of, but context ID is part of content and separate. ",
+          "createdAt": "2021-05-06T20:31:21Z",
+          "updatedAt": "2021-05-06T20:31:21Z"
         }
       ]
     }
@@ -2767,7 +2805,7 @@
       "labels": [],
       "body": "This PR aims to take the design discussions we had at the last\r\ninterim, and propose a potential solution. This PR should in theory\r\ncontain enough information to allow folks to implement this new\r\ndesign. That will allow us to perform interop testing and confirm\r\nwhether the design is sound.\r\n\r\n[An HTML version of the draft with these changes is available here.](https://ietf-wg-masque.github.io/draft-ietf-masque-h3-datagram/two_layer_capsule/draft-ietf-masque-h3-datagram.html)",
       "createdAt": "2021-05-04T00:52:14Z",
-      "updatedAt": "2021-05-06T00:22:53Z",
+      "updatedAt": "2021-05-07T19:19:05Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "6cccb0e8b5149c1dae7d33c3579321032c591864",
@@ -2778,7 +2816,22 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "vasilvv",
+          "authorAssociation": "NONE",
+          "body": "I'm confused by this pull request (probably because I was out of the loop for a while).  My understanding, at least when I first read the proposal a month ago was that we would separate multiplexing streams and multiplexing contexts into different layers, so that methods that need context would get it (CONNECT-UDP), and features that don't (WebTransport/extended CONNECT) could use stream-associated datagrams directly.",
+          "createdAt": "2021-05-07T18:21:21Z",
+          "updatedAt": "2021-05-07T18:59:45Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@vasilvv you're referring to #45 which this PR isn't trying to address. That'll happen in a subsequent PR.",
+          "createdAt": "2021-05-07T19:19:05Z",
+          "updatedAt": "2021-05-07T19:19:05Z"
+        }
+      ],
       "reviews": [
         {
           "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUxNTQxNTAx",
@@ -3429,6 +3482,46 @@
               "body": "The core tenet of the two-layer design is that Stream IDs are per-hop and context IDs are end-to-end. That allows extensions to rely on the fact that both endpoints have the same view of context IDs. CAPSULE exists as an end-to-end mechanism, and similarly relies on that property. If we need a new per-hop mechanism, then we can use a different h3 frame. I've clarified that intermediaries don't send capsules apart from forwarding them, so they're not allowed to inject their own context IDs.",
               "createdAt": "2021-05-06T00:22:53Z",
               "updatedAt": "2021-05-06T00:22:53Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUzNTUxNTE3",
+          "commit": {
+            "abbreviatedOid": "057155d"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-06T15:17:48Z",
+          "updatedAt": "2021-05-06T15:20:37Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "Whatever mechanism the endpoint will use to know if it should parse the context ID can also be used by the intermediary as well.  My point was that in this PR, they are required.\r\n\r\nPresumably if/when negotiation is added the specification can be updated to reflect that.",
+              "createdAt": "2021-05-06T15:17:48Z",
+              "updatedAt": "2021-05-06T15:20:37Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjUzNjU2MTc0",
+          "commit": {
+            "abbreviatedOid": "057155d"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-06T16:25:37Z",
+          "updatedAt": "2021-05-06T16:25:37Z",
+          "comments": [
+            {
+              "originalPosition": 138,
+              "body": "I've filed #54 to keep track of this discussion so it doesn't get lost when this is merged. Let's continue this conversation there.",
+              "createdAt": "2021-05-06T16:25:37Z",
+              "updatedAt": "2021-05-06T16:25:37Z"
             }
           ]
         }
