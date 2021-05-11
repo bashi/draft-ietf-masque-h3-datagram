@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-09T01:06:32.778669+00:00",
+  "timestamp": "2021-05-11T01:05:02.196028+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -2805,7 +2805,7 @@
       "labels": [],
       "body": "This PR aims to take the design discussions we had at the last\r\ninterim, and propose a potential solution. This PR should in theory\r\ncontain enough information to allow folks to implement this new\r\ndesign. That will allow us to perform interop testing and confirm\r\nwhether the design is sound.\r\n\r\n[An HTML version of the draft with these changes is available here.](https://ietf-wg-masque.github.io/draft-ietf-masque-h3-datagram/two_layer_capsule/draft-ietf-masque-h3-datagram.html)",
       "createdAt": "2021-05-04T00:52:14Z",
-      "updatedAt": "2021-05-07T19:19:05Z",
+      "updatedAt": "2021-05-10T20:01:17Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "6cccb0e8b5149c1dae7d33c3579321032c591864",
@@ -3524,6 +3524,19 @@
               "updatedAt": "2021-05-06T16:25:37Z"
             }
           ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjU2MDM2NzUy",
+          "commit": {
+            "abbreviatedOid": "057155d"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-10T20:01:17Z",
+          "updatedAt": "2021-05-10T20:01:17Z",
+          "comments": []
         }
       ]
     }
