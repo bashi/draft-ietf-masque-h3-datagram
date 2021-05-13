@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-11T01:05:02.196028+00:00",
+  "timestamp": "2021-05-13T01:11:34.005039+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -1150,7 +1150,7 @@
       "labels": [],
       "body": "This issue assumes that decide to go with the two-layer design described in #41. Given that design, some applications might not need the multiplexing provided by context IDs. We have multiple options here:\r\n\r\n* Make context ID mandatory\r\n  * Applications that don't need it waste a byte per datagram\r\n* Negotiate the presence of context IDs using an HTTP header\r\n  * Context IDs would still be mandatory to implement on servers because the client might send that header\r\n* Have the method determine whether context IDs are present or not\r\n  * This would prevent extensibility on those methods\r\n* Create a REGISTER_NO_CONTEXT message\r\n  * This assumes we use the Message design from #44\r\n  * We add a register message that means that this stream does not use context IDs\r\n  * This allows avoiding the byte overhead without sacrificing extensibility",
       "createdAt": "2021-04-16T23:07:41Z",
-      "updatedAt": "2021-04-23T14:58:55Z",
+      "updatedAt": "2021-05-12T21:36:30Z",
       "closedAt": null,
       "comments": [
         {
@@ -1201,6 +1201,20 @@
           "body": "Yes, by proxy I meant intermediary.  And I agree about what intermediaries need to do, I just wanted to ensure I understood what server meant when David used it above.\r\n\r\nYup, whenever all this gets written up, we can make it clear that intermediaries can ignore much of this.",
           "createdAt": "2021-04-23T14:58:55Z",
           "updatedAt": "2021-04-23T14:58:55Z"
+        },
+        {
+          "author": "vasilvv",
+          "authorAssociation": "NONE",
+          "body": "The method defines the semantics of datagrams for a particular request, thus I think the third option makes most sense. I don't see a point in using explicit negotiation, since in the two cases I can think of the top of the head, the answer is always clear from the method (CONNECT-IP seems to always want context IDs, WebTransport does not ever want context IDs).  If some method starts out without context, but wants to add context later, it can add its own negotiation.",
+          "createdAt": "2021-05-12T20:46:19Z",
+          "updatedAt": "2021-05-12T20:46:19Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "One set of use cases for which the method approach(3) is best are those where there are multiple context IDs but they're predefined by the method and don't need negotiation.  My strawman is WebRTC.",
+          "createdAt": "2021-05-12T21:36:30Z",
+          "updatedAt": "2021-05-12T21:36:30Z"
         }
       ]
     },
