@@ -5,8 +5,8 @@
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                               L. Pardue
-Expires: 14 November 2021                                     Cloudflare
-                                                             13 May 2021
+Expires: 18 November 2021                                     Cloudflare
+                                                             17 May 2021
 
 
                     Using QUIC Datagrams with HTTP/3
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 14 November 2021.
+   This Internet-Draft will expire on 18 November 2021.
 
 Copyright Notice
 
@@ -304,6 +304,25 @@ Table of Contents
    capsule that violates one or more of these requirements, the endpoint
    MUST abruptly terminate the corresponding stream with a stream error
    of type H3_GENERAL_PROTOCOL_ERROR.
+
+   Endpoints MUST NOT send a REGISTER_DATAGRAM_CONTEXT capsule on a
+   stream before they have sent at least one HEADERS frame on that
+   stream.  This removes the need to buffer REGISTER_DATAGRAM_CONTEXT
+   capsules when the endpoint needs information from headers to
+   determine how to react to the capsule.  If an endpoint receives a
+   REGISTER_DATAGRAM_CONTEXT capsule on a stream that hasn't yet
+   received a HEADERS frame, the endpoint MUST abruptly terminate the
+   corresponding stream with a stream error of type
+   H3_GENERAL_PROTOCOL_ERROR.
+
+   Servers MUST NOT send a REGISTER_DATAGRAM_CONTEXT capsule on a stream
+   before they have received at least one REGISTER_DATAGRAM_CONTEXT
+   capsule from the client on that stream.  This ensures that clients
+   control whether datagrams are allowed for a given request.  If a
+   client receives a REGISTER_DATAGRAM_CONTEXT capsule on a stream where
+   the client has not yet sent a REGISTER_DATAGRAM_CONTEXT capsule, the
+   client MUST abruptly terminate the corresponding stream with a stream
+   error of type H3_GENERAL_PROTOCOL_ERROR.
 
 4.2.  The CLOSE_DATAGRAM_CONTEXT Capsule
 
