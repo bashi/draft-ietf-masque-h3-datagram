@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-16T01:17:42.264781+00:00",
+  "timestamp": "2021-05-18T01:14:03.172105+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -3602,6 +3602,109 @@
           "createdAt": "2021-05-10T20:01:17Z",
           "updatedAt": "2021-05-10T20:01:17Z",
           "comments": []
+        }
+      ]
+    },
+    {
+      "number": 55,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjQ2MDU4MzQ4",
+      "title": "Add some rules on ordering of register capsules",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/55",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This prevents some flavors of DoS attacks and provides clearer assumptions to endpoints.",
+      "createdAt": "2021-05-17T17:53:28Z",
+      "updatedAt": "2021-05-17T18:00:34Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "a419fb7b581b0fe2900349b65664928ed1a942fd",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "register_ordering",
+      "headRefOid": "d50a473c7d991d0bcfaa93dcf1429ff293bb526d",
+      "closedAt": "2021-05-17T18:00:34Z",
+      "mergedAt": "2021-05-17T18:00:33Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "104359017bdb560d20c1fa337ca34216b0f65cdb"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjYxMjUyNDk1",
+          "commit": {
+            "abbreviatedOid": "d50a473"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-17T17:59:10Z",
+          "updatedAt": "2021-05-17T17:59:10Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 56,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjQ2MTExNDk5",
+      "title": "Make contexts optional",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/56",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This change allows clients to disable contexts for a given stream.\r\nThis uses a new REGISTER_DATAGRAM_NO_CONTEXT capsule for negotiation.\r\nThe important property here is that it requires capsule support even\r\nwhen contexts are not required. This is critical to the health of the\r\necosystem as it will ensure that intermediaries that support datagrams\r\nbut not capsules cannot be deployed, as that would prevent future\r\nextensibility.\r\n\r\nCloses #45.",
+      "createdAt": "2021-05-17T19:10:01Z",
+      "updatedAt": "2021-05-17T21:40:30Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "104359017bdb560d20c1fa337ca34216b0f65cdb",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "optional_context",
+      "headRefOid": "b02a4872420c769ef91511f0afd8c2b298b4e9a3",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Editorial comments aside, I support the protocol feature of an optional DATAGRAM Context ID. Using a registration capsule, as proposed in this PR, is a very logical way of achieving that. I plan to implement this in my WIP code.",
+          "createdAt": "2021-05-17T21:40:30Z",
+          "updatedAt": "2021-05-17T21:40:30Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjYxMzQxODk5",
+          "commit": {
+            "abbreviatedOid": "b02a487"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "Left some specific comments in-line.\r\n\r\nThis change also has implications for CLOSE_DATAGRAM_CONTEXT. For instance, I presume it is an error to receive CLOSE_DATAGRAM_CONTEXT after receiving REGISTER_DATAGRAM_NO_CONTEXT.",
+          "createdAt": "2021-05-17T19:30:59Z",
+          "updatedAt": "2021-05-17T20:04:12Z",
+          "comments": [
+            {
+              "originalPosition": 76,
+              "body": "I think these rules are correct but a bit hard to follow in isolation and especially when there's only a few characters of difference.\r\n\r\nI wonder if pulling some of the text that discusses the relationship between CONTEXT and NO_CONTEXT registrations in the same stream into {datagram-contexts} could help.",
+              "createdAt": "2021-05-17T19:31:00Z",
+              "updatedAt": "2021-05-17T20:04:12Z"
+            },
+            {
+              "originalPosition": 132,
+              "body": "This is a good example of my prior comment, we could probably say earlier in the document that these can't be mixed in the same stream and then point to this section for wire-specifics.",
+              "createdAt": "2021-05-17T19:43:07Z",
+              "updatedAt": "2021-05-17T20:04:12Z"
+            }
+          ]
         }
       ]
     }
