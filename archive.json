@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-18T01:14:03.172105+00:00",
+  "timestamp": "2021-05-20T01:08:04.978306+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -693,15 +693,22 @@
       "labels": [],
       "body": "Consider a situation where a single HTTP/3 connection is terminated at a CDN and it carries two different WebTransport sessions to different backends.  Those backends may have different max datagram size, thus the protocol needs to be able to specify max datagram size limit per-flow.",
       "createdAt": "2021-02-26T01:05:14Z",
-      "updatedAt": "2021-02-26T01:10:58Z",
+      "updatedAt": "2021-05-19T20:37:04Z",
       "closedAt": null,
       "comments": [
         {
           "author": "LPardue",
-          "authorAssociation": "CONTRIBUTOR",
+          "authorAssociation": "COLLABORATOR",
           "body": "Do you mean DATAGRAM frame? Theres still an open question about whether we will continue with the max size Transport Parameter as a integer, or whether plain enable / disable would work ",
           "createdAt": "2021-02-26T01:10:58Z",
           "updatedAt": "2021-02-26T01:10:58Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm not sure whether this feature would be useful. Since datagram-based applications already need to perform PMTUD because the MTU might vary on each hop, I don't think there's much value in propagating the value of the transport parameter.",
+          "createdAt": "2021-05-19T20:37:04Z",
+          "updatedAt": "2021-05-19T20:37:04Z"
         }
       ]
     },
@@ -1272,7 +1279,7 @@
       "labels": [],
       "body": "I think it's be valuable for h3-datagram to be able to use the new HTTP priority draft.\r\n\r\nI think it'd be ok to say that the datagram flow has the same prioritization as the request that initiated it.  I don't think anything more complex is necessary, but I could be wrong.",
       "createdAt": "2021-04-28T20:09:30Z",
-      "updatedAt": "2021-05-07T18:46:54Z",
+      "updatedAt": "2021-05-19T21:12:40Z",
       "closedAt": null,
       "comments": [
         {
@@ -1344,6 +1351,34 @@
           "body": "I think defining priorities of sub-flows would be useful in Ian's use case if you wanted to merge the priorities of streams within the tunneled QUIC connections at the entry proxy, rather that strictly prioritize one tunnel over another.\r\n\r\nOne could do this by registering a context-ID for each priority level.  This context-ID could be used by the intermediary (did I break the rules again?) to determine the priority of the datagram back towards the client.",
           "createdAt": "2021-05-07T18:46:54Z",
           "updatedAt": "2021-05-07T18:46:54Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'm going to propose closing this issue with no action, with the intent to leave this functionality to extensions. ",
+          "createdAt": "2021-05-19T20:39:35Z",
+          "updatedAt": "2021-05-19T20:39:35Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "Adding text that says by default datagrams inherit the priority of the stream they are associated with seems likely to capture the most common cases.  If we can't agree on that and want to punt, it would be good to indicate in the draft that priority of datagrams is undefined/implementation specific.",
+          "createdAt": "2021-05-19T20:51:31Z",
+          "updatedAt": "2021-05-19T20:51:31Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I'll would be happy with Alan's suggestion. I will prepare a PR unless someone beats me too it.\r\n\r\nEdit: suggestion to state that it is undefined ",
+          "createdAt": "2021-05-19T21:03:39Z",
+          "updatedAt": "2021-05-19T21:04:21Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@LPardue stating that it is undefined sounds great to me.",
+          "createdAt": "2021-05-19T21:12:40Z",
+          "updatedAt": "2021-05-19T21:12:40Z"
         }
       ]
     },
@@ -1352,15 +1387,15 @@
       "id": "MDU6SXNzdWU4NzM5ODk1OTI=",
       "title": "Can HTTP server push use h3-datagram?",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/47",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ianswett",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "I would prefer that h3-datagram cannot use server push, because I believe it adds extra complexity and there are no clear use cases.\r\n\r\nAdditionally, server push is an optimization which allows a server to push a resource up to 1RTT prior to the client's (expected) requests for the resource.  h3-datagram is much more analogous to a CONNECT, which is neither idempotent or cacheable, so I'd assume a client would drop any received datagrams, rendering the optimization useless.\r\n\r\nWhatever we decide, we should definitely clarify this.  This issue was motivated by https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/42#issuecomment-827750984\r\n",
       "createdAt": "2021-05-02T16:52:08Z",
-      "updatedAt": "2021-05-03T15:37:52Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-19T20:41:24Z",
+      "closedAt": "2021-05-19T20:41:24Z",
       "comments": [
         {
           "author": "LPardue",
@@ -1389,6 +1424,13 @@
           "body": "I think there are better ways to send unreliable bodies than unreliable datagrams.\r\n\r\nI agree that in some homogeneous environments, multi-layer pushes are practical, but in the general case I don't think they are.  Apple's low latency HLS abandoned push fairly early on for that reason.",
           "createdAt": "2021-05-03T15:37:52Z",
           "updatedAt": "2021-05-03T15:37:52Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Given that #52 has been merged, datagrams are now associated with request streams. That doesn't preclude push from using datagrams, because push is also associated with a request stream, but it does mean that datagrams are not directly linked to push streams.",
+          "createdAt": "2021-05-19T20:41:24Z",
+          "updatedAt": "2021-05-19T20:41:24Z"
         }
       ]
     },
@@ -3659,7 +3701,7 @@
       "labels": [],
       "body": "This change allows clients to disable contexts for a given stream.\r\nThis uses a new REGISTER_DATAGRAM_NO_CONTEXT capsule for negotiation.\r\nThe important property here is that it requires capsule support even\r\nwhen contexts are not required. This is critical to the health of the\r\necosystem as it will ensure that intermediaries that support datagrams\r\nbut not capsules cannot be deployed, as that would prevent future\r\nextensibility.\r\n\r\nCloses #45.",
       "createdAt": "2021-05-17T19:10:01Z",
-      "updatedAt": "2021-05-17T21:40:30Z",
+      "updatedAt": "2021-05-18T17:25:37Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "104359017bdb560d20c1fa337ca34216b0f65cdb",
@@ -3703,6 +3745,92 @@
               "body": "This is a good example of my prior comment, we could probably say earlier in the document that these can't be mixed in the same stream and then point to this section for wire-specifics.",
               "createdAt": "2021-05-17T19:43:07Z",
               "updatedAt": "2021-05-17T20:04:12Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjYxNjA1MTIw",
+          "commit": {
+            "abbreviatedOid": "b02a487"
+          },
+          "author": "vasilvv",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "Looks good overall.",
+          "createdAt": "2021-05-18T03:42:10Z",
+          "updatedAt": "2021-05-18T06:26:55Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "I am not sure this is necessary.  Extension strings only make sense if you have multiple contexts within a request; when you only have one, any extensions can be negotiated within headers.",
+              "createdAt": "2021-05-18T03:42:10Z",
+              "updatedAt": "2021-05-18T06:26:55Z"
+            },
+            {
+              "originalPosition": 111,
+              "body": "There's a bit of contradiction here.  You claim that capsules are end-to-end; yet stream resets are per-hop mechanism, and in general I don't believe there is a reliable error propagation of stream reset codes across hops.",
+              "createdAt": "2021-05-18T03:45:26Z",
+              "updatedAt": "2021-05-18T06:26:55Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjYyMzYzODYw",
+          "commit": {
+            "abbreviatedOid": "b02a487"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-18T17:12:15Z",
+          "updatedAt": "2021-05-18T17:12:16Z",
+          "comments": [
+            {
+              "originalPosition": 111,
+              "body": "As far as I know, HTTP/3 doesn't have any other way to abruptly close request streams apart from reseting the stream. That reset will be propagated, and if the error code is changed that's not a big deal. This matches how HTTP/3 CONNECT reacts to a TCP RST for example.",
+              "createdAt": "2021-05-18T17:12:16Z",
+              "updatedAt": "2021-05-18T17:12:16Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjYyMzY1MDYx",
+          "commit": {
+            "abbreviatedOid": "b02a487"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-18T17:13:35Z",
+          "updatedAt": "2021-05-18T17:13:35Z",
+          "comments": [
+            {
+              "originalPosition": 88,
+              "body": "You could use a header, but if you've already defined an extension key for the multiple context use-case, why have to define a header too? I prefer the simplicity and symmetry of using the same mechanism.",
+              "createdAt": "2021-05-18T17:13:35Z",
+              "updatedAt": "2021-05-18T17:13:35Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjYyMzc1MzAx",
+          "commit": {
+            "abbreviatedOid": "b02a487"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-18T17:25:11Z",
+          "updatedAt": "2021-05-18T17:25:12Z",
+          "comments": [
+            {
+              "originalPosition": 111,
+              "body": "It's good behaviour to propagate errors across hops, even if they require mapping. For example, see the H2-H3 mapping advice in https://datatracker.ietf.org/doc/html/draft-ietf-quic-http-34#appendix-A.4.1.\r\n\r\nI think the text is fine right to focus on HTTP/3 right now. Subsequent follow up work to make this design work over other HTTP versions can add guidance on how to propagate errors if specific advice is needed. I wouldn't worry about it in isolation since we might overlook details.",
+              "createdAt": "2021-05-18T17:25:12Z",
+              "updatedAt": "2021-05-18T17:25:37Z"
             }
           ]
         }
