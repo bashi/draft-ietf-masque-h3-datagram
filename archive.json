@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-20T01:08:04.978306+00:00",
+  "timestamp": "2021-05-23T01:20:56.803090+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -1279,7 +1279,7 @@
       "labels": [],
       "body": "I think it's be valuable for h3-datagram to be able to use the new HTTP priority draft.\r\n\r\nI think it'd be ok to say that the datagram flow has the same prioritization as the request that initiated it.  I don't think anything more complex is necessary, but I could be wrong.",
       "createdAt": "2021-04-28T20:09:30Z",
-      "updatedAt": "2021-05-19T21:12:40Z",
+      "updatedAt": "2021-05-20T15:31:46Z",
       "closedAt": null,
       "comments": [
         {
@@ -1379,6 +1379,41 @@
           "body": "@LPardue stating that it is undefined sounds great to me.",
           "createdAt": "2021-05-19T21:12:40Z",
           "updatedAt": "2021-05-19T21:12:40Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "I prefer it inherit the priority of the associated stream as @afrind suggested.",
+          "createdAt": "2021-05-20T13:20:30Z",
+          "updatedAt": "2021-05-20T13:20:30Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I think that sounds like an easy suggestion but in practice doesn't help implementers. Inheriting the same signal doesn't really help the multiplexing scheduling conundrum - IMO trying to make any reasonable suggestion will tie up time in this document development that could be answered elsewhere. ",
+          "createdAt": "2021-05-20T13:25:42Z",
+          "updatedAt": "2021-05-20T13:25:42Z"
+        },
+        {
+          "author": "ianswett",
+          "authorAssociation": "NONE",
+          "body": "If I'm an intermediary l7 load balancer, and support h3-datagram but am not looking deeper into the payload, I'm going to have to make scheduling decisions, so leaving it undefined could cause large differences in how h3-datagram based applications work on different intermediaries.",
+          "createdAt": "2021-05-20T13:54:16Z",
+          "updatedAt": "2021-05-20T13:54:16Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Right but that's the situation the base HTTP/3 specification has right now too. \r\n\r\nAnd even if the L7 balancer applies scheduling logic based on the extensible priorities draft, \r\n\r\n1) it would need to decide how to schedule ingress data (request content) itself, since that is not defined \r\n2) we have little experience about how to schedule datagram and stream data concurrently. I would expect implementers to turn around immediately and ask us how to do that if we say explicitly here that there is a datagram priority signal.\r\n\r\nI am not saying we punt the question indefinately. But in the interest of making progress here (especially to limit feature creep) I am suggesting we write a standalone `draft-pardue-masque-h3-dgram-priorities` document that can capture all the concerns as completely as is useful. If that draft makes rapid progress it might be a candidate for getting incorporated back into the H3 datagram specification. I would be happy to bootstrap that document in a new repo and work with Alan, Ian or other folks that can give some opinions.",
+          "createdAt": "2021-05-20T14:09:34Z",
+          "updatedAt": "2021-05-20T14:09:34Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "+1 to @LPardue. The more I think about this the more I believe that H3DGRAM has to match what H3 does - in a vacuum as an implementor I don't know how to implement \"datagram should inherit priority of the corresponding stream\" when no one has actually defined what a priority is. There are important questions like \"should higher priority completely starve lower priority or not?\" that are not answered by H3. H3DGRAM itself cannot depend on a given priorities extension, because we might define a different priorities scheme later. Having a separate draft that explains how to combine draft-ietf-masque-h3-datagram and draft-ietf-httpbis-priority sounds like the best option.",
+          "createdAt": "2021-05-20T15:31:46Z",
+          "updatedAt": "2021-05-20T15:31:46Z"
         }
       ]
     },
