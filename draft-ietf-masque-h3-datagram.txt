@@ -66,7 +66,7 @@ Table of Contents
    2.  Multiplexing
      2.1.  Datagram Contexts
      2.2.  Context ID Allocation
-   3.  HTTP/3 DATAGRAM Frame Format
+   3.  HTTP/3 DATAGRAM Format
    4.  CAPSULE HTTP/3 Frame Definition
      4.1.  The REGISTER_DATAGRAM_CONTEXT Capsule
      4.2.  The REGISTER_DATAGRAM_NO_CONTEXT Capsule
@@ -167,7 +167,7 @@ Table of Contents
    possible for the same numeral context ID to be used simultaneously in
    distinct requests.
 
-3.  HTTP/3 DATAGRAM Frame Format
+3.  HTTP/3 DATAGRAM Format
 
    When used with HTTP/3, the Datagram Data field of QUIC DATAGRAM
    frames uses the following format (using the notation from the
@@ -179,7 +179,7 @@ Table of Contents
      HTTP/3 Datagram Payload (..),
    }
 
-                   Figure 1: HTTP/3 DATAGRAM Frame Format
+                      Figure 1: HTTP/3 DATAGRAM Format
 
    Quarter Stream ID:  A variable-length integer that contains the value
       of the client-initiated bidirectional stream that this datagram is
