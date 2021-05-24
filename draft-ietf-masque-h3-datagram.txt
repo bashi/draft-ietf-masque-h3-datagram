@@ -73,14 +73,15 @@ Table of Contents
      4.3.  The CLOSE_DATAGRAM_CONTEXT Capsule
      4.4.  The DATAGRAM Capsule
    5.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
-   6.  HTTP/1.x and HTTP/2 Support
-   7.  Security Considerations
-   8.  IANA Considerations
-     8.1.  HTTP/3 CAPSULE Frame
-     8.2.  HTTP SETTINGS Parameter
-     8.3.  Capsule Types
-     8.4.  Context Extension Keys
-   9.  Normative References
+   6.  Prioritization
+   7.  HTTP/1.x and HTTP/2 Support
+   8.  Security Considerations
+   9.  IANA Considerations
+     9.1.  HTTP/3 CAPSULE Frame
+     9.2.  HTTP SETTINGS Parameter
+     9.3.  Capsule Types
+     9.4.  Context Extension Keys
+   10. Normative References
    Appendix A.  Examples
      A.1.  CONNECT-UDP
      A.2.  CONNECT-UDP with Timestamp Extension
@@ -287,7 +288,7 @@ Table of Contents
 
    Extension String:  A string of comma-separated key-value pairs to
       enable extensibility.  Keys are registered with IANA, see
-      Section 8.4.
+      Section 9.4.
 
    The ABNF for the Extension String field is as follows (using syntax
    from Section 3.2.6 of [RFC7230]):
@@ -513,7 +514,14 @@ Table of Contents
    the connection with error H3_SETTINGS_ERROR.  In all cases, the
    maximum permitted value of the H3_DATAGRAM SETTINGS parameter is 1.
 
-6.  HTTP/1.x and HTTP/2 Support
+6.  Prioritization
+
+   Prioritization of HTTP/3 datagrams is not defined in this document.
+   Future extensions MAY define how to prioritize datagrams, and MAY
+   define signaling to allow endpoints to communicate their
+   prioritization preferences.
+
+7.  HTTP/1.x and HTTP/2 Support
 
    We can provide DATAGRAM support in HTTP/2 by defining the CAPSULE
    frame in HTTP/2.
@@ -524,7 +532,7 @@ Table of Contents
    TODO: Refactor this document into "HTTP Datagrams" with definitions
    for HTTP/1.x, HTTP/2, and HTTP/3.
 
-7.  Security Considerations
+8.  Security Considerations
 
    Since this feature requires sending an HTTP/3 Settings parameter, it
    "sticks out".  In other words, probing clients can learn whether a
@@ -533,9 +541,9 @@ Table of Contents
    the fact that there are applications using HTTP/3 datagrams enabled
    on this endpoint.
 
-8.  IANA Considerations
+9.  IANA Considerations
 
-8.1.  HTTP/3 CAPSULE Frame
+9.1.  HTTP/3 CAPSULE Frame
 
    This document will request IANA to register the following entry in
    the "HTTP/3 Frames" registry:
@@ -546,7 +554,7 @@ Table of Contents
      |  CAPSULE   | 0xffcab5 | This Document |
      +------------+----------+---------------+
 
-8.2.  HTTP SETTINGS Parameter
+9.2.  HTTP SETTINGS Parameter
 
    This document will request IANA to register the following entry in
    the "HTTP/3 Settings" registry:
@@ -557,7 +565,7 @@ Table of Contents
      | H3_DATAGRAM  | 0xffd276 | This Document |    0    |
      +--------------+----------+---------------+---------+
 
-8.3.  Capsule Types
+9.3.  Capsule Types
 
    This document establishes a registry for HTTP/3 frame type codes.
    The "HTTP Capsule Types" registry governs a 62-bit space.
@@ -591,7 +599,7 @@ Table of Contents
    | REGISTER_DATAGRAM_NO_CONTEXT | 0x03  | This Document |
    +------------------------------+-------+---------------+
 
-8.4.  Context Extension Keys
+9.4.  Context Extension Keys
 
    REGISTER_DATAGRAM_CONTEXT capsules carry key-value pairs, see
    Section 4.1.  This document will request IANA to create an "HTTP
@@ -611,7 +619,7 @@ Table of Contents
    Section 4.4 of [IANA-POLICY]) where two registrations MUST NOT have
    the same Key. This registry is initially empty.
 
-9.  Normative References
+10.  Normative References
 
    [DGRAM]    Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
               Datagram Extension to QUIC", Work in Progress, Internet-
