@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-23T01:20:56.803090+00:00",
+  "timestamp": "2021-05-25T01:14:39.223603+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -686,15 +686,15 @@
       "id": "MDU6SXNzdWU4MTY5MzM4NDQ=",
       "title": "Datagram flows should have their individual max datagram size",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/28",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "vasilvv",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "Consider a situation where a single HTTP/3 connection is terminated at a CDN and it carries two different WebTransport sessions to different backends.  Those backends may have different max datagram size, thus the protocol needs to be able to specify max datagram size limit per-flow.",
       "createdAt": "2021-02-26T01:05:14Z",
-      "updatedAt": "2021-05-19T20:37:04Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-24T22:14:11Z",
+      "closedAt": "2021-05-24T22:14:11Z",
       "comments": [
         {
           "author": "LPardue",
@@ -709,6 +709,13 @@
           "body": "I'm not sure whether this feature would be useful. Since datagram-based applications already need to perform PMTUD because the MTU might vary on each hop, I don't think there's much value in propagating the value of the transport parameter.",
           "createdAt": "2021-05-19T20:37:04Z",
           "updatedAt": "2021-05-19T20:37:04Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Discussed this offline with @vasilvv. Given that the MTU can change mid-flow for each hop, propagating this information to both endpoints is non-trivial. This means there are two solutions:\r\n1. applications that use datagrams perform their own end-to-end PMTUD\r\n2. a future extension to HTTP/3 datagrams could define a way to communicate this\r\n\r\nIn both cases, we don't need to address this now in the HTTP/3 datagrams draft, so I'm closing this issue.",
+          "createdAt": "2021-05-24T22:14:11Z",
+          "updatedAt": "2021-05-24T22:14:11Z"
         }
       ]
     },
@@ -960,15 +967,15 @@
       "id": "MDU6SXNzdWU4NTkzNDc4MTc=",
       "title": "DATAGRAM and STREAM+FIN reordering",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/40",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "afrind",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "H3 datagrams are associated with a stream, so it makes sense that it is only valid to send DATAGRAMs before sending the stream FIN.  These packets may be received out of order however.  What should receivers do with these packets?\r\n\r\nThe simplest action for the receiver is to drop any datagrams received after FIN, but I can imagine applications where the receiver would prefer to allow them to be processed for some time.  Should the draft offer guidance for this?\r\n\r\nThe answer might be different if we use Flow IDs as connection scoped identifiers or the 2-layer approach (Stream ID+Flow ID) discussed at the interim.",
       "createdAt": "2021-04-16T00:16:07Z",
-      "updatedAt": "2021-04-16T19:08:30Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-24T21:42:23Z",
+      "closedAt": "2021-05-24T21:42:23Z",
       "comments": [
         {
           "author": "LPardue",
@@ -1192,15 +1199,15 @@
       "id": "MDU6SXNzdWU4NjAyNDY1MzI=",
       "title": "Is the context ID optional?",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/45",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This issue assumes that decide to go with the two-layer design described in #41. Given that design, some applications might not need the multiplexing provided by context IDs. We have multiple options here:\r\n\r\n* Make context ID mandatory\r\n  * Applications that don't need it waste a byte per datagram\r\n* Negotiate the presence of context IDs using an HTTP header\r\n  * Context IDs would still be mandatory to implement on servers because the client might send that header\r\n* Have the method determine whether context IDs are present or not\r\n  * This would prevent extensibility on those methods\r\n* Create a REGISTER_NO_CONTEXT message\r\n  * This assumes we use the Message design from #44\r\n  * We add a register message that means that this stream does not use context IDs\r\n  * This allows avoiding the byte overhead without sacrificing extensibility",
       "createdAt": "2021-04-16T23:07:41Z",
-      "updatedAt": "2021-05-12T21:36:30Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-24T16:16:13Z",
+      "closedAt": "2021-05-24T16:16:13Z",
       "comments": [
         {
           "author": "tfpauly",
@@ -1272,15 +1279,15 @@
       "id": "MDU6SXNzdWU4NzAzMTgxMjE=",
       "title": "The spec should discuss how h3-datagram works(or does not) with priority",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/46",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "ianswett",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "I think it's be valuable for h3-datagram to be able to use the new HTTP priority draft.\r\n\r\nI think it'd be ok to say that the datagram flow has the same prioritization as the request that initiated it.  I don't think anything more complex is necessary, but I could be wrong.",
       "createdAt": "2021-04-28T20:09:30Z",
-      "updatedAt": "2021-05-20T15:31:46Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-24T21:42:33Z",
+      "closedAt": "2021-05-24T21:42:33Z",
       "comments": [
         {
           "author": "DavidSchinazi",
@@ -1498,15 +1505,15 @@
       "id": "MDU6SXNzdWU4Nzc2OTY3OTQ=",
       "title": "Can intermediaries interact with capsules, contexts and context IDs?",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/54",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "In #52, capsules, contexts and context IDs are explicitly defined as end-to-end and there are requirements for intermediaries to not modify them, and to not even parse them. The motivation for this was to ensure that we retain the ability to deploy extensions end-to-end without having to modify intermediaries. @afrind mentioned that these requirements might be too strict, as he would like to have his intermediary be able to parse the context ID, for logging purposes.",
       "createdAt": "2021-05-06T16:24:48Z",
-      "updatedAt": "2021-05-13T14:02:45Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-24T22:08:28Z",
+      "closedAt": "2021-05-24T22:08:28Z",
       "comments": [
         {
           "author": "afrind",
@@ -3729,24 +3736,26 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NjQ2MTExNDk5",
       "title": "Make contexts optional",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/56",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This change allows clients to disable contexts for a given stream.\r\nThis uses a new REGISTER_DATAGRAM_NO_CONTEXT capsule for negotiation.\r\nThe important property here is that it requires capsule support even\r\nwhen contexts are not required. This is critical to the health of the\r\necosystem as it will ensure that intermediaries that support datagrams\r\nbut not capsules cannot be deployed, as that would prevent future\r\nextensibility.\r\n\r\nCloses #45.",
       "createdAt": "2021-05-17T19:10:01Z",
-      "updatedAt": "2021-05-18T17:25:37Z",
+      "updatedAt": "2021-05-24T16:16:13Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "104359017bdb560d20c1fa337ca34216b0f65cdb",
       "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "headRefName": "optional_context",
       "headRefOid": "b02a4872420c769ef91511f0afd8c2b298b4e9a3",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2021-05-24T16:16:13Z",
+      "mergedAt": "2021-05-24T16:16:13Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "9c4c32917d22e8600f4818382ec151c045728bd2"
+      },
       "comments": [
         {
           "author": "LPardue",
@@ -3754,6 +3763,13 @@
           "body": "Editorial comments aside, I support the protocol feature of an optional DATAGRAM Context ID. Using a registration capsule, as proposed in this PR, is a very logical way of achieving that. I plan to implement this in my WIP code.",
           "createdAt": "2021-05-17T21:40:30Z",
           "updatedAt": "2021-05-17T21:40:30Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Looks like there's support for merging this. Some additional editorial work is needed, but we'll do that in followups.",
+          "createdAt": "2021-05-24T16:16:08Z",
+          "updatedAt": "2021-05-24T16:16:08Z"
         }
       ],
       "reviews": [
@@ -3870,6 +3886,238 @@
           ]
         }
       ]
+    },
+    {
+      "number": 57,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjUxNjIxNzAy",
+      "title": "Clarify datagram lifetime with stream",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/57",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Minor editorial clarification.\r\n\r\nCloses #40.",
+      "createdAt": "2021-05-24T20:59:37Z",
+      "updatedAt": "2021-05-24T21:42:23Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "be59a39d45f44b3a0321a6976674635af81dfa9d",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "lifetime",
+      "headRefOid": "60777c8da14e01939beff432ca9865a19f5f5758",
+      "closedAt": "2021-05-24T21:42:23Z",
+      "mergedAt": "2021-05-24T21:42:23Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "d922f8071d357e1bb37a3acbed1546bd35c9e711"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MTkxNzAw",
+          "commit": {
+            "abbreviatedOid": "279aeff"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-24T21:24:16Z",
+          "updatedAt": "2021-05-24T21:24:16Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "There still seems to be some ambiguity here. Where you say \"Endpoints MUST NOT send HTTP/3 datagrams unless the corresponding stream is open\" do you really mean that it is ok to send Datagrams if the local send side is closed? CONNECT-UDP, IIRC, prohibits clients closing their end of the stream but there seems to be no requirement for other methods to do so. I think a model where you can only send DATAGRAM frames while you can send STREAM frames is the most rational way to approach this. \r\n\r\nSince there is no general ordering guarantee between DATAGRAM and STREAM, your recommendation \"If an HTTP/3 datagram is received and its Quarter Stream ID maps to a stream that has already been closed, the receiver MUST silently drop\" is good. We might want to loosen this a little and say \"If an HTTP/3 receiver detects that it has received a datagram with a Quarter Stream ID that maps to a closed stream, it MUST silently drop.\" - the reason being that certain types of housekeeping might be impractical for some implementations.",
+              "createdAt": "2021-05-24T21:24:16Z",
+              "updatedAt": "2021-05-24T21:24:16Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MjA3NTkz",
+          "commit": {
+            "abbreviatedOid": "60777c8"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-24T21:31:40Z",
+          "updatedAt": "2021-05-24T21:31:40Z",
+          "comments": [
+            {
+              "originalPosition": 15,
+              "body": "I tweaked the text to make clear it's tied to one direction of the stream, and that should resolve this.",
+              "createdAt": "2021-05-24T21:31:40Z",
+              "updatedAt": "2021-05-24T21:31:40Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MjExMjkx",
+          "commit": {
+            "abbreviatedOid": "60777c8"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "This improvement is good enough for me. Thanks.",
+          "createdAt": "2021-05-24T21:38:10Z",
+          "updatedAt": "2021-05-24T21:38:10Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 58,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjUxNjMyNTgw",
+      "title": "Make prioritization undefined",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/58",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Punt prioritization to extensions like QUIC and HTTP/3 did.\r\n\r\nCloses #46.",
+      "createdAt": "2021-05-24T21:14:26Z",
+      "updatedAt": "2021-05-24T21:42:33Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "be59a39d45f44b3a0321a6976674635af81dfa9d",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "priority",
+      "headRefOid": "a4fe673de4655eeecd8b06162864a6c4d9ddb76f",
+      "closedAt": "2021-05-24T21:42:33Z",
+      "mergedAt": "2021-05-24T21:42:33Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "0cdcdd054dc1815352d79c3031fb9d91107ea74e"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MTk4MDE0",
+          "commit": {
+            "abbreviatedOid": "a4fe673"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-24T21:26:33Z",
+          "updatedAt": "2021-05-24T21:26:33Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 59,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjUxNjQzNTA2",
+      "title": "Clarify intermediary parsing rules",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/59",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Contexts are end-to-end, and intermediaries MUST NOT parse them.\r\n\r\nCloses #54.",
+      "createdAt": "2021-05-24T21:26:23Z",
+      "updatedAt": "2021-05-24T22:08:28Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "be59a39d45f44b3a0321a6976674635af81dfa9d",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "intermediary",
+      "headRefOid": "0aba1736801c7160d03fa142baac244b1e225950",
+      "closedAt": "2021-05-24T22:08:28Z",
+      "mergedAt": "2021-05-24T22:08:28Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "f899b094074eda3bb0f5141d5e6c79074121c5c8"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MjA5NjY5",
+          "commit": {
+            "abbreviatedOid": "43473fb"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-24T21:35:16Z",
+          "updatedAt": "2021-05-24T21:35:16Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "```suggestion\r\nH3_GENERAL_PROTOCOL_ERROR. The Context ID field is optional and its use is\r\nnegotiated end-to-end see {{ref}}. Therefore intermediaries cannot\r\nknow whether the Context ID field is present or absent and they \r\nMUST ignore any HTTP/3 Datagram fields after the Quarter Stream ID.\r\n```\r\n\r\nHere's an alternative that's less wordy at risk of losing some points you were trying to make. \r\n\r\nI don't think putting/repeating the negotiation requirement right here is too great, so I've replace the parenthesised clause with a reference to wherever that requirement actually lives.\r\n\r\nI also made a horrible mess of your line wrapping :D",
+              "createdAt": "2021-05-24T21:35:16Z",
+              "updatedAt": "2021-05-24T21:35:45Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MjEzNTA0",
+          "commit": {
+            "abbreviatedOid": "0aba173"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-24T21:42:04Z",
+          "updatedAt": "2021-05-24T21:42:04Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Took that text and tweaked it a bit more.",
+              "createdAt": "2021-05-24T21:42:04Z",
+              "updatedAt": "2021-05-24T21:42:04Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY3MjE3NjQ2",
+          "commit": {
+            "abbreviatedOid": "0aba173"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM! :shipit: ",
+          "createdAt": "2021-05-24T21:49:53Z",
+          "updatedAt": "2021-05-24T21:49:53Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 60,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjUxNjk3ODcw",
+      "title": "Clarify Opaque Capsules",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/60",
+      "state": "OPEN",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "@afrind points out that in order to correctly forward DATAGRAMs between transports where the QUIC DATAGRAM frame isn't always available, intermediaries need the ability to parse some capsules.",
+      "createdAt": "2021-05-24T23:13:55Z",
+      "updatedAt": "2021-05-24T23:13:55Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "13a8ccd227f217367896cef03f92649db5c5bba3",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "opaque",
+      "headRefOid": "3395b87191c364212a7faf36a37bbd1038873716",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
     }
   ]
 }
