@@ -5,8 +5,8 @@
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                               L. Pardue
-Expires: 25 November 2021                                     Cloudflare
-                                                             24 May 2021
+Expires: 27 November 2021                                     Cloudflare
+                                                             26 May 2021
 
 
                     Using QUIC Datagrams with HTTP/3
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 November 2021.
+   This Internet-Draft will expire on 27 November 2021.
 
 Copyright Notice
 
@@ -243,7 +243,10 @@ Table of Contents
    CAPSULE is an HTTP/3 Frame (as opposed to a QUIC frame) which SHALL
    only be sent in client-initiated bidirectional streams.
    Intermediaries forward received CAPSULE frames in their unmodified
-   entirety on the same stream where it would forward DATA frames.
+   entirety on the same stream where it would forward DATA frames.  Each
+   Capsule Type determines whether it is opaque or transparent to
+   intermediaries: opaque capsules are forwarded unmodified while
+   transparent ones can be parsed or added by intermediaries.
 
    This specification of CAPSULE currently uses HTTP/3 frame type
    0xffcab5.  If this document is approved, a lower number will be
@@ -271,12 +274,13 @@ Table of Contents
    send any opaque CAPSULE frames other than the ones it is forwarding.
    All Capsule Types defined in this document are opaque, with the
    exception of the DATAGRAM Capsule, see Section 4.4.  Definitions of
-   new Capsule Types MAY specify that the newly introduced type is not
-   opaque.  Intermediaries MUST treat unknown Capsule Types as opaque.
+   new Capsule Types MAY specify that the newly introduced type is
+   transparent.  Intermediaries MUST treat unknown Capsule Types as
+   opaque.
 
-   Intermediaries respect the order of CAPSULE frames: if an
-   intermediary receives two CAPSULE frames in a given order, it MUST
-   forward them in the same order.
+   Intermediaries respect the order of opaque CAPSULE frames: if an
+   intermediary receives two opaque CAPSULE frames in a given order, it
+   MUST forward them in the same order.
 
    Endpoints which receive a Capsule with an unknown Capsule Type MUST
    silently drop that Capsule.
@@ -499,12 +503,12 @@ Table of Contents
    how to process them from Section 3 also apply to HTTP/3 datagrams
    sent and received using the DATAGRAM capsule.
 
-   The DATAGRAM Capsule is not opaque, meaning that intermediaries MAY
-   parse it and send DATAGRAM Capsules that they did not receive.  This
-   allows an intermediary to reencode HTTP/3 Datagrams as it forwards
-   them: in other words, an intermediary MAY send a DATAGRAM Capsule to
-   forward an HTTP/3 Datagram which was received in a QUIC DATAGRAM
-   frame, and vice versa.
+   The DATAGRAM Capsule is transparent to intermediaries, meaning that
+   intermediaries MAY parse it and send DATAGRAM Capsules that they did
+   not receive.  This allows an intermediary to reencode HTTP/3
+   Datagrams as it forwards them: in other words, an intermediary MAY
+   send a DATAGRAM Capsule to forward an HTTP/3 Datagram which was
+   received in a QUIC DATAGRAM frame, and vice versa.
 
 5.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
 
