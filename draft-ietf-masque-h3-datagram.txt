@@ -5,8 +5,8 @@
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                               L. Pardue
-Expires: 25 November 2021                                     Cloudflare
-                                                             24 May 2021
+Expires: 27 November 2021                                     Cloudflare
+                                                             26 May 2021
 
 
                     Using QUIC Datagrams with HTTP/3
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 25 November 2021.
+   This Internet-Draft will expire on 27 November 2021.
 
 Copyright Notice
 
@@ -72,16 +72,20 @@ Table of Contents
      4.2.  The REGISTER_DATAGRAM_NO_CONTEXT Capsule
      4.3.  The CLOSE_DATAGRAM_CONTEXT Capsule
      4.4.  The DATAGRAM Capsule
-   5.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
-   6.  Prioritization
-   7.  HTTP/1.x and HTTP/2 Support
-   8.  Security Considerations
-   9.  IANA Considerations
-     9.1.  HTTP/3 CAPSULE Frame
-     9.2.  HTTP SETTINGS Parameter
-     9.3.  Capsule Types
-     9.4.  Context Extension Keys
-   10. Normative References
+   5.  Context Extensibility
+     5.1.  The CLOSE_CODE Context Extension Type
+     5.2.  The DETAILS Context Extension Type
+   6.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
+   7.  Prioritization
+   8.  HTTP/1.x and HTTP/2 Support
+   9.  Security Considerations
+   10. IANA Considerations
+     10.1.  HTTP/3 CAPSULE Frame
+     10.2.  HTTP SETTINGS Parameter
+     10.3.  Capsule Types
+     10.4.  Context Extension Types
+     10.5.  Context Close Codes
+   11. Normative References
    Appendix A.  Examples
      A.1.  CONNECT-UDP
      A.2.  CONNECT-UDP with Timestamp Extension
@@ -283,24 +287,14 @@ Table of Contents
 
    REGISTER_DATAGRAM_CONTEXT Capsule {
      Context ID (i),
-     Extension String (..),
+     Context Extensions (..),
    }
 
              Figure 3: REGISTER_DATAGRAM_CONTEXT Capsule Format
 
    Context ID:  The context ID to register.
 
-   Extension String:  A string of comma-separated key-value pairs to
-      enable extensibility.  Keys are registered with IANA, see
-      Section 9.4.
-
-   The ABNF for the Extension String field is as follows (using syntax
-   from Section 3.2.6 of [RFC7230]):
-
-     extension-string = [ ext-member *( "," ext-member ) ]
-     ext-member       = ext-member-key "=" ext-member-value
-     ext-member-key   = token
-     ext-member-value = token
+   Context Extensions:  See Section 5.
 
    Note that these registrations are unilateral and bidirectional: the
    sender of the frame unilaterally defines the semantics it will apply
@@ -360,14 +354,12 @@ Table of Contents
    field consists of:
 
    REGISTER_DATAGRAM_NO_CONTEXT Capsule {
-     Extension String (..),
+     Context Extensions (..),
    }
 
            Figure 4: REGISTER_DATAGRAM_NO_CONTEXT Capsule Format
 
-   Extension String:  A string of comma-separated key-value pairs to
-      enable extensibility, see the definition of the same field in
-      Section 4.1 for details.
+   Context Extensions:  See Section 5.
 
    Note that this registration is unilateral and bidirectional: the
    client unilaterally defines the semantics it will apply to the
@@ -423,16 +415,14 @@ Table of Contents
 
    CLOSE_DATAGRAM_CONTEXT Capsule {
      Context ID (i),
-     Extension String (..),
+     Context Extensions (..),
    }
 
               Figure 5: CLOSE_DATAGRAM_CONTEXT Capsule Format
 
    Context ID:  The context ID to close.
 
-   Extension String:  A string of comma-separated key-value pairs to
-      enable extensibility, see the definition of the same field in
-      Section 4.1 for details.
+   Context Extensions:  See Section 5.
 
    Note that this close is unilateral and bidirectional: the sender of
    the frame unilaterally informs its peer of the closure.  Endpoints
@@ -440,8 +430,8 @@ Table of Contents
    initially registered by either themselves, or by their peer.
    Endpoints MAY use the CLOSE_DATAGRAM_CONTEXT capsule to immediately
    reject a context that was just registered using a
-   REGISTER_DATAGRAM_CONTEXT capsule if they find its Extension String
-   to be unacceptable.
+   REGISTER_DATAGRAM_CONTEXT capsule if they find its Context Extensions
+   field to be unacceptable.
 
    After an endpoint has either sent or received a
    CLOSE_DATAGRAM_CONTEXT frame, it MUST NOT send any DATAGRAM frames
@@ -455,6 +445,12 @@ Table of Contents
    capsule that violates one or more of these requirements, the endpoint
    MUST abruptly terminate the corresponding stream with a stream error
    of type H3_GENERAL_PROTOCOL_ERROR.
+
+   All CLOSE_DATAGRAM_CONTEXT capsules MUST contain a CLOSE_CODE context
+   extension, see Section 5.1.  If an endpoint receives a
+   CLOSE_DATAGRAM_CONTEXT capsule without a CLOSE_CODE context
+   extension, the endpoint MUST abruptly terminate the corresponding
+   stream with a stream error of type H3_GENERAL_PROTOCOL_ERROR.
 
 4.4.  The DATAGRAM Capsule
 
@@ -492,7 +488,64 @@ Table of Contents
    how to process them from Section 3 also apply to HTTP/3 datagrams
    sent and received using the DATAGRAM capsule.
 
-5.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
+5.  Context Extensibility
+
+   In order to facilitate extensibility of contexts, the
+   REGISTER_DATAGRAM_CONTEXT, REGISTER_DATAGRAM_NO_CONTEXT, and the
+   CLOSE_DATAGRAM_CONTEXT capsules carry a Context Extensions field.
+   That field contains a sequence of context extensions:
+
+     Context Extensions {
+       Context Extension (..) ...,
+     }
+
+   Each context extension is encoded as a (type, length, value) tuple:
+
+     Context Extension {
+       Context Extension Type (i),
+       Context Extension Length (i),
+       Context Extension Value (..),
+     }
+
+   Context Extension Types are registered with IANA, see Section 10.4.
+   The Context Extension Length field contains the length of the Context
+   Extension Value field in bytes.  The semantics of the Context
+   Extension Value field are defined by the corresponding Context
+   Extension Type.
+
+5.1.  The CLOSE_CODE Context Extension Type
+
+   The CLOSE_CODE context extension type (type=0x00) allows an endpoint
+   to provide additional information as to why a datagram context was
+   closed.  This type SHALL only be sent in CLOSE_DATAGRAM_CONTEXT
+   capsules.  Its Context Extension Value field consists of a single
+   variable-length integer which contains the close code.  The following
+   codes are defined:
+
+   NO_ERROR (code=0x00):  This indicates that the registration was
+      closed without any additional information.
+
+   DENIED (code=0x01):  This indicates that the sender has rejected the
+      context registration based on its local policy.  The endpoint that
+      had originally registered this context MUST NOT try to register
+      another context with the same context extensions on this stream.
+
+   RESOURCE_LIMIT (code=0x02):  This indicates that the context was
+      closed to save resources.  The recipient SHOULD limit its future
+      registration of resource-incentive contexts.
+
+   Receipt of an unknown close code MUST be treated as if the NO_ERROR
+   code was present.  Close codes are registered with IANA, see
+   Section 10.5.
+
+5.2.  The DETAILS Context Extension Type
+
+   The DETAILS context extension type (type=0x01) allows an endpoint to
+   provide additional details to context capsules.  It is meant for
+   debugging purposes.  Its Context Extension Value field consists of a
+   human-readable string encoded in UTF-8.
+
+6.  The H3_DATAGRAM HTTP/3 SETTINGS Parameter
 
    Implementations of HTTP/3 that support this mechanism can indicate
    that to their peer by sending the H3_DATAGRAM SETTINGS parameter with
@@ -522,14 +575,14 @@ Table of Contents
    the connection with error H3_SETTINGS_ERROR.  In all cases, the
    maximum permitted value of the H3_DATAGRAM SETTINGS parameter is 1.
 
-6.  Prioritization
+7.  Prioritization
 
    Prioritization of HTTP/3 datagrams is not defined in this document.
    Future extensions MAY define how to prioritize datagrams, and MAY
    define signaling to allow endpoints to communicate their
    prioritization preferences.
 
-7.  HTTP/1.x and HTTP/2 Support
+8.  HTTP/1.x and HTTP/2 Support
 
    We can provide DATAGRAM support in HTTP/2 by defining the CAPSULE
    frame in HTTP/2.
@@ -540,7 +593,7 @@ Table of Contents
    TODO: Refactor this document into "HTTP Datagrams" with definitions
    for HTTP/1.x, HTTP/2, and HTTP/3.
 
-8.  Security Considerations
+9.  Security Considerations
 
    Since this feature requires sending an HTTP/3 Settings parameter, it
    "sticks out".  In other words, probing clients can learn whether a
@@ -549,9 +602,9 @@ Table of Contents
    the fact that there are applications using HTTP/3 datagrams enabled
    on this endpoint.
 
-9.  IANA Considerations
+10.  IANA Considerations
 
-9.1.  HTTP/3 CAPSULE Frame
+10.1.  HTTP/3 CAPSULE Frame
 
    This document will request IANA to register the following entry in
    the "HTTP/3 Frames" registry:
@@ -562,7 +615,7 @@ Table of Contents
      |  CAPSULE   | 0xffcab5 | This Document |
      +------------+----------+---------------+
 
-9.2.  HTTP SETTINGS Parameter
+10.2.  HTTP SETTINGS Parameter
 
    This document will request IANA to register the following entry in
    the "HTTP/3 Settings" registry:
@@ -573,9 +626,9 @@ Table of Contents
      | H3_DATAGRAM  | 0xffd276 | This Document |    0    |
      +--------------+----------+---------------+---------+
 
-9.3.  Capsule Types
+10.3.  Capsule Types
 
-   This document establishes a registry for HTTP/3 frame type codes.
+   This document establishes a registry for HTTP/3 capsule type codes.
    The "HTTP Capsule Types" registry governs a 62-bit space.
    Registrations in this registry MUST include the following fields:
 
@@ -607,27 +660,71 @@ Table of Contents
    | REGISTER_DATAGRAM_NO_CONTEXT | 0x03  | This Document |
    +------------------------------+-------+---------------+
 
-9.4.  Context Extension Keys
+10.4.  Context Extension Types
 
-   REGISTER_DATAGRAM_CONTEXT capsules carry key-value pairs, see
-   Section 4.1.  This document will request IANA to create an "HTTP
-   Datagram Context Extension Keys" registry.  Registrations in this
-   registry MUST include the following fields:
+   This document establishes a registry for HTTP/3 datagram context
+   extension type codes.  The "HTTP Context Extension Types" registry
+   governs a 62-bit space.  Registrations in this registry MUST include
+   the following fields:
 
-   Key:  The key (see Section 4.1).  Keys MUST be valid tokens as
-      defined in Section 3.2.6 of [RFC7230].
+   Type:
 
-   Description:  A brief description of the key semantics, which MAY be
-      a summary if a specification reference is provided.
+   A name or label for the context extension type.
+
+   Value:  The value of the Context Extension Type field (see Section 5)
+      is a 62bit integer.
 
    Reference:  An optional reference to a specification for the
       parameter.  This field MAY be empty.
 
    Registrations follow the "First Come First Served" policy (see
    Section 4.4 of [IANA-POLICY]) where two registrations MUST NOT have
-   the same Key. This registry is initially empty.
+   the same Type nor Value.
 
-10.  Normative References
+   This registry initially contains the following entries:
+
+   +------------------------------+-------+---------------+
+   | Context Extension Type       | Value | Specification |
+   +------------------------------+-------+---------------+
+   | CLOSE_CODE                   | 0x00  | This Document |
+   +------------------------------+-------+---------------+
+   | DETAILS                      | 0x01  | This Document |
+   +------------------------------+-------+---------------+
+
+10.5.  Context Close Codes
+
+   This document establishes a registry for HTTP/3 context extension
+   type codes.  The "HTTP Context Close Codes" registry governs a 62-bit
+   space.  Registrations in this registry MUST include the following
+   fields:
+
+   Type:
+
+   A name or label for the close code.
+
+   Value:  The value of the CLOSE_CODE Context Extension Value field
+      (see Section 5.1) is a 62bit integer.
+
+   Reference:  An optional reference to a specification for the
+      parameter.  This field MAY be empty.
+
+   Registrations follow the "First Come First Served" policy (see
+   Section 4.4 of [IANA-POLICY]) where two registrations MUST NOT have
+   the same Type nor Value.
+
+   This registry initially contains the following entries:
+
+   +------------------------------+-------+---------------+
+   | Context Close Code           | Value | Specification |
+   +------------------------------+-------+---------------+
+   | NO_ERROR                     | 0x00  | This Document |
+   +------------------------------+-------+---------------+
+   | DENIED                       | 0x01  | This Document |
+   +------------------------------+-------+---------------+
+   | RESOURCE_LIMIT              | 0x02  | This Document |
+   +------------------------------+-------+---------------+
+
+11.  Normative References
 
    [DGRAM]    Pauly, T., Kinnear, E., and D. Schinazi, "An Unreliable
               Datagram Extension to QUIC", Work in Progress, Internet-
@@ -658,11 +755,6 @@ Table of Contents
               DOI 10.17487/RFC2119, March 1997,
               <https://datatracker.ietf.org/doc/html/rfc2119>.
 
-   [RFC7230]  Fielding, R., Ed. and J. Reschke, Ed., "Hypertext Transfer
-              Protocol (HTTP/1.1): Message Syntax and Routing",
-              RFC 7230, DOI 10.17487/RFC7230, June 2014,
-              <https://datatracker.ietf.org/doc/html/rfc7230>.
-
    [RFC8174]  Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://datatracker.ietf.org/doc/html/rfc8174>.
@@ -682,7 +774,7 @@ A.1.  CONNECT-UDP
    STREAM(44): CAPSULE             -------->
      Capsule Type = REGISTER_DATAGRAM_CONTEXT
      Context ID = 0
-     Extension String = ""
+     Context Extension = {}
 
    DATAGRAM                        -------->
      Quarter Stream ID = 11
@@ -712,7 +804,7 @@ A.2.  CONNECT-UDP with Timestamp Extension
    STREAM(44): CAPSULE            -------->
      Capsule Type = REGISTER_DATAGRAM_CONTEXT
      Context ID = 0
-     Extension String = ""
+     Context Extension = {}
 
    DATAGRAM                       -------->
      Quarter Stream ID = 11
@@ -733,7 +825,7 @@ A.2.  CONNECT-UDP with Timestamp Extension
    STREAM(44): CAPSULE            -------->
      Capsule Type = REGISTER_DATAGRAM_CONTEXT
      Context ID = 2
-     Extension String = "timestamp"
+     Context Extension = {TIMESTAMP=""}
 
    DATAGRAM                       -------->
      Quarter Stream ID = 11
@@ -742,50 +834,50 @@ A.2.  CONNECT-UDP with Timestamp Extension
 
 A.3.  CONNECT-IP with IP compression
 
-   Client                                             Server
+ Client                                             Server
 
-   STREAM(44): HEADERS            -------->
-     :method = CONNECT-IP
-     :scheme = https
-     :path = /
-     :authority = proxy.example.org:443
+ STREAM(44): HEADERS            -------->
+   :method = CONNECT-IP
+   :scheme = https
+   :path = /
+   :authority = proxy.example.org:443
 
-              <--------  STREAM(44): HEADERS
-                           :status = 200
+            <--------  STREAM(44): HEADERS
+                         :status = 200
 
-   /* Exchange CONNECT-IP configuration information. */
+ /* Exchange CONNECT-IP configuration information. */
 
-   STREAM(44): CAPSULE             -------->
-     Capsule Type = REGISTER_DATAGRAM_CONTEXT
-     Context ID = 0
-     Extension String = ""
+ STREAM(44): CAPSULE             -------->
+   Capsule Type = REGISTER_DATAGRAM_CONTEXT
+   Context ID = 0
+   Context Extension = {}
 
-   DATAGRAM                       -------->
-     Quarter Stream ID = 11
-     Context ID = 0
-     Payload = Encapsulated IP Packet
+ DATAGRAM                       -------->
+   Quarter Stream ID = 11
+   Context ID = 0
+   Payload = Encapsulated IP Packet
 
-   /* Endpoint happily exchange encapsulated IP packets */
-   /* using Quarter Stream ID 11 and Context ID 0.      */
+ /* Endpoint happily exchange encapsulated IP packets */
+ /* using Quarter Stream ID 11 and Context ID 0.      */
 
-   DATAGRAM                       -------->
-     Quarter Stream ID = 11
-     Context ID = 0
-     Payload = Encapsulated IP Packet
+ DATAGRAM                       -------->
+   Quarter Stream ID = 11
+   Context ID = 0
+   Payload = Encapsulated IP Packet
 
-   /* After performing some analysis on traffic patterns, */
-   /* the client decides it wants to compress a 5-tuple.  */
+ /* After performing some analysis on traffic patterns, */
+ /* the client decides it wants to compress a 5-tuple.  */
 
 
-   STREAM(44): CAPSULE             -------->
-     Capsule Type = REGISTER_DATAGRAM_CONTEXT
-     Context ID = 2
-     Extension String = "ip=192.0.2.42,port=443"
+ STREAM(44): CAPSULE             -------->
+   Capsule Type = REGISTER_DATAGRAM_CONTEXT
+   Context ID = 2
+   Context Extension = {IP_COMPRESSION=tcp,192.0.2.6:9876,192.0.2.7:443}
 
-   DATAGRAM                       -------->
-     Quarter Stream ID = 11
-     Context ID = 2
-     Payload = Compressed IP Packet
+ DATAGRAM                       -------->
+   Quarter Stream ID = 11
+   Context ID = 2
+   Payload = Compressed IP Packet
 
 A.4.  WebTransport
 
@@ -801,7 +893,7 @@ A.4.  WebTransport
 
    STREAM(44): CAPSULE             -------->
      Capsule Type = REGISTER_DATAGRAM_NO_CONTEXT
-     Extension String = ""
+     Context Extension = {}
 
               <--------  STREAM(44): HEADERS
                            :status = 200
