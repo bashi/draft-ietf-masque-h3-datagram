@@ -5,8 +5,8 @@
 MASQUE                                                       D. Schinazi
 Internet-Draft                                                Google LLC
 Intended status: Standards Track                               L. Pardue
-Expires: 26 November 2021                                     Cloudflare
-                                                             25 May 2021
+Expires: 27 November 2021                                     Cloudflare
+                                                             26 May 2021
 
 
                     Using QUIC Datagrams with HTTP/3
@@ -43,7 +43,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 November 2021.
+   This Internet-Draft will expire on 27 November 2021.
 
 Copyright Notice
 
@@ -524,7 +524,7 @@ Table of Contents
       had originally registered this context MUST NOT try to register
       another context with the same context extensions on this stream.
 
-   RESSOURCE_LIMIT (code=0x02):  This indicates that the context was
+   RESOURCE_LIMIT (code=0x02):  This indicates that the context was
       closed to save resources.  The recipient SHOULD limit its future
       registration of resource-incentive contexts.
 
@@ -717,7 +717,7 @@ Table of Contents
    +------------------------------+-------+---------------+
    | DENIED                       | 0x01  | This Document |
    +------------------------------+-------+---------------+
-   | RESSOURCE_LIMIT              | 0x02  | This Document |
+   | RESOURCE_LIMIT              | 0x02  | This Document |
    +------------------------------+-------+---------------+
 
 11.  Normative References
