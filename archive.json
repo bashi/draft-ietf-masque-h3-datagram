@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-05-25T01:14:39.223603+00:00",
+  "timestamp": "2021-05-27T01:43:27.200601+00:00",
   "repo": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
   "labels": [
     {
@@ -974,8 +974,8 @@
       "labels": [],
       "body": "H3 datagrams are associated with a stream, so it makes sense that it is only valid to send DATAGRAMs before sending the stream FIN.  These packets may be received out of order however.  What should receivers do with these packets?\r\n\r\nThe simplest action for the receiver is to drop any datagrams received after FIN, but I can imagine applications where the receiver would prefer to allow them to be processed for some time.  Should the draft offer guidance for this?\r\n\r\nThe answer might be different if we use Flow IDs as connection scoped identifiers or the 2-layer approach (Stream ID+Flow ID) discussed at the interim.",
       "createdAt": "2021-04-16T00:16:07Z",
-      "updatedAt": "2021-05-24T21:42:23Z",
-      "closedAt": "2021-05-24T21:42:23Z",
+      "updatedAt": "2021-05-27T01:21:55Z",
+      "closedAt": "2021-05-27T01:21:55Z",
       "comments": [
         {
           "author": "LPardue",
@@ -990,6 +990,41 @@
           "body": "Thanks for filing this. I'll add text to address this after we switch to the two-layer approach (assuming that becomes official WG consensus)",
           "createdAt": "2021-04-16T19:08:29Z",
           "updatedAt": "2021-04-16T19:08:29Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "The proposal here was receiver MAY drop a datagram after receiving FIN, but the merged PR has receiver MUST drop.  I prefer MAY, since I can envision a use case where the receiver would rather wait for a period to allow wayward datagrams to arrive, rather than declaring everything lost because of minor reordering.\r\n\r\nIs there a strong objection to changing this MUST to a MAY?",
+          "createdAt": "2021-05-26T15:50:50Z",
+          "updatedAt": "2021-05-26T15:50:50Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@afrind Can you provide an example of a use-case for not dropping a datagram which arrived after the stream was closed? I'm failing to imagine an application that would benefit from this.",
+          "createdAt": "2021-05-26T18:28:23Z",
+          "updatedAt": "2021-05-26T18:28:23Z"
+        },
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "\"Naive Partial Reliability\" or NPR:\r\n\r\nClient sends a request to the server indicating it is willing to accept the response body of an HTTP message over DATAGRAM rather than in the stream.\r\nServer sends the headers on the stream, and a marker indicating the response will come via DATAGRAMs (registering a context for this perhaps)\r\nServer sends DATAGRAMs containing the response body (and offsets)\r\nServer sends stream FIN\r\n\r\nThe client receives the stream FIN before the DATAGRAMs because of reordering, and assumes all response body was lost.\r\nDatagrams arrive at client shortly thereafter and per #57 are dropped.",
+          "createdAt": "2021-05-26T18:34:26Z",
+          "updatedAt": "2021-05-26T18:34:26Z"
+        },
+        {
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "body": "HTTP/2 kind of has some similar issues. It makes statements like\r\n\r\n> WINDOW_UPDATE or RST_STREAM frames can be received in this state\r\n      for a short period after a DATA or HEADERS frame containing an\r\n      END_STREAM flag is sent.  Until the remote peer receives and\r\n      processes RST_STREAM or the frame bearing the END_STREAM flag, it\r\n      might send frames of these types.  Endpoints MUST ignore\r\n      WINDOW_UPDATE or RST_STREAM frames received in this state, though\r\n      endpoints MAY choose to treat frames that arrive a significant\r\n      time after sending END_STREAM as a connection error\r\n      (Section 5.4.1) of type PROTOCOL_ERROR.\r\n\r\n and elsewhere     \r\n\r\n >    To avoid these problems, an endpoint SHOULD retain stream\r\n   prioritization state for a period after streams become closed.  The\r\n   longer state is retained, the lower the chance that streams are\r\n   assigned incorrect or default priority values.",
+          "createdAt": "2021-05-26T18:49:14Z",
+          "updatedAt": "2021-05-26T18:49:30Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "OK this makes sense to me, I can tweak the text to allow keeping stream state around for slightly longer.",
+          "createdAt": "2021-05-26T18:51:25Z",
+          "updatedAt": "2021-05-26T18:51:25Z"
         }
       ]
     },
@@ -1481,15 +1516,15 @@
       "id": "MDU6SXNzdWU4NzY4MzExNzk=",
       "title": "Do context ID closures need more details?",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/issues/53",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "In #52, we introduce the CLOSE_DATAGRAM_CONTEXT capsule which allows endpoints to close a context. That message currently only contains the context ID to close. @bemasc suggests that we may want to add more information there.\r\n* Should we differentiate between \"context close\" and \"context registration rejected\"?\r\n* Should we add an error code?\r\n\r\nIn particular, do folks have use cases for these features?",
       "createdAt": "2021-05-05T21:01:30Z",
-      "updatedAt": "2021-05-05T21:14:07Z",
-      "closedAt": null,
+      "updatedAt": "2021-05-26T20:32:50Z",
+      "closedAt": "2021-05-26T20:32:50Z",
       "comments": [
         {
           "author": "bemasc",
@@ -2299,21 +2334,21 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NTk5MjgxMDk4",
       "title": "Experiment with HTTP/3 frames",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/37",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This PR is a thought experiment aimed at seeing whether using HTTP/3 frames for H3DGRAM and CONNECT-UDP makes sense. We're not planning on merging this as-is.",
       "createdAt": "2021-03-24T00:31:24Z",
-      "updatedAt": "2021-03-30T21:49:53Z",
+      "updatedAt": "2021-05-27T01:22:34Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "eabfb327140651137c6c1053087d63dfdbdf18c5",
       "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "headRefName": "experiment_h3_frames",
       "headRefOid": "43f6970fe06c7e33129f62aff60d534d523b8f3a",
-      "closedAt": null,
+      "closedAt": "2021-05-27T01:22:34Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -2338,6 +2373,13 @@
           "body": "@ianswett : to clarify, you mean the QPACK table is not modified via encoded field sections.  Still, any extension that makes use of the QPACK dynamic table but doesn't properly decode all the sections will lead to state mismatch between the encoder and decoder -- the decoder still needs to send Section Acknowledgement or Stream Cancellation.  I guess it's not as bad as HPACK. \r\n\r\nI maintain that it's possible to write a safe extension to H2 or H3 that uses HPACK or QPACK dynamic tables, so long as it's guarded under SETTINGS.",
           "createdAt": "2021-03-24T22:27:34Z",
           "updatedAt": "2021-03-24T22:27:34Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR is obsolete now that we've landed #52.",
+          "createdAt": "2021-05-27T01:22:34Z",
+          "updatedAt": "2021-05-27T01:22:34Z"
         }
       ],
       "reviews": [
@@ -2696,21 +2738,21 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NjEyOTk1MTMx",
       "title": "Experiment with two layers of indirection",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/38",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "Similar to #37, this PR is a thought experiment aimed at seeing whether an alternate design makes sense. We're not planning on merging this as-is.\r\n\r\nThis design was inspired by a proposal by @bemasc. Ben gets the credit for the idea of using two layers of indirection here, and I take the blame for writing it down wrong.\r\n\r\nSince this is really hard to review in PR form, I've uploaded an HTML version [here](https://davidschinazi.com/stuff/draft-ietf-masque-h3-datagram.html) so I definitely suggest reading that instead.\r\n\r\nConceptually, I think this proposal is easier to reason about, and it has the advantage of requiring minimal work from intermediaries. Its downside is that the wire format is slightly less efficient because it requires another varint to be sent per datagram, but I think we can live with that.",
       "createdAt": "2021-04-11T02:18:51Z",
-      "updatedAt": "2021-04-13T00:51:51Z",
+      "updatedAt": "2021-05-27T01:22:39Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "255935632c9247980273dfe418de8c2a4332727f",
       "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "headRefName": "experiment_1_to_1",
       "headRefOid": "88e6caf21369d6986ec724d23d22550b47bf54de",
-      "closedAt": null,
+      "closedAt": "2021-05-27T01:22:39Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
@@ -2777,6 +2819,13 @@
           "body": "This PR doesn't spell out RELIABLE_DATAGRAM, but you're right that the details there are important.  In H2, RELIABLE_DATAGRAM needs to carry a flag to ensure that messages that need to be reliable (like control messages) stay reliable end-to-end, and are not converted into H3 unreliable datagrams at H2->H3 intermediaries.",
           "createdAt": "2021-04-13T00:51:51Z",
           "updatedAt": "2021-04-13T00:51:51Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR is obsolete now that we've landed #52.",
+          "createdAt": "2021-05-27T01:22:39Z",
+          "updatedAt": "2021-05-27T01:22:39Z"
         }
       ],
       "reviews": []
@@ -2786,25 +2835,33 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NjE0MDIxNzk4",
       "title": "Yet another experiment with two layers of indirection",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/39",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "This is a variation on #38 but with the \"flow ID = 0 means register\" replaced with the REGISTER_DATAGRAM_FLOW_ID frame from #37.\r\n\r\nSince this is really hard to review in PR form, I've uploaded an HTML version [here](https://davidschinazi.com/stuff/draft-ietf-masque-h3-datagram-exp2.html#name-register_datagram_flow_id-ht) so I definitely suggest reading that instead.",
       "createdAt": "2021-04-12T23:58:04Z",
-      "updatedAt": "2021-04-14T03:30:57Z",
+      "updatedAt": "2021-05-27T01:22:43Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "255935632c9247980273dfe418de8c2a4332727f",
       "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "headRefName": "experiment_1_to_1_with_register_frame",
       "headRefOid": "ea7fbdb8e6371d0d8fa5fdfe7962709234b02cb8",
-      "closedAt": null,
+      "closedAt": "2021-05-27T01:22:43Z",
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
-      "comments": [],
+      "comments": [
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "This PR is obsolete now that we've landed #52.",
+          "createdAt": "2021-05-27T01:22:43Z",
+          "updatedAt": "2021-05-27T01:22:43Z"
+        }
+      ],
       "reviews": [
         {
           "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjM1MTg1MDU1",
@@ -4098,26 +4155,487 @@
       "id": "MDExOlB1bGxSZXF1ZXN0NjUxNjk3ODcw",
       "title": "Clarify Opaque Capsules",
       "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/60",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "DavidSchinazi",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "@afrind points out that in order to correctly forward DATAGRAMs between transports where the QUIC DATAGRAM frame isn't always available, intermediaries need the ability to parse some capsules.",
       "createdAt": "2021-05-24T23:13:55Z",
-      "updatedAt": "2021-05-24T23:13:55Z",
+      "updatedAt": "2021-05-26T23:53:57Z",
       "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "baseRefName": "main",
       "baseRefOid": "13a8ccd227f217367896cef03f92649db5c5bba3",
       "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
       "headRefName": "opaque",
-      "headRefOid": "3395b87191c364212a7faf36a37bbd1038873716",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "headRefOid": "93ac485e5afbaafcf2ceabca70e8de7ed800703b",
+      "closedAt": "2021-05-26T23:53:57Z",
+      "mergedAt": "2021-05-26T23:53:57Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "d60d5f524c0182dcb79f62a05851de289cefc6bd"
+      },
+      "comments": [
+        {
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "body": "CAPSULE was easier to understand when it was fully opaque.  When should I choose to define a semi-opaque CAPSULE vs defining a new frame?  Aren't both constructs effectively hop-by-hop?",
+          "createdAt": "2021-05-25T15:44:02Z",
+          "updatedAt": "2021-05-25T15:44:02Z"
+        },
+        {
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "body": "@afrind you're the one who asked for this :-)\r\n\r\nThe benefit of a semi-opaque capsule is that it allows defining new capsules without having to update every single intermediary in the chain, because intermediaries forward all unknown capsules.",
+          "createdAt": "2021-05-25T16:11:58Z",
+          "updatedAt": "2021-05-25T16:11:58Z"
+        }
+      ],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY4MTQ0Nzk4",
+          "commit": {
+            "abbreviatedOid": "3395b87"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-25T17:29:24Z",
+          "updatedAt": "2021-05-25T19:09:35Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "Non-opqaue (transparent?) CAPSULEs are not forwarded in their unmodified entirety.  \r\n\r\nShould we state here that there are two types of CAPSULE (opaque and transparent)?.  Opaque CAPSULEs are always forwarded in their unmodified entirety.  Transparent CAPSULEs may be inspected and decapsulated by an intermediary and forwarded via a semantically equivalent protocol construct, when available.\r\n\r\nAlso in this PR, the DATAGRAM CAPSULE is *not* reliable end-to-end (see line 198), since converting to an H3 datagram on any hop along the path makes it unreliable.",
+              "createdAt": "2021-05-25T17:29:24Z",
+              "updatedAt": "2021-05-25T19:09:35Z"
+            },
+            {
+              "originalPosition": 31,
+              "body": "Order of transparent CAPSULEs (such as DATAGRAM) is no longer guaranteed, because an H3 -> H2 intermediary can have reordering effects.",
+              "createdAt": "2021-05-25T19:09:23Z",
+              "updatedAt": "2021-05-25T19:09:35Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY4NDk4ODAz",
+          "commit": {
+            "abbreviatedOid": "caa0d35"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T00:13:49Z",
+          "updatedAt": "2021-05-26T00:13:49Z",
+          "comments": [
+            {
+              "originalPosition": 31,
+              "body": "Good catch, fixed",
+              "createdAt": "2021-05-26T00:13:49Z",
+              "updatedAt": "2021-05-26T00:13:49Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY4NDk5MTM3",
+          "commit": {
+            "abbreviatedOid": "caa0d35"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T00:14:43Z",
+          "updatedAt": "2021-05-26T00:14:44Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I like transparent. Updated the text.\r\n\r\nYes, datagrams are not reliable, even if sent by capsule.",
+              "createdAt": "2021-05-26T00:14:43Z",
+              "updatedAt": "2021-05-26T00:14:44Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY4NTAzNzEz",
+          "commit": {
+            "abbreviatedOid": "caa0d35"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T00:27:21Z",
+          "updatedAt": "2021-05-26T00:27:21Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "> I like transparent\r\n\r\nHeh, now that I read it I like it less :) \r\n\r\nIt's good that transparent is the opposite of opaque, but as I read the text it seems strange that an intermediary is removing or inserting something that's called 'transparent'.  \r\n\r\nNaming is hard though.  The property of the 'transparent' capsule that makes them different is that they are convertible to other protocol elements or extensions (I'm imagining what WebTransport streams might look like if conveyed by capsule).  But opaque vs convertible seems weird too.  I hereby resign from this bikeshed.\r\n\r\n> Yes, datagrams are not reliable, even if sent by capsule.\r\n\r\nIs that true?  Capsules are always sent on an HTTP stream which is reliable.  You mean that a receiver has the option to drop a DATAGRAM capsule?  I didn't text to this effect.",
+              "createdAt": "2021-05-26T00:27:21Z",
+              "updatedAt": "2021-05-26T00:27:21Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY4NTA5NTA3",
+          "commit": {
+            "abbreviatedOid": "668a62e"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T00:44:14Z",
+          "updatedAt": "2021-05-26T00:44:14Z",
+          "comments": [
+            {
+              "originalPosition": 12,
+              "body": "I also don't much care for bikesheds. I'm going to keep \"transparent\" until someone proposes something better.\r\n\r\nI've added text to spell out that yes: datagrams are unreliable, even when initially sent in capsules.",
+              "createdAt": "2021-05-26T00:44:14Z",
+              "updatedAt": "2021-05-26T00:44:14Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY4NTEzMzYx",
+          "commit": {
+            "abbreviatedOid": "668a62e"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T00:55:25Z",
+          "updatedAt": "2021-05-26T01:03:14Z",
+          "comments": [
+            {
+              "originalPosition": 29,
+              "body": "It might be a better flow to move these two sentences to immediately after the first sentence of this para. But see the other review comment below.",
+              "createdAt": "2021-05-26T00:55:25Z",
+              "updatedAt": "2021-05-26T01:03:14Z"
+            },
+            {
+              "originalPosition": 38,
+              "body": "This para seems a bit like a fragment, maybe you could just append the clause to the end of the sentence 2 paras up? I.e. \"Intermediaries MUST treat unknown Capsule Types as opaque and MUST silently drop the Capsule.\"",
+              "createdAt": "2021-05-26T01:02:30Z",
+              "updatedAt": "2021-05-26T01:03:14Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5MTU1NTMx",
+          "commit": {
+            "abbreviatedOid": "668a62e"
+          },
+          "author": "afrind",
+          "authorAssociation": "NONE",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T15:14:23Z",
+          "updatedAt": "2021-05-26T15:19:45Z",
+          "comments": [
+            {
+              "originalPosition": 11,
+              "body": "Maybe just 'Intermediaries forward received CAPSULE frames on the same stream...' , since the capsule type (opacity) described in the next sentence explicitly carves out cases where capsules are not forwarded in their entirety.",
+              "createdAt": "2021-05-26T15:14:23Z",
+              "updatedAt": "2021-05-26T15:19:45Z"
+            },
+            {
+              "originalPosition": 14,
+              "body": "Is 'parsed or added' what we want to say, or rather, 'transparent ones can be converted to semantically equivalent protocol features or extensions by an intermediary, as defined by the specific Capsule Type', or something like that.",
+              "createdAt": "2021-05-26T15:16:20Z",
+              "updatedAt": "2021-05-26T15:19:45Z"
+            },
+            {
+              "originalPosition": 38,
+              "body": "This is talking about Endpoints.  Intermediaries MUST forward, regardless if they know the type.  Specifying that the endpoint MUST 'drop' unknown capsules seems prescriptive - perhaps 'MAY ignore' is better?",
+              "createdAt": "2021-05-26T15:19:30Z",
+              "updatedAt": "2021-05-26T15:19:45Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NDgxMDUz",
+          "commit": {
+            "abbreviatedOid": "668a62e"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T19:53:58Z",
+          "updatedAt": "2021-05-26T19:58:30Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "For intermediaries it's MUST forward, not MUST drop. Otherwise new capsules won't work without modifying intermediaries.",
+              "createdAt": "2021-05-26T19:53:58Z",
+              "updatedAt": "2021-05-26T19:58:30Z"
+            },
+            {
+              "originalPosition": 14,
+              "body": "I'd rather leave this vague. If it's transparent, the intermediary is allowed to do anything to a capsule if it wants to. I tweaked the text to clarify the intent.",
+              "createdAt": "2021-05-26T19:54:51Z",
+              "updatedAt": "2021-05-26T19:58:30Z"
+            },
+            {
+              "originalPosition": 11,
+              "body": "I agree, fixed.",
+              "createdAt": "2021-05-26T19:55:49Z",
+              "updatedAt": "2021-05-26T19:58:30Z"
+            },
+            {
+              "originalPosition": 29,
+              "body": "I think this flows better here, see response on other comment",
+              "createdAt": "2021-05-26T19:57:40Z",
+              "updatedAt": "2021-05-26T19:58:30Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NjI0NTgz",
+          "commit": {
+            "abbreviatedOid": "1ef7bc2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T23:33:12Z",
+          "updatedAt": "2021-05-26T23:33:13Z",
+          "comments": [
+            {
+              "originalPosition": 38,
+              "body": "oh sorry I misread things",
+              "createdAt": "2021-05-26T23:33:12Z",
+              "updatedAt": "2021-05-26T23:33:13Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NjI2OTAw",
+          "commit": {
+            "abbreviatedOid": "1ef7bc2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T23:39:09Z",
+          "updatedAt": "2021-05-26T23:39:09Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "Not specific to this PR but the changes made me realise we probably want to specific what receivers of CAPSULE on the wrong type of stream do. I.E. if I understand CAPSULE and I see one arrive on the peer's control stream, I probably should be closing the connection with H3_FRAME_UNEXPECTED. Maybe we should spin this off to a new issue?",
+              "createdAt": "2021-05-26T23:39:09Z",
+              "updatedAt": "2021-05-26T23:39:09Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NjI2OTU0",
+          "commit": {
+            "abbreviatedOid": "1ef7bc2"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-26T23:39:18Z",
+          "updatedAt": "2021-05-26T23:39:18Z",
+          "comments": []
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NjMwNTMx",
+          "commit": {
+            "abbreviatedOid": "93ac485"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T23:48:39Z",
+          "updatedAt": "2021-05-26T23:48:40Z",
+          "comments": [
+            {
+              "originalPosition": 10,
+              "body": "Fixed",
+              "createdAt": "2021-05-26T23:48:39Z",
+              "updatedAt": "2021-05-26T23:48:40Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 61,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjUxNzU1NDQw",
+      "title": "Add context close codes and make extensibility binary",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/61",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR adds a new concept of context close codes which\r\nwill allow applications that use contexts to indicate\r\nthe reason for closing a context.\r\n\r\nThis PR also makes the extensibility mechanism binary as\r\nthat is easier to implement.\r\n\r\nCloses #53.",
+      "createdAt": "2021-05-25T01:17:28Z",
+      "updatedAt": "2021-05-26T20:32:50Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "13a8ccd227f217367896cef03f92649db5c5bba3",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "errors",
+      "headRefOid": "e9fad671582da9a3f4ecbc15e20d7161c7c7103b",
+      "closedAt": "2021-05-26T20:32:50Z",
+      "mergedAt": "2021-05-26T20:32:50Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "a54a431ba043141321fe8107e17c00beb6d99526"
+      },
       "comments": [],
-      "reviews": []
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NDU3MzU3",
+          "commit": {
+            "abbreviatedOid": "bbe4fac"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T19:24:33Z",
+          "updatedAt": "2021-05-26T19:32:31Z",
+          "comments": [
+            {
+              "originalPosition": 136,
+              "body": "```suggestion\r\nRESOURCE_LIMIT (code=0x02):\r\n```",
+              "createdAt": "2021-05-26T19:24:33Z",
+              "updatedAt": "2021-05-26T19:32:31Z"
+            },
+            {
+              "originalPosition": 142,
+              "body": "Omitting the code seems like a micro optimization. Is there a strong case for this?",
+              "createdAt": "2021-05-26T19:28:33Z",
+              "updatedAt": "2021-05-26T19:32:31Z"
+            },
+            {
+              "originalPosition": 255,
+              "body": "```suggestion\r\n| RESOURCE_LIMIT              | 0x02  | This Document |\r\n```",
+              "createdAt": "2021-05-26T19:30:26Z",
+              "updatedAt": "2021-05-26T19:32:31Z"
+            },
+            {
+              "originalPosition": 302,
+              "body": "Longer term, we might want to explain the presentation format for extensions but for now I think this is ok.",
+              "createdAt": "2021-05-26T19:32:19Z",
+              "updatedAt": "2021-05-26T19:32:31Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NDc1MTQx",
+          "commit": {
+            "abbreviatedOid": "bbe4fac"
+          },
+          "author": "DavidSchinazi",
+          "authorAssociation": "COLLABORATOR",
+          "state": "COMMENTED",
+          "body": "",
+          "createdAt": "2021-05-26T19:46:39Z",
+          "updatedAt": "2021-05-26T19:51:34Z",
+          "comments": [
+            {
+              "originalPosition": 302,
+              "body": "Agreed, these example are likely to be removed before publication.",
+              "createdAt": "2021-05-26T19:46:39Z",
+              "updatedAt": "2021-05-26T19:51:34Z"
+            },
+            {
+              "originalPosition": 142,
+              "body": "That's a good point, fixed.",
+              "createdAt": "2021-05-26T19:47:41Z",
+              "updatedAt": "2021-05-26T19:51:34Z"
+            }
+          ]
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NDkzMjgz",
+          "commit": {
+            "abbreviatedOid": "4a3ceda"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "LGTM thanks",
+          "createdAt": "2021-05-26T20:08:34Z",
+          "updatedAt": "2021-05-26T20:08:34Z",
+          "comments": []
+        },
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NTA5ODMy",
+          "commit": {
+            "abbreviatedOid": "4a3ceda"
+          },
+          "author": "bemasc",
+          "authorAssociation": "NONE",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-26T20:29:16Z",
+          "updatedAt": "2021-05-26T20:29:52Z",
+          "comments": [
+            {
+              "originalPosition": 313,
+              "body": "I find this example kind of confusing, especially now that contexts are bidirectional.  A more realistic hypothetical might be something like `IP_COMPRESSION=tcp,192.0.2.41:54321,192.0.2.42:443`.  Or just `IP_COMPRESSION=<TBD connection info>`.",
+              "createdAt": "2021-05-26T20:29:16Z",
+              "updatedAt": "2021-05-26T20:29:52Z"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "number": 62,
+      "id": "MDExOlB1bGxSZXF1ZXN0NjU0MjA1MjQ4",
+      "title": "Allow keeping receive around for a short time",
+      "url": "https://github.com/ietf-wg-masque/draft-ietf-masque-h3-datagram/pull/62",
+      "state": "MERGED",
+      "author": "DavidSchinazi",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Closes #40.",
+      "createdAt": "2021-05-26T20:29:25Z",
+      "updatedAt": "2021-05-27T01:21:55Z",
+      "baseRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "baseRefName": "main",
+      "baseRefOid": "13a8ccd227f217367896cef03f92649db5c5bba3",
+      "headRepository": "ietf-wg-masque/draft-ietf-masque-h3-datagram",
+      "headRefName": "lifetime_again",
+      "headRefOid": "55c8d94b3497b04a09f7c7b4a586488bfa618826",
+      "closedAt": "2021-05-27T01:21:55Z",
+      "mergedAt": "2021-05-27T01:21:55Z",
+      "mergedBy": "DavidSchinazi",
+      "mergeCommit": {
+        "oid": "ef994baae9067ca1d9398f4eb562c20e5e7c42b1"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "MDE3OlB1bGxSZXF1ZXN0UmV2aWV3NjY5NjQ0Njkz",
+          "commit": {
+            "abbreviatedOid": "55c8d94"
+          },
+          "author": "LPardue",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2021-05-27T00:27:42Z",
+          "updatedAt": "2021-05-27T00:27:42Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
