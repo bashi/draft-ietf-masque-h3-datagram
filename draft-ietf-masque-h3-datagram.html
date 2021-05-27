@@ -1801,6 +1801,11 @@ empty.<a href="#section-10.3-4.4.1" class="pilcrow">¶</a></p>
 +------------------------------+-------+---------------+
 </pre><a href="#section-10.3-7" class="pilcrow">¶</a>
 </div>
+<p id="section-10.3-8">Capsule types with a value of the form 41 * N + 23 for integer values of N are
+reserved to exercise the requirement that unknown capsule types be ignored.
+These capsules have no semantics and can carry arbitrary values. These values
+MUST NOT be assigned by IANA and MUST NOT appear in the listing of assigned
+values.<a href="#section-10.3-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-ext-types">
@@ -1844,6 +1849,11 @@ nor Value.<a href="#section-10.4-5" class="pilcrow">¶</a></p>
 +------------------------------+-------+---------------+
 </pre><a href="#section-10.4-7" class="pilcrow">¶</a>
 </div>
+<p id="section-10.4-8">Context extension types with a value of the form 41 * N + 17 for integer values
+of N are reserved to exercise the requirement that unknown context extension
+types be ignored. These extensions have no semantics and can carry arbitrary
+values. These values MUST NOT be assigned by IANA and MUST NOT appear in the
+listing of assigned values.<a href="#section-10.4-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="iana-close-codes">
@@ -1885,10 +1895,14 @@ nor Value.<a href="#section-10.5-5" class="pilcrow">¶</a></p>
 +------------------------------+-------+---------------+
 | DENIED                       | 0x01  | This Document |
 +------------------------------+-------+---------------+
-| RESOURCE_LIMIT              | 0x02  | This Document |
+| RESOURCE_LIMIT               | 0x02  | This Document |
 +------------------------------+-------+---------------+
 </pre><a href="#section-10.5-7" class="pilcrow">¶</a>
 </div>
+<p id="section-10.5-8">Context close codes with a value of the form 41 * N + 19 for integer values of
+N are reserved to exercise the requirement that unknown context close codes be
+treated as NO_ERROR. These values MUST NOT be assigned by IANA and MUST NOT
+appear in the listing of assigned values.<a href="#section-10.5-8" class="pilcrow">¶</a></p>
 </section>
 </div>
 </section>
